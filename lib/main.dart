@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:personal_finance/view/dasahboard_screen.dart';
+import 'package:personal_finance/view/screen/main_screen.dart';
 
 void main() {
   runApp(const PersonalFinanceApp());
@@ -11,12 +11,12 @@ class PersonalFinanceApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Personal Finance',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
         useMaterial3: true,
       ),
-      home: const DasahboardScreen(),
+      home: const MainScreen(),
     );
   }
 }
