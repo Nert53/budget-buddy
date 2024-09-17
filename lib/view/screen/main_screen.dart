@@ -3,7 +3,8 @@ import 'package:personal_finance/constants.dart';
 import 'package:personal_finance/view/screen/dashboard_screen.dart';
 import 'package:personal_finance/view/nav_destinations.dart';
 import 'package:personal_finance/view/screen/graph_screen.dart';
-import 'package:personal_finance/view/screen/history_screen.dart';
+import 'package:personal_finance/view/screen/settings_screen.dart';
+import 'package:personal_finance/view/screen/transaction_screen.dart';
 import 'package:personal_finance/view/widget/add_modal_bottom.dart';
 
 class MainScreen extends StatefulWidget {
@@ -24,8 +25,9 @@ class _MainScreenState extends State<MainScreen> {
 
   final List<Widget> _screens = <Widget>[
     const DashboardScreen(),
-    const HistoryScreen(),
+    const TransactionScreen(),
     const GraphScreen(),
+    const SettingsScreen(),
   ];
 
   @override
@@ -74,12 +76,13 @@ class _MainScreenState extends State<MainScreen> {
       floatingActionButton: wideScreen
           ? null
           : FloatingActionButton(
+              backgroundColor: Theme.of(context).colorScheme.primary,
+              foregroundColor: Theme.of(context).colorScheme.onPrimary,
               onPressed: () {
                 showModalBottomSheet<void>(
                   context: context,
                   builder: (BuildContext context) {
-                    return AddModalBottom(
-                        screenHeight: screenHeight, screenWidth: screenWidth);
+                    return const AddModalBottom();
                   },
                 );
               },
