@@ -28,6 +28,11 @@ class AddTransactionViewModel extends ChangeNotifier {
     Value<String> noteValue = noteController.text.isNotEmpty
         ? Value(noteController.text)
         : const Value('');
+    Value<DateTime> dateValue = dateController.text.isNotEmpty
+        ? Value(DateTime.parse(dateController.text))
+        : Value(DateTime.now());
+    Value<String> category = Value(selectedCategory);
+    Value<String> currency = Value(selectedCurrency);
 
     await appDB.into(appDB.transactionItems).insert(
           TransactionItemsCompanion(

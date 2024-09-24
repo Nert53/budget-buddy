@@ -113,8 +113,8 @@ class _MainScreenState extends State<MainScreen> {
   }
 }
 
-class MyNavigationBar extends StatelessWidget {
-  const MyNavigationBar({super.key, required this.navigationShell});
+class ScreenContainer extends StatelessWidget {
+  const ScreenContainer({super.key, required this.navigationShell});
 
   final StatefulNavigationShell navigationShell;
 
@@ -128,7 +128,6 @@ class MyNavigationBar extends StatelessWidget {
         ),
         backgroundColor: Theme.of(context).colorScheme.primary,
       ),
-      body: navigationShell,
       bottomNavigationBar: NavigationBar(
         destinations: destinations.map<NavigationDestination>((d) {
           return NavigationDestination(
@@ -142,6 +141,20 @@ class MyNavigationBar extends StatelessWidget {
           navigationShell.goBranch(index);
         },
       ),
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        foregroundColor: Theme.of(context).colorScheme.onPrimary,
+        onPressed: () {
+          showModalBottomSheet<void>(
+            context: context,
+            builder: (BuildContext context) {
+              return const AddModalBottom();
+            },
+          );
+        },
+        child: const Icon(Icons.add),
+      ),
+      body: navigationShell,
     );
   }
 }

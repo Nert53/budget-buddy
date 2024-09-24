@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:personal_finance/view_model/add_transaction_viewmodel.dart';
 import 'package:provider/provider.dart';
@@ -35,7 +36,7 @@ class _AddModalWindowState extends State<AddModalWindow> {
 
     return Consumer<AddTransactionViewModel>(builder: (context, model, child) {
       return SizedBox(
-        height: screenHeight * 0.65,
+        height: screenHeight * 0.75,
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
@@ -66,6 +67,16 @@ class _AddModalWindowState extends State<AddModalWindow> {
                   controller: model.amountController,
                   keyboardType:
                       const TextInputType.numberWithOptions(decimal: true),
+                  inputFormatters: <TextInputFormatter>[
+                    // allow only numbers and dot/comma and comma is replaced with dot
+                    FilteringTextInputFormatter.allow(
+                        RegExp(r'(^-?\d*[.,]?\d*)')),
+                    TextInputFormatter.withFunction(
+                      (oldValue, newValue) => newValue.copyWith(
+                        text: newValue.text.replaceAll(',', '.'),
+                      ),
+                    ),
+                  ],
                   decoration: const InputDecoration(
                       labelText: 'Amount',
                       border: OutlineInputBorder(
@@ -165,6 +176,7 @@ class _AddModalWindowState extends State<AddModalWindow> {
                     Expanded(
                       child: TextField(
                         controller: model.timeController,
+                        readOnly: true,
                         onTap: () async {
                           TimeOfDay? time = await showTimePicker(
                               context: context, initialTime: TimeOfDay.now());

@@ -20,7 +20,7 @@ final _router = GoRouter(initialLocation: '/dashboard', routes: [
   StatefulShellRoute.indexedStack(
       builder: (BuildContext context, GoRouterState state,
           StatefulNavigationShell navigationShell) {
-        return MyNavigationBar(
+        return ScreenContainer(
           navigationShell: navigationShell,
         );
       },

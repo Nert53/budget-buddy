@@ -20,7 +20,7 @@ class TransactionList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Provider.of<TransactionViewModel>(context, listen: false).getTransactions();
+    Provider.of<TransactionViewModel>(context, listen: true);
     Provider.of<AppDatabase>(context, listen: false);
 
     final double screenWidth = MediaQuery.of(context).size.width;
