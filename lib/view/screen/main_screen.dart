@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:personal_finance/constants.dart';
+import 'package:personal_finance/main.dart';
 import 'package:personal_finance/view/screen/dashboard_screen.dart';
 import 'package:personal_finance/view/nav_destinations.dart';
 import 'package:personal_finance/view/screen/graph_screen.dart';
@@ -27,7 +29,7 @@ class _MainScreenState extends State<MainScreen> {
     const DashboardScreen(),
     const TransactionScreen(),
     const GraphScreen(),
-    const SettingsScreen(),
+    SettingsScreen(),
   ];
 
   @override
@@ -57,7 +59,14 @@ class _MainScreenState extends State<MainScreen> {
                 child: FloatingActionButton.extended(
                   elevation: 3,
                   label: const Text('Add'),
-                  onPressed: () {},
+                  onPressed: () {
+                    showModalBottomSheet<void>(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return const AddModalBottom();
+                      },
+                    );
+                  },
                   icon: const Icon(Icons.add),
                 ),
               ),
@@ -102,6 +111,39 @@ class _MainScreenState extends State<MainScreen> {
                 );
               }).toList(),
             ),
+    );
+  }
+}
+
+class MyNavigationBar extends StatelessWidget {
+  const MyNavigationBar({super.key, required this.navigationShell});
+
+  final StatefulNavigationShell navigationShell;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text(
+          'Personal Finance',
+          style: TextStyle(color: Colors.white),
+        ),
+        backgroundColor: Theme.of(context).colorScheme.primary,
+      ),
+      body: navigationShell,
+      bottomNavigationBar: NavigationBar(
+        destinations: destinations.map<NavigationDestination>((d) {
+          return NavigationDestination(
+            icon: Icon(d.icon),
+            selectedIcon: Icon(d.selectedIcon),
+            label: d.label,
+          );
+        }).toList(),
+        selectedIndex: navigationShell.currentIndex,
+        onDestinationSelected: (int index) {
+          navigationShell.goBranch(index);
+        },
+      ),
     );
   }
 }
