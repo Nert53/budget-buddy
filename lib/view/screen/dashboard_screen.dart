@@ -48,7 +48,7 @@ class DashboardScreenMain extends StatelessWidget {
                     ),
                   ],
                 ),
-                child: Text('Monthly spending graph'),
+                child: const Text('Monthly spending graph'),
               ),
               const SizedBox(height: 16.0),
               Row(

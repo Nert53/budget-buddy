@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:personal_finance/constants.dart';
-import 'package:personal_finance/main.dart';
 import 'package:personal_finance/view/screen/dashboard_screen.dart';
 import 'package:personal_finance/view/nav_destinations.dart';
 import 'package:personal_finance/view/screen/graph_screen.dart';
@@ -35,7 +34,6 @@ class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     final double screenWidth = MediaQuery.of(context).size.width;
-    final double screenHeight = MediaQuery.of(context).size.height;
     bool wideScreen = screenWidth > laptopScreenWidth;
 
     return Scaffold(
