@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:personal_finance/data/database.dart';
 import 'package:personal_finance/view/screen/main_screen.dart';
-import 'package:personal_finance/view_model/transaction_viewmodel.dart';
 import 'package:provider/provider.dart';
 
 void main() {
-  runApp(ChangeNotifierProvider(
-      create: (context) => TransactionViewModel(),
-      child: const PersonalFinanceApp()));
+  runApp(Provider<AppDatabase>(
+    create: (context) => AppDatabase(),
+    child: const PersonalFinanceApp(),
+    dispose: (context, db) => db.close(),
+  ));
 }
 
 class PersonalFinanceApp extends StatelessWidget {
@@ -17,7 +19,7 @@ class PersonalFinanceApp extends StatelessWidget {
     return MaterialApp(
       title: 'Personal Finance',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
+        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0x007fb9ae)),
         useMaterial3: true,
       ),
       home: const MainScreen(),

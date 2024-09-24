@@ -48,13 +48,13 @@ class DashboardScreenMain extends StatelessWidget {
                     ),
                   ],
                 ),
-                child: Text('Sidebar'),
+                child: Text('Monthly spending graph'),
               ),
               const SizedBox(height: 16.0),
               Row(
                 children: [
                   Container(
-                    height: 200,
+                    height: 160,
                     width: contentWidth / 2 - 8,
                     padding: const EdgeInsets.all(16.0),
                     decoration: BoxDecoration(
@@ -72,16 +72,28 @@ class DashboardScreenMain extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('Balance'),
+                        Text(
+                          'Account Balance',
+                          style: TextStyle(
+                              color: Theme.of(context).colorScheme.primary,
+                              fontSize: 18.0,
+                              fontWeight: FontWeight.bold),
+                        ),
                         Expanded(
-                            child:
-                                Center(child: Text('${model.accountBalance}'))),
+                            child: Center(
+                                child: Text('${model.accountBalance} CZK',
+                                    style: TextStyle(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .onSurface,
+                                        fontSize: 22.0,
+                                        fontWeight: FontWeight.bold)))),
                       ],
                     ),
                   ),
                   const SizedBox(width: 16.0),
                   Container(
-                    height: 200,
+                    height: 160,
                     width: contentWidth / 2 - 8,
                     padding: const EdgeInsets.all(16.0),
                     decoration: BoxDecoration(
@@ -96,7 +108,19 @@ class DashboardScreenMain extends StatelessWidget {
                         ),
                       ],
                     ),
-                    child: Text('Content'),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('This month spendings',
+                            style: TextStyle(
+                                color: Theme.of(context).colorScheme.primary,
+                                fontSize: 18.0,
+                                fontWeight: FontWeight.bold)),
+                        Expanded(
+                            child: Center(
+                                child: Text('${model.thisMonthBalance} CZK'))),
+                      ],
+                    ),
                   ),
                 ],
               )

@@ -93,7 +93,7 @@ class _MainScreenState extends State<MainScreen> {
           : NavigationBar(
               selectedIndex: _selectedIndex,
               onDestinationSelected: onDestinationSelected,
-              height: 70,
+              height: 80,
               destinations: destinations.map<NavigationDestination>((d) {
                 return NavigationDestination(
                   icon: Icon(d.icon),

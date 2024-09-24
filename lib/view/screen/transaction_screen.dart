@@ -71,6 +71,7 @@ class TransactionList extends StatelessWidget {
                         title: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
+                            Text(model.transactions[index].id.toString()),
                             Text(model.transactions[index].note),
                             Text(
                               model.transactions[index].date.toString(),

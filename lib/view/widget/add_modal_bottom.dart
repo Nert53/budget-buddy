@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:personal_finance/view_model/add_transaction_viewmodel.dart';
 import 'package:provider/provider.dart';
 
@@ -14,14 +15,20 @@ class AddModalBottom extends StatelessWidget {
   }
 }
 
-class AddModalWindow extends StatelessWidget {
+class AddModalWindow extends StatefulWidget {
   const AddModalWindow({
     super.key,
   });
 
   @override
+  State<AddModalWindow> createState() => _AddModalWindowState();
+}
+
+class _AddModalWindowState extends State<AddModalWindow> {
+  @override
   Widget build(BuildContext context) {
-    Provider.of<AddTransactionViewModel>(context, listen: false);
+    Provider.of<AddTransactionViewModel>(context, listen: false)
+        .getCategories();
 
     final double screenHeight = MediaQuery.of(context).size.height;
     final double screenWidth = MediaQuery.of(context).size.width;
@@ -54,30 +61,126 @@ class AddModalWindow extends StatelessWidget {
               ),
               const SizedBox(height: 16),
               Padding(
-                padding: EdgeInsets.symmetric(horizontal: 16.0),
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
                 child: TextField(
                   controller: model.amountController,
-                  keyboardType: TextInputType.numberWithOptions(decimal: true),
-                  decoration: InputDecoration(
-                    labelText: 'Amount',
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(16))),
-                  ),
+                  keyboardType:
+                      const TextInputType.numberWithOptions(decimal: true),
+                  decoration: const InputDecoration(
+                      labelText: 'Amount',
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(16))),
+                      suffixIcon: Icon(Icons.paid_outlined)),
                 ),
               ),
               const SizedBox(height: 12),
               Padding(
-                padding: EdgeInsets.symmetric(horizontal: 16.0),
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
                 child: TextField(
                   controller: model.noteController,
                   minLines: 3,
                   maxLines: 5,
                   keyboardType: TextInputType.text,
-                  decoration: InputDecoration(
-                    labelText: 'Notes',
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(16))),
-                  ),
+                  decoration: const InputDecoration(
+                      labelText: 'Name',
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(16))),
+                      suffixIcon: Icon(Icons.text_snippet_outlined)),
+                ),
+              ),
+              const SizedBox(height: 12),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  DropdownMenu(
+                      width: (screenWidth - 32 - 16) / 3 * 2,
+                      inputDecorationTheme: const InputDecorationTheme(
+                          border: OutlineInputBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(16)))),
+                      onSelected: (Object? newValue) {
+                        model.changeCurrentCategory(newValue as String);
+                      },
+                      initialSelection: model.categories.isEmpty
+                          ? 'General'
+                          : model.categories.first,
+                      dropdownMenuEntries: model.categories
+                          .map<DropdownMenuEntry<String>>((List<Object> value) {
+                        return DropdownMenuEntry<String>(
+                          value: value[0].toString(),
+                          label: value[0].toString(),
+                          trailingIcon: Icon(
+                            value[2] as IconData,
+                            color: value[1] as Color,
+                          ),
+                        );
+                      }).toList()),
+                  DropdownMenu(
+                      width: (screenWidth - 32 - 16) / 3,
+                      inputDecorationTheme: const InputDecorationTheme(
+                          border: OutlineInputBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(16)))),
+                      onSelected: (String? newValue) {
+                        model.changeCurrentCurrency(newValue!);
+                      },
+                      initialSelection: model.currencies.first,
+                      dropdownMenuEntries: model.currencies
+                          .map<DropdownMenuEntry<String>>((String value) {
+                        return DropdownMenuEntry<String>(
+                            value: value, label: value);
+                      }).toList()),
+                ],
+              ),
+              const SizedBox(height: 12),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: TextField(
+                        controller: model.dateController,
+                        onTap: () async {
+                          DateTime? date = await showDatePicker(
+                              context: context,
+                              initialDate: DateTime.now(),
+                              firstDate: DateTime(2000),
+                              lastDate: DateTime(2100));
+                          if (date != null) {
+                            model.dateController.text = DateFormat('dd.MM.yyyy')
+                                .format(date)
+                                .toString();
+                          }
+                        },
+                        decoration: const InputDecoration(
+                            labelText: 'Date',
+                            border: OutlineInputBorder(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(16))),
+                            suffixIcon: Icon(Icons.calendar_month_outlined)),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: TextField(
+                        controller: model.timeController,
+                        onTap: () async {
+                          TimeOfDay? time = await showTimePicker(
+                              context: context, initialTime: TimeOfDay.now());
+                          if (time != null) {
+                            model.timeController.text = time.format(context);
+                          }
+                        },
+                        decoration: const InputDecoration(
+                            labelText: 'Time',
+                            border: OutlineInputBorder(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(16))),
+                            suffixIcon: Icon(Icons.access_time_outlined)),
+                      ),
+                    ),
+                  ],
                 ),
               ),
               const SizedBox(height: 12),
