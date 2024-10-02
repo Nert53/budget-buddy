@@ -1,36 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
+import 'package:personal_finance/model/category.dart';
 import 'package:personal_finance/view_model/add_transaction_viewmodel.dart';
 import 'package:provider/provider.dart';
 
-class AddModalBottom extends StatelessWidget {
-  const AddModalBottom({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (context) => AddTransactionViewModel(),
-      child: const AddModalWindow(),
-    );
-  }
-}
-
-class AddModalWindow extends StatefulWidget {
+class AddModalWindow extends StatelessWidget {
   const AddModalWindow({
     super.key,
   });
 
   @override
-  State<AddModalWindow> createState() => _AddModalWindowState();
-}
-
-class _AddModalWindowState extends State<AddModalWindow> {
-  @override
   Widget build(BuildContext context) {
-    Provider.of<AddTransactionViewModel>(context, listen: false)
-        .getCategories();
-
     final double screenHeight = MediaQuery.of(context).size.height;
     final double screenWidth = MediaQuery.of(context).size.width;
 
@@ -100,11 +81,43 @@ class _AddModalWindowState extends State<AddModalWindow> {
                 ),
               ),
               const SizedBox(height: 12),
+              SegmentedButton<TransactionType>(
+                showSelectedIcon: false,
+                segments: const <ButtonSegment<TransactionType>>[
+                  ButtonSegment(
+                      value: TransactionType.income,
+                      label: Text('Income'),
+                      icon: Icon(
+                        Icons.arrow_drop_down,
+                        color: Colors.green,
+                        size: 24,
+                      )),
+                  ButtonSegment(
+                      value: TransactionType.outcome,
+                      label: Text('Outcome'),
+                      icon: Icon(
+                        Icons.arrow_drop_up,
+                        color: Colors.red,
+                        size: 24,
+                      )),
+                ],
+                selected: <TransactionType>{model.selectedType},
+                onSelectionChanged: (Set<TransactionType> newValue) {
+                  model.changeTransactionType(newValue.first);
+                },
+              ),
+              const SizedBox(height: 12),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   DropdownMenu(
                       width: (screenWidth - 32 - 16) / 3 * 2,
+                      leadingIcon: Icon(
+                        model.selectedCategory.icon,
+                        color: model.selectedCategory.color,
+                      ),
+                      textStyle: TextStyle(color: model.selectedCategory.color),
+                      label: const Text('Category'),
                       inputDecorationTheme: const InputDecorationTheme(
                           border: OutlineInputBorder(
                               borderRadius:
@@ -114,20 +127,30 @@ class _AddModalWindowState extends State<AddModalWindow> {
                       },
                       initialSelection: model.categories.isEmpty
                           ? 'General'
-                          : model.categories.first,
-                      dropdownMenuEntries: model.categories
-                          .map<DropdownMenuEntry<String>>((List<Object> value) {
-                        return DropdownMenuEntry<String>(
-                          value: value[0].toString(),
-                          label: value[0].toString(),
-                          trailingIcon: Icon(
-                            value[2] as IconData,
-                            color: value[1] as Color,
-                          ),
-                        );
-                      }).toList()),
+                          : model.categories.first.name,
+                      menuStyle: MenuStyle(
+                          shape: WidgetStateProperty.all(
+                              const RoundedRectangleBorder(
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(16))))),
+                      dropdownMenuEntries:
+                          model.categories.map<DropdownMenuEntry<String>>(
+                        (TransactionCategory value) {
+                          return DropdownMenuEntry<String>(
+                              value: value.name,
+                              label: value.name,
+                              style: ButtonStyle(
+                                  foregroundColor:
+                                      WidgetStateProperty.all(value.color)),
+                              trailingIcon: Icon(
+                                value.icon,
+                                color: value.color,
+                              ));
+                        },
+                      ).toList()),
                   DropdownMenu(
                       width: (screenWidth - 32 - 16) / 3,
+                      label: const Text('Currency'),
                       inputDecorationTheme: const InputDecorationTheme(
                           border: OutlineInputBorder(
                               borderRadius:
@@ -152,6 +175,7 @@ class _AddModalWindowState extends State<AddModalWindow> {
                     Expanded(
                       child: TextField(
                         controller: model.dateController,
+                        readOnly: true,
                         onTap: () async {
                           DateTime? date = await showDatePicker(
                               context: context,
@@ -204,7 +228,8 @@ class _AddModalWindowState extends State<AddModalWindow> {
                         foregroundColor: Theme.of(context).colorScheme.error,
                         side: BorderSide(
                             color: Theme.of(context).colorScheme.error)),
-                    onPressed: () => Navigator.pop(context),
+                    onPressed: () =>
+                        {Navigator.pop(context), model.clearFields()},
                     child: const Text('Discard'),
                   ),
                   const SizedBox(width: 12),
@@ -215,7 +240,17 @@ class _AddModalWindowState extends State<AddModalWindow> {
                             Theme.of(context).colorScheme.onPrimary,
                       ),
                       onPressed: () {
+                        if (model.amountController.text.isEmpty ||
+                            model.noteController.text.isEmpty) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                  behavior: SnackBarBehavior.floating,
+                                  content:
+                                      Text('Amount and Name are required')));
+                          return;
+                        }
                         model.saveTransaction();
+                        model.clearFields();
                         Navigator.pop(context);
                       },
                       child: const Text('Save Transaction')),

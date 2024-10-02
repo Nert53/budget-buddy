@@ -6,7 +6,56 @@ import 'package:personal_finance/view/nav_destinations.dart';
 import 'package:personal_finance/view/screen/graph_screen.dart';
 import 'package:personal_finance/view/screen/settings_screen.dart';
 import 'package:personal_finance/view/screen/transaction_screen.dart';
-import 'package:personal_finance/view/widget/add_modal_bottom.dart';
+import 'package:personal_finance/view/widget/add_modal_window.dart';
+
+class ScreenContainer extends StatelessWidget {
+  const ScreenContainer({super.key, required this.navigationShell});
+
+  final StatefulNavigationShell navigationShell;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text(
+          'Personal Finance',
+          style: TextStyle(color: Colors.white),
+        ),
+        backgroundColor: Theme.of(context).colorScheme.primary,
+      ),
+      body: navigationShell,
+      bottomNavigationBar: NavigationBar(
+        destinations: destinations.map<NavigationDestination>((d) {
+          return NavigationDestination(
+            icon: Icon(d.icon),
+            selectedIcon: Icon(d.selectedIcon),
+            label: d.label,
+          );
+        }).toList(),
+        selectedIndex: navigationShell.currentIndex,
+        onDestinationSelected: (int index) {
+          navigationShell.goBranch(index);
+        },
+      ),
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        foregroundColor: Theme.of(context).colorScheme.onPrimary,
+        onPressed: () {
+          showModalBottomSheet<void>(
+            context: context,
+            builder: (BuildContext context) {
+              return const AddModalWindow();
+            },
+          );
+        },
+        child: const Icon(Icons.add),
+      ),
+    );
+  }
+}
+
+// -----------------------------------------------------------------------------
+//! not in use
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -61,7 +110,7 @@ class _MainScreenState extends State<MainScreen> {
                     showModalBottomSheet<void>(
                       context: context,
                       builder: (BuildContext context) {
-                        return const AddModalBottom();
+                        return const AddModalWindow();
                       },
                     );
                   },
@@ -80,21 +129,6 @@ class _MainScreenState extends State<MainScreen> {
           _screens[_selectedIndex]
         ],
       ),
-      floatingActionButton: wideScreen
-          ? null
-          : FloatingActionButton(
-              backgroundColor: Theme.of(context).colorScheme.primary,
-              foregroundColor: Theme.of(context).colorScheme.onPrimary,
-              onPressed: () {
-                showModalBottomSheet<void>(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return const AddModalBottom();
-                  },
-                );
-              },
-              child: const Icon(Icons.add),
-            ),
       bottomNavigationBar: wideScreen
           ? null
           : NavigationBar(
@@ -109,52 +143,6 @@ class _MainScreenState extends State<MainScreen> {
                 );
               }).toList(),
             ),
-    );
-  }
-}
-
-class ScreenContainer extends StatelessWidget {
-  const ScreenContainer({super.key, required this.navigationShell});
-
-  final StatefulNavigationShell navigationShell;
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          'Personal Finance',
-          style: TextStyle(color: Colors.white),
-        ),
-        backgroundColor: Theme.of(context).colorScheme.primary,
-      ),
-      bottomNavigationBar: NavigationBar(
-        destinations: destinations.map<NavigationDestination>((d) {
-          return NavigationDestination(
-            icon: Icon(d.icon),
-            selectedIcon: Icon(d.selectedIcon),
-            label: d.label,
-          );
-        }).toList(),
-        selectedIndex: navigationShell.currentIndex,
-        onDestinationSelected: (int index) {
-          navigationShell.goBranch(index);
-        },
-      ),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: Theme.of(context).colorScheme.primary,
-        foregroundColor: Theme.of(context).colorScheme.onPrimary,
-        onPressed: () {
-          showModalBottomSheet<void>(
-            context: context,
-            builder: (BuildContext context) {
-              return const AddModalBottom();
-            },
-          );
-        },
-        child: const Icon(Icons.add),
-      ),
-      body: navigationShell,
     );
   }
 }

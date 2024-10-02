@@ -1,56 +1,77 @@
 import 'package:flutter/material.dart';
-import 'package:personal_finance/data/database.dart';
+import 'package:personal_finance/utils/functions.dart';
 import 'package:personal_finance/view_model/transaction_viewmodel.dart';
 import 'package:provider/provider.dart';
 
 class TransactionScreen extends StatelessWidget {
-  const TransactionScreen({super.key});
+  const TransactionScreen({
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (context) => TransactionViewModel(),
-      child: const TransactionList(),
-    );
-  }
-}
-
-class TransactionList extends StatelessWidget {
-  const TransactionList({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    Provider.of<TransactionViewModel>(context, listen: true);
-    Provider.of<AppDatabase>(context, listen: false);
-
     final double screenWidth = MediaQuery.of(context).size.width;
+    var model = context.watch<TransactionViewModel>();
 
-    return Consumer2<TransactionViewModel, AppDatabase>(
-      builder: (context, model, database, child) {
-        if (model.isLoading) {
-          return Center(
-              child: Row(
-            children: [
-              SizedBox(
-                width: screenWidth / 2 - 24,
-              ),
-              const CircularProgressIndicator(),
-            ],
-          ));
-        }
-        if (model.transactions.isEmpty) {
-          return const Center(
-            child: Text('No transactions found'),
-          );
-        } else {
-          return Expanded(
+    if (model.isLoading) {
+      return Center(
+          child: Row(
+        children: [
+          SizedBox(
+            width: screenWidth / 2 - 24,
+          ),
+          const CircularProgressIndicator(),
+        ],
+      ));
+    }
+    if (model.transactions.isEmpty) {
+      return const Center(
+        child: Text('No transactions found'),
+      );
+    } else {
+      return Column(
+        children: [
+          Container(
+            color: Theme.of(context).colorScheme.primary,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                IconButton(
+                  icon: Icon(
+                    Icons.arrow_back_ios_new_outlined,
+                    color: Theme.of(context).colorScheme.onPrimary,
+                  ),
+                  onPressed: () {
+                    model.refresh();
+                  },
+                ),
+                Text(
+                  convertMontNumToMonthName(DateTime.now().month),
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.onPrimary,
+                    fontSize: 24,
+                  ),
+                ),
+                IconButton(
+                  icon: Icon(
+                    Icons.arrow_forward_ios_outlined,
+                    color: Theme.of(context).colorScheme.onPrimary,
+                  ),
+                  onPressed: () {
+                    // Navigator.pushNamed(context, '/addTransaction');
+                  },
+                ),
+              ],
+            ),
+          ),
+          Expanded(
             child: Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: const EdgeInsets.only(left: 8.0, right: 8.0),
               child: ListView.builder(
                 itemCount: model.transactions.length,
                 itemBuilder: (BuildContext context, int index) {
                   return Dismissible(
-                    key: ValueKey(model.transactions[index]),
+                    key: Key(model.transactions[index].id.toString()),
                     onDismissed: (direction) {
                       model.deleteTransaction(model.transactions[index]);
                     },
@@ -69,11 +90,11 @@ class TransactionList extends StatelessWidget {
                     ),
                     child: Card(
                       child: ListTile(
-                        key: ValueKey(model.transactions[index].id),
+                        key: ValueKey(model.transactions[index].id.toString()),
                         title: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(model.transactions[index].id.toString()),
+                            Text(model.toString()),
                             Text(model.transactions[index].note),
                             Text(
                               model.transactions[index].date.toString(),
@@ -93,9 +114,9 @@ class TransactionList extends StatelessWidget {
                 },
               ),
             ),
-          );
-        }
-      },
-    );
+          ),
+        ],
+      );
+    }
   }
 }
