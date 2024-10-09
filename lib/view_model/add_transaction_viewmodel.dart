@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:personal_finance/data/database.dart';
 import 'package:personal_finance/model/category.dart';
+import 'package:personal_finance/model/currency.dart';
 import 'package:personal_finance/utils/functions.dart';
 
 enum TransactionType { income, outcome }
@@ -19,9 +20,10 @@ class AddTransactionViewModel extends ChangeNotifier {
       text: DateFormat('HH:mm').format(DateTime.now()).toString());
 
   List<TransactionCategory> categories = [];
-  List<String> currencies = ['CZK', 'USD', 'EUR'];
+  List<Currency> currencies = [];
 
   TransactionCategory selectedCategory = TransactionCategory(
+      id: '1',
       name: 'Groceries',
       color: Colors.green,
       icon: Icons.shopping_cart_outlined);
@@ -32,30 +34,43 @@ class AddTransactionViewModel extends ChangeNotifier {
     _db.watchAllTransactions().listen((event) {
       getCategories();
     });
-    getCategories();
+    getCurrencies();
     isLoading = false;
   }
 
   void saveTransaction() async {
-    Value<double> amoutValue = amountController.text.isNotEmpty
+    DateFormat dateFormat = DateFormat('dd.MM.yyyy');
+    DateFormat timeFormat = DateFormat('HH:mm');
+
+    Value<double> amountToSave = amountController.text.isNotEmpty
         ? Value(double.parse(amountController.text))
         : const Value(0.0);
-    Value<String> noteValue = noteController.text.isNotEmpty
+    Value<String> noteToSave = noteController.text.isNotEmpty
         ? Value(noteController.text)
         : const Value('');
-    /*Value<DateTime> dateValue = dateController.text.isNotEmpty
-        ? Value(DateTime.parse(dateController.text))
-        : Value(DateTime.now());*/
-    //Value<String> category = Value("test");
-    //Value<String> currency = Value(selectedCurrency);
+    Value<bool> isOutcomeToSave = selectedType == TransactionType.outcome
+        ? const Value(true)
+        : const Value(false);
+    Value<DateTime> date = dateController.text.isNotEmpty
+        ? Value(dateFormat.parse(dateController.text))
+        : Value(DateTime.now());
+    Value<DateTime> time = timeController.text.isNotEmpty
+        ? Value(timeFormat.parse(timeController.text))
+        : Value(DateTime.now());
+    Value<String> categoryToSaveId = Value(selectedCategory.id);
+    Value<String> currencyToSave = Value(selectedCurrency);
 
-    _db.into(_db.transactionItems).insert(
+    Value<DateTime> dateToSave = Value(DateTime(date.value.year,
+        date.value.month, date.value.day, time.value.hour, time.value.minute));
+
+    await _db.into(_db.transactionItems).insert(
           TransactionItemsCompanion(
-            amount: amoutValue,
-            date: Value(DateTime.now()),
-            note: noteValue,
-            category: const Value('Outcome'),
-            currency: const Value('CZK'),
+            amount: amountToSave,
+            date: dateToSave,
+            note: noteToSave,
+            isOutcome: isOutcomeToSave,
+            category: categoryToSaveId,
+            currency: currencyToSave,
           ),
         );
     notifyListeners();
@@ -69,6 +84,7 @@ class AddTransactionViewModel extends ChangeNotifier {
 
     for (var category in allCategories) {
       categories.add(TransactionCategory(
+          id: category.id,
           name: category.name,
           color: Color(category.color),
           icon: convertIconNameToIcon(category.icon)));
@@ -82,6 +98,7 @@ class AddTransactionViewModel extends ChangeNotifier {
       for (var item in values) {
         if (item.name.toLowerCase() == category.toLowerCase()) {
           selectedCategory = TransactionCategory(
+              id: item.id,
               name: item.name,
               color: Color(item.color),
               icon: convertIconNameToIcon(item.icon));
@@ -90,6 +107,18 @@ class AddTransactionViewModel extends ChangeNotifier {
         }
       }
     });
+  }
+
+  getCurrencies() async {
+    List<CurrencyItem> allCurrencies =
+        await _db.select(_db.currencyItems).get().then((value) {
+      return value.map((e) => e).toList();
+    });
+
+    for (var currency in allCurrencies) {
+      currencies.add(Currency(
+          id: currency.id, name: currency.name, symbol: currency.symbol));
+    }
   }
 
   changeCurrentCurrency(String currency) {

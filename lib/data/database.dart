@@ -9,8 +9,9 @@ class TransactionItems extends Table {
   RealColumn get amount => real()();
   DateTimeColumn get date => dateTime()();
   TextColumn get note => text()();
-  TextColumn get category => text().withLength(min: 1, max: 32)();
-  TextColumn get currency => text().withLength(min: 2, max: 3)();
+  BoolColumn get isOutcome => boolean()();
+  TextColumn get category => text().references(CategoryItems, #id)();
+  TextColumn get currency => text().references(CurrencyItems, #id)();
 }
 
 class CategoryItems extends Table {
@@ -21,7 +22,7 @@ class CategoryItems extends Table {
 }
 
 class CurrencyItems extends Table {
-  IntColumn get id => integer().autoIncrement()();
+  TextColumn get id => text().clientDefault(() => ShortUid.create())();
   TextColumn get name => text().withLength(min: 1, max: 32)();
   TextColumn get symbol => text().withLength(min: 1, max: 3)();
 }
@@ -38,6 +39,7 @@ class AppDatabase extends _$AppDatabase {
         onCreate: (Migrator m) async {
           await m.createAll();
           await initialCategoriesInsert();
+          await initialCurrenciesInsert();
         },
       );
 
@@ -94,6 +96,35 @@ class AppDatabase extends _$AppDatabase {
           name: 'Health',
           color: 0xFFD50000, // dark red
           icon: 'health',
+        ),
+      );
+    });
+  }
+
+  Future<Null> initialCurrenciesInsert() async {
+    return await transaction(() async {
+      await into(currencyItems).insert(
+        CurrencyItemsCompanion.insert(
+          name: 'Euro',
+          symbol: '€',
+        ),
+      );
+      await into(currencyItems).insert(
+        CurrencyItemsCompanion.insert(
+          name: 'Dollar',
+          symbol: "\$",
+        ),
+      );
+      await into(currencyItems).insert(
+        CurrencyItemsCompanion.insert(
+          name: 'Czech Koruna',
+          symbol: 'Kč',
+        ),
+      );
+      await into(currencyItems).insert(
+        CurrencyItemsCompanion.insert(
+          name: 'Pound',
+          symbol: '£',
         ),
       );
     });
