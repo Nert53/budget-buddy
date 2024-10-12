@@ -1,6 +1,7 @@
 import 'package:drift/drift.dart';
 import 'package:flutter/material.dart';
 import 'package:personal_finance/data/database.dart';
+import 'package:personal_finance/model/transaction.dart';
 import 'package:personal_finance/utils/functions.dart';
 
 class TransactionViewModel extends ChangeNotifier {
@@ -8,6 +9,7 @@ class TransactionViewModel extends ChangeNotifier {
   final AppDatabase _db;
 
   List<TransactionItem> transactions = [];
+  List<Transaction> transactionsGrouped = [];
 
   int currentMonth = DateTime.now().month;
   String currentMonthString = convertMontNumToMonthName(DateTime.now().month);
@@ -57,7 +59,31 @@ class TransactionViewModel extends ChangeNotifier {
       ..where((t) => t.date.month.equals(currentMonth))
       ..where((t) => t.date.year.equals(currentYear));
 
-    transactions = await trans.get();
+    var tmp = await trans.get();
+
+    for (var t in tmp) {
+      var selectedCategory = _db.select(_db.categoryItems)
+        ..where((c) => c.id.equals(t.category));
+      var catName = await selectedCategory.getSingle();
+
+      var selectedCurrency = _db.select(_db.currencyItems)
+        ..where((c) => c.id.equals(t.currency));
+      var currencyName =
+          await selectedCurrency.getSingle().then((value) => value.symbol);
+
+      transactionsGrouped.add(Transaction(
+        id: t.id.toString(),
+        amount: t.amount,
+        date: t.date,
+        note: t.note,
+        categoryId: t.category,
+        categoryName: catName.name,
+        categoryIcon: Icons.local_grocery_store_outlined,
+        categoryColor: Colors.red,
+        currencyId: t.currency,
+        currencyName: currencyName,
+      ));
+    }
 
     // transactions = await _db.select(_db.transactionItems).get();
     isLoading = false;

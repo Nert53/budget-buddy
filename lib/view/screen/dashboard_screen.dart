@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:personal_finance/constants.dart';
+import 'package:personal_finance/utils/functions.dart';
 import 'package:personal_finance/view_model/dashboard_viewmodel.dart';
 import 'package:provider/provider.dart';
+import 'package:fl_chart/fl_chart.dart';
 
 class DashboardScreen extends StatelessWidget {
   const DashboardScreen({super.key});
@@ -9,7 +11,7 @@ class DashboardScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final double screenWidth = MediaQuery.of(context).size.width;
-    bool wideScreen = screenWidth > laptopScreenWidth;
+    bool wideScreen = screenWidth > mediumScreenWidth;
     double contentWidth =
         screenWidth - (wideScreen ? (navigationRailWidth + 32) : 32);
 
@@ -34,11 +36,11 @@ class DashboardScreen extends StatelessWidget {
         child: Column(
           children: [
             Container(
-              height: 200,
+              height: 240,
               width: contentWidth,
               padding: const EdgeInsets.all(16.0),
               decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.surfaceContainer,
+                color: Theme.of(context).colorScheme.surface,
                 borderRadius: const BorderRadius.all(Radius.circular(16.0)),
                 boxShadow: const [
                   BoxShadow(
@@ -48,7 +50,30 @@ class DashboardScreen extends StatelessWidget {
                   ),
                 ],
               ),
-              child: const Text('Monthly spending graph'),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text('Monthly spending graph',
+                      style: TextStyle(
+                          fontSize: 16.0, fontWeight: FontWeight.normal)),
+                  const SizedBox(height: 8.0),
+                  Expanded(
+                      child: LineChart(
+                    LineChartData(
+                      titlesData: const FlTitlesData(
+                        topTitles: AxisTitles(
+                            sideTitles: SideTitles(showTitles: false)),
+                        rightTitles: AxisTitles(
+                            sideTitles: SideTitles(showTitles: false)),
+                      ),
+                      minX: 0,
+                      maxX: model.currrentDate.daysInMonth().toDouble(),
+                      minY: 0,
+                      maxY: 1000,
+                    ),
+                  ))
+                ],
+              ),
             ),
             const SizedBox(height: 16.0),
             Row(
@@ -58,7 +83,7 @@ class DashboardScreen extends StatelessWidget {
                   width: contentWidth / 2 - 8,
                   padding: const EdgeInsets.all(16.0),
                   decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.surfaceContainer,
+                    color: Theme.of(context).colorScheme.surface,
                     borderRadius: const BorderRadius.all(Radius.circular(16.0)),
                     boxShadow: const [
                       BoxShadow(
@@ -71,12 +96,10 @@ class DashboardScreen extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
+                      const Text(
                         'Account Balance',
                         style: TextStyle(
-                            color: Theme.of(context).colorScheme.primary,
-                            fontSize: 18.0,
-                            fontWeight: FontWeight.bold),
+                            fontSize: 16.0, fontWeight: FontWeight.normal),
                       ),
                       Expanded(
                           child: Center(
@@ -85,7 +108,7 @@ class DashboardScreen extends StatelessWidget {
                                       color: Theme.of(context)
                                           .colorScheme
                                           .onSurface,
-                                      fontSize: 22.0,
+                                      fontSize: 24.0,
                                       fontWeight: FontWeight.bold)))),
                     ],
                   ),
@@ -96,7 +119,7 @@ class DashboardScreen extends StatelessWidget {
                   width: contentWidth / 2 - 8,
                   padding: const EdgeInsets.all(16.0),
                   decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.surfaceContainer,
+                    color: Theme.of(context).colorScheme.surface,
                     borderRadius: const BorderRadius.all(Radius.circular(16.0)),
                     boxShadow: const [
                       BoxShadow(
@@ -109,14 +132,18 @@ class DashboardScreen extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('This month spendings',
+                      const Text('This month spendings',
                           style: TextStyle(
-                              color: Theme.of(context).colorScheme.primary,
-                              fontSize: 18.0,
-                              fontWeight: FontWeight.bold)),
+                              fontSize: 16.0, fontWeight: FontWeight.normal)),
                       Expanded(
                           child: Center(
-                              child: Text('${model.thisMonthBalance} CZK'))),
+                              child: Text('${model.thisMonthBalance} CZK',
+                                  style: TextStyle(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onSurface,
+                                      fontSize: 24.0,
+                                      fontWeight: FontWeight.bold)))),
                     ],
                   ),
                 ),

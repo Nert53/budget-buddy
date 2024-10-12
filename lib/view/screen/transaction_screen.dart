@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:personal_finance/utils/functions.dart';
 import 'package:personal_finance/view_model/transaction_viewmodel.dart';
 import 'package:provider/provider.dart';
 
@@ -88,7 +87,7 @@ class TransactionScreen extends StatelessWidget {
                       title: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(model.transactions[index].note),
+                          Text(model.transactions[index].category),
                           Text(
                             '${dateFormat.format(model.transactions[index].date)} | ${timeFormat.format(model.transactions[index].date)}',
                             style: TextStyle(

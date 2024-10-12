@@ -6,7 +6,7 @@ import 'package:personal_finance/view/nav_destinations.dart';
 import 'package:personal_finance/view/screen/graph_screen.dart';
 import 'package:personal_finance/view/screen/settings_screen.dart';
 import 'package:personal_finance/view/screen/transaction_screen.dart';
-import 'package:personal_finance/view/widget/add_modal_window.dart';
+import 'package:personal_finance/view/widget/add_window.dart';
 
 class ScreenContainer extends StatelessWidget {
   const ScreenContainer({super.key, required this.navigationShell});
@@ -15,6 +15,11 @@ class ScreenContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final double screenWidth = MediaQuery.of(context).size.width;
+    bool mediumScreen =
+        screenWidth > mediumScreenWidth && screenWidth < largeScreenWidth;
+    bool largeScreen = screenWidth > largeScreenWidth;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -23,38 +28,86 @@ class ScreenContainer extends StatelessWidget {
         ),
         backgroundColor: Theme.of(context).colorScheme.primary,
       ),
-      body: navigationShell,
-      bottomNavigationBar: NavigationBar(
-        destinations: destinations.map<NavigationDestination>((d) {
-          return NavigationDestination(
-            icon: Icon(d.icon),
-            selectedIcon: Icon(d.selectedIcon),
-            label: d.label,
-          );
-        }).toList(),
-        selectedIndex: navigationShell.currentIndex,
-        onDestinationSelected: (int index) {
-          navigationShell.goBranch(index);
-        },
+      body: Row(
+        children: [
+          if (mediumScreen || largeScreen)
+            NavigationRail(
+              selectedIndex: navigationShell.currentIndex,
+              elevation: 5,
+              labelType: largeScreen ? null : NavigationRailLabelType.all,
+              extended: largeScreen,
+              leading: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                child: SizedBox(
+                  width: largeScreen ? 256 - 32 : null,
+                  child: FloatingActionButton.extended(
+                    elevation: 3,
+                    label: largeScreen
+                        ? const Text('Add Transaction')
+                        : const Text('Add'),
+                    backgroundColor: Theme.of(context).colorScheme.primary,
+                    foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                    onPressed: () {
+                      showDialog<void>(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return const AddWindow();
+                        },
+                      );
+                    },
+                    icon: const Icon(Icons.add),
+                  ),
+                ),
+              ),
+              destinations: destinations.map<NavigationRailDestination>((d) {
+                return NavigationRailDestination(
+                  icon: Icon(d.icon),
+                  label: Text(d.label),
+                  selectedIcon: Icon(d.selectedIcon),
+                );
+              }).toList(),
+              onDestinationSelected: (int index) {
+                navigationShell.goBranch(index);
+              },
+            ),
+          Flexible(child: navigationShell)
+        ],
       ),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: Theme.of(context).colorScheme.primary,
-        foregroundColor: Theme.of(context).colorScheme.onPrimary,
-        onPressed: () {
-          showModalBottomSheet<void>(
-            context: context,
-            builder: (BuildContext context) {
-              return const AddModalWindow();
-            },
-          );
-        },
-        child: const Icon(Icons.add),
-      ),
+      bottomNavigationBar: mediumScreen || largeScreen
+          ? null
+          : NavigationBar(
+              destinations: destinations.map<NavigationDestination>((d) {
+                return NavigationDestination(
+                  icon: Icon(d.icon),
+                  selectedIcon: Icon(d.selectedIcon),
+                  label: d.label,
+                );
+              }).toList(),
+              selectedIndex: navigationShell.currentIndex,
+              onDestinationSelected: (int index) {
+                navigationShell.goBranch(index);
+              },
+            ),
+      floatingActionButton: mediumScreen || largeScreen
+          ? null
+          : FloatingActionButton(
+              backgroundColor: Theme.of(context).colorScheme.primary,
+              foregroundColor: Theme.of(context).colorScheme.onPrimary,
+              onPressed: () {
+                showDialog<void>(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return const AddWindow();
+                  },
+                );
+              },
+              child: const Icon(Icons.add),
+            ),
     );
   }
 }
 
-// -----------------------------------------------------------------------------
+/* -----------------------------------------------------------------------------
 //! not in use
 
 class MainScreen extends StatefulWidget {
@@ -83,7 +136,7 @@ class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     final double screenWidth = MediaQuery.of(context).size.width;
-    bool wideScreen = screenWidth > laptopScreenWidth;
+    bool wideScreen = screenWidth > mediumScreenWidth;
 
     return Scaffold(
       appBar: AppBar(
@@ -146,3 +199,5 @@ class _MainScreenState extends State<MainScreen> {
     );
   }
 }
+
+*/

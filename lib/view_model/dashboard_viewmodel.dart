@@ -11,6 +11,7 @@ class DashboardViewmodel extends ChangeNotifier {
   Future<List<TransactionItem>> lastFiveTransactions = Future.value([]);
   Future<List<TransactionItem>> lastTransactions = Future.value([]);
 
+  DateTime currrentDate = DateTime.now();
   int currentMonth = DateTime.now().month;
   int currentYear = DateTime.now().year;
 
