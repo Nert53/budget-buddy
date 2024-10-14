@@ -10,7 +10,6 @@ class TransactionScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final double screenWidth = MediaQuery.of(context).size.width;
     var model = context.watch<TransactionViewModel>();
 
     DateFormat dateFormat = DateFormat('dd.MM.yyyy');
@@ -81,26 +80,46 @@ class TransactionScreen extends StatelessWidget {
               child: ListView.builder(
                 itemCount: model.transactions.length,
                 itemBuilder: (BuildContext context, int index) {
+                  var currentTransaction = model.transactions[index];
+
                   return Card(
                     child: ListTile(
-                      key: ValueKey(model.transactions[index].id.toString()),
-                      title: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(model.transactions[index].category),
+                        key: ValueKey(currentTransaction.id.toString()),
+                        title: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(currentTransaction.note),
+                            Text(
+                              '${dateFormat.format(model.transactions[index].date)} | ${timeFormat.format(model.transactions[index].date)}',
+                              style: TextStyle(
+                                  fontSize: 12, color: Colors.grey[700]),
+                            ),
+                          ],
+                        ),
+                        leading: Icon(
+                          currentTransaction.categoryIcon,
+                          color: currentTransaction.categoryColor,
+                        ),
+                        trailing:
+                            Row(mainAxisSize: MainAxisSize.min, children: [
+                          currentTransaction.isOutcome
+                              ? const Icon(
+                                  Icons.arrow_drop_down,
+                                  color: Colors.red,
+                                )
+                              : Icon(
+                                  Icons.arrow_drop_up,
+                                  color: Colors.green[700],
+                                ),
                           Text(
-                            '${dateFormat.format(model.transactions[index].date)} | ${timeFormat.format(model.transactions[index].date)}',
+                            '${model.transactions[index].amount} ${model.transactions[index].currencyName}',
                             style: TextStyle(
-                                fontSize: 12, color: Colors.grey[700]),
+                                color: currentTransaction.isOutcome
+                                    ? Colors.red
+                                    : Colors.green[700],
+                                fontSize: 14),
                           ),
-                        ],
-                      ),
-                      leading: const Icon(Icons.local_grocery_store_outlined),
-                      trailing: Text(
-                        '${model.transactions[index].amount} ${model.transactions[index].currency}',
-                        style: const TextStyle(color: Colors.red),
-                      ),
-                    ),
+                        ])),
                   );
                 },
               ),

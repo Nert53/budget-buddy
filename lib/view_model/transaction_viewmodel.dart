@@ -8,8 +8,7 @@ class TransactionViewModel extends ChangeNotifier {
   bool isLoading = true;
   final AppDatabase _db;
 
-  List<TransactionItem> transactions = [];
-  List<Transaction> transactionsGrouped = [];
+  List<Transaction> transactions = [];
 
   int currentMonth = DateTime.now().month;
   String currentMonthString = convertMontNumToMonthName(DateTime.now().month);
@@ -55,37 +54,41 @@ class TransactionViewModel extends ChangeNotifier {
   }
 
   getTransactions() async {
-    var trans = _db.select(_db.transactionItems)
-      ..where((t) => t.date.month.equals(currentMonth))
-      ..where((t) => t.date.year.equals(currentYear));
+    var transactionItems = await (_db.select(_db.transactionItems)
+          ..where((t) => t.date.month.equals(currentMonth))
+          ..where((t) => t.date.year.equals(currentYear))
+          ..orderBy([
+            (t) => OrderingTerm(expression: t.date, mode: OrderingMode.desc)
+          ])) // Sort by date in descending order
+        .get();
 
-    var tmp = await trans.get();
-
-    for (var t in tmp) {
-      var selectedCategory = _db.select(_db.categoryItems)
-        ..where((c) => c.id.equals(t.category));
-      var catName = await selectedCategory.getSingle();
+    transactions.clear();
+    for (var t in transactionItems) {
+      var category = await (_db.select(_db.categoryItems)
+            ..where((c) => c.id.equals(t.category)))
+          .getSingle();
 
       var selectedCurrency = _db.select(_db.currencyItems)
         ..where((c) => c.id.equals(t.currency));
       var currencyName =
           await selectedCurrency.getSingle().then((value) => value.symbol);
 
-      transactionsGrouped.add(Transaction(
+      transactions.add(Transaction(
         id: t.id.toString(),
         amount: t.amount,
         date: t.date,
         note: t.note,
+        isOutcome: t.isOutcome,
         categoryId: t.category,
-        categoryName: catName.name,
-        categoryIcon: Icons.local_grocery_store_outlined,
-        categoryColor: Colors.red,
+        categoryName: category.name,
+        categoryIcon: convertIconNameToIcon(category.icon),
+        categoryColor: Color(category.color),
         currencyId: t.currency,
         currencyName: currencyName,
       ));
     }
 
-    // transactions = await _db.select(_db.transactionItems).get();
+    transactions.sort((a, b) => b.date.compareTo(a.date));
     isLoading = false;
 
     notifyListeners();
@@ -93,7 +96,6 @@ class TransactionViewModel extends ChangeNotifier {
 
   deleteTransaction(TransactionItem transaction) async {
     await _db.delete(_db.transactionItems).delete(transaction);
-    transactions.remove(transaction);
     notifyListeners();
   }
 }

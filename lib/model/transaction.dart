@@ -7,6 +7,7 @@ class Transaction {
   double amount;
   DateTime date;
   String note;
+  bool isOutcome;
   String categoryId;
   String categoryName;
   IconData categoryIcon;
@@ -19,6 +20,7 @@ class Transaction {
     required this.amount,
     required this.date,
     required this.note,
+    required this.isOutcome,
     required this.categoryId,
     required this.categoryName,
     required this.categoryIcon,

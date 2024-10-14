@@ -1,11 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:personal_finance/constants.dart';
-import 'package:personal_finance/view/screen/dashboard_screen.dart';
 import 'package:personal_finance/view/nav_destinations.dart';
-import 'package:personal_finance/view/screen/graph_screen.dart';
-import 'package:personal_finance/view/screen/settings_screen.dart';
-import 'package:personal_finance/view/screen/transaction_screen.dart';
 import 'package:personal_finance/view/widget/add_window.dart';
 
 class ScreenContainer extends StatelessWidget {
@@ -36,6 +32,10 @@ class ScreenContainer extends StatelessWidget {
               elevation: 5,
               labelType: largeScreen ? null : NavigationRailLabelType.all,
               extended: largeScreen,
+              selectedLabelTextStyle: TextStyle(
+                color: Theme.of(context).textTheme.labelMedium?.color,
+                fontWeight: FontWeight.bold,
+              ),
               leading: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 8.0),
                 child: SizedBox(

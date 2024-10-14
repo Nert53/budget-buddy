@@ -93,15 +93,15 @@ class AddTransactionViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  changeCurrentCategory(String category) {
-    _db.select(_db.categoryItems).get().then((values) {
-      for (var item in values) {
-        if (item.name.toLowerCase() == category.toLowerCase()) {
+  changeCurrentCategory(String categoryId) {
+    _db.select(_db.categoryItems).get().then((categories) {
+      for (var c in categories) {
+        if (c.id == categoryId) {
           selectedCategory = TransactionCategory(
-              id: item.id,
-              name: item.name,
-              color: Color(item.color),
-              icon: convertIconNameToIcon(item.icon));
+              id: c.id,
+              name: c.name,
+              color: Color(c.color),
+              icon: convertIconNameToIcon(c.icon));
           notifyListeners();
           return;
         }

@@ -48,6 +48,10 @@ convertMontNumToMonthName(int monthNum) {
   }
 }
 
+convertColorCodeToColor(int colorCode) {
+  return Color(colorCode);
+}
+
 extension DateTimeExtension on DateTime {
   int daysInMonth() {
     switch (month) {

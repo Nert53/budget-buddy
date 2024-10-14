@@ -1,6 +1,10 @@
 import 'package:drift/drift.dart';
+import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:personal_finance/data/database.dart';
+import 'package:personal_finance/model/category_spending.dart';
+import 'package:personal_finance/model/transaction.dart';
+import 'package:personal_finance/utils/functions.dart';
 
 class DashboardViewmodel extends ChangeNotifier {
   bool isLoading = true;
@@ -8,12 +12,13 @@ class DashboardViewmodel extends ChangeNotifier {
 
   double accountBalance = 0.0;
   double thisMonthBalance = 0.0;
-  Future<List<TransactionItem>> lastFiveTransactions = Future.value([]);
-  Future<List<TransactionItem>> lastTransactions = Future.value([]);
+  List<Transaction> lastTransactions = [];
+  List<PieChartSectionData> categoryPieData = [];
 
   DateTime currrentDate = DateTime.now();
   int currentMonth = DateTime.now().month;
   int currentYear = DateTime.now().year;
+  int numOfLastTransactions = 5;
 
   DashboardViewmodel(this._db) {
     _db.watchAllTransactions().listen((event) {
@@ -24,8 +29,9 @@ class DashboardViewmodel extends ChangeNotifier {
 
   getAllData() {
     getAccountBalance();
-    getLastNTransactions(5);
+    getLastNTransactions(numOfLastTransactions);
     getThisMonthBalance();
+    getCategoryPieData();
     isLoading = false;
   }
 
@@ -33,32 +39,118 @@ class DashboardViewmodel extends ChangeNotifier {
     List<TransactionItem> allTransactions =
         await _db.select(_db.transactionItems).get();
     accountBalance = allTransactions.fold(
-        0, (previousValue, element) => previousValue + element.amount);
+      0,
+      (previousValue, element) => element.isOutcome
+          ? previousValue - element.amount
+          : previousValue + element.amount,
+    );
     notifyListeners();
   }
 
-  getLastNTransactions(int n) {
-    final query = _db.select(_db.transactionItems)
-      ..orderBy([
-        (transaction) =>
-            OrderingTerm(expression: transaction.date, mode: OrderingMode.desc)
-      ])
-      ..limit(n);
-    lastTransactions = query.get();
+  getLastNTransactions(int n) async {
+    var transactions = await (_db.select(_db.transactionItems)
+          ..where((t) => t.date.month.equals(currentMonth))
+          ..where((t) => t.date.year.equals(currentYear))
+          ..orderBy([
+            (t) => OrderingTerm(expression: t.date, mode: OrderingMode.desc)
+          ])
+          ..limit(n)) // Sort by date in descending order
+        .get();
+
+    lastTransactions.clear();
+    for (var t in transactions) {
+      var category = await (_db.select(_db.categoryItems)
+            ..where((c) => c.id.equals(t.category)))
+          .getSingle();
+
+      var selectedCurrency = _db.select(_db.currencyItems)
+        ..where((c) => c.id.equals(t.currency));
+      var currencyName =
+          await selectedCurrency.getSingle().then((value) => value.symbol);
+
+      lastTransactions.add(Transaction(
+        id: t.id.toString(),
+        amount: t.amount,
+        date: t.date,
+        note: t.note,
+        isOutcome: t.isOutcome,
+        categoryId: t.category,
+        categoryName: category.name,
+        categoryIcon: convertIconNameToIcon(category.icon),
+        categoryColor: Color(category.color),
+        currencyId: t.currency,
+        currencyName: currencyName,
+      ));
+    }
+
     notifyListeners();
   }
 
   getThisMonthBalance() {
-    //TODO only outcomes
-
     final query = _db.select(_db.transactionItems)
       ..where((transaction) =>
           transaction.date.month.equals(currentMonth) &
-          transaction.date.year.equals(currentYear));
+          transaction.date.year.equals(currentYear) &
+          transaction.isOutcome.equals(true));
+
     query.get().then((value) {
       thisMonthBalance = value.fold(
-          0, (previousValue, element) => previousValue + element.amount);
+        0,
+        (previousValue, element) => element.isOutcome
+            ? previousValue - element.amount
+            : previousValue + element.amount,
+      );
     });
     notifyListeners();
+  }
+
+  getCategoryPieData() async {
+    final query = _db.selectOnly(_db.transactionItems)
+      ..addColumns([
+        _db.categoryItems.name, // Category name
+        _db.categoryItems.color, // Category color
+        _db.categoryItems.icon, // Category icon
+        _db.categoryItems.id, // Category ID
+        _db.transactionItems.amount.sum() // Total amount spent for the category
+      ])
+      ..join([
+        innerJoin(_db.categoryItems,
+            _db.categoryItems.id.equalsExp(_db.transactionItems.category))
+      ])
+      ..groupBy([
+        _db.transactionItems.category,
+        _db.categoryItems.name,
+        _db.categoryItems.color,
+        _db.categoryItems.icon,
+        _db.categoryItems.id
+      ]);
+
+    var result = await query.get();
+    final List<CategorySpending> categorySpendings = result.map((row) {
+      return CategorySpending(
+        id: row.read<String>(_db.categoryItems.id) ?? '',
+        name: row.read<String>(_db.categoryItems.name) ?? '',
+        color: convertColorCodeToColor(
+            row.read<int>(_db.categoryItems.color) ?? 0),
+        icon: convertIconNameToIcon(
+            row.read<String>(_db.categoryItems.icon) ?? ''),
+        amount: row.read<double>(_db.transactionItems.amount.sum()) ?? 0,
+      );
+    }).toList();
+
+    categoryPieData.clear();
+    for (var category in categorySpendings) {
+      categoryPieData.add(PieChartSectionData(
+        color: category.color,
+        value: category.amount,
+        title: category.amount.toString(),
+        titleStyle: TextStyle(
+          color: Colors.white,
+        ),
+        radius: 50,
+      ));
+
+      print('Category: ${category.id}, Amount: ${category.name}');
+    }
   }
 }
