@@ -149,8 +149,6 @@ class DashboardViewmodel extends ChangeNotifier {
         ),
         radius: 50,
       ));
-
-      print('Category: ${category.id}, Amount: ${category.name}');
     }
   }
 }

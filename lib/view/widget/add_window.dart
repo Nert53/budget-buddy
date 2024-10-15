@@ -16,7 +16,7 @@ class AddWindow extends StatelessWidget {
     final double screenHeight = MediaQuery.of(context).size.height;
     final double screenWidth = MediaQuery.of(context).size.width;
 
-    var model = context.watch<AddTransactionViewModel>();
+    var viewModel = context.watch<AddTransactionViewModel>();
 
     return Dialog(
       insetPadding: EdgeInsets.only(
@@ -50,7 +50,7 @@ class AddWindow extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
             child: TextField(
-              controller: model.amountController,
+              controller: viewModel.amountController,
               keyboardType:
                   const TextInputType.numberWithOptions(decimal: true),
               inputFormatters: <TextInputFormatter>[
@@ -73,7 +73,7 @@ class AddWindow extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
             child: TextField(
-              controller: model.noteController,
+              controller: viewModel.noteController,
               minLines: 3,
               maxLines: 5,
               keyboardType: TextInputType.text,
@@ -105,9 +105,9 @@ class AddWindow extends StatelessWidget {
                     size: 24,
                   )),
             ],
-            selected: <TransactionType>{model.selectedType},
+            selected: <TransactionType>{viewModel.selectedType},
             onSelectionChanged: (Set<TransactionType> newValue) {
-              model.changeTransactionType(newValue.first);
+              viewModel.changeTransactionType(newValue.first);
             },
           ),
           const SizedBox(height: 12),
@@ -120,11 +120,10 @@ class AddWindow extends StatelessWidget {
                   flex: 2,
                   child: DropdownMenu(
                       label: const Text('Category'),
-                      leadingIcon: Icon(
-                        model.selectedCategory.icon,
-                        color: model.selectedCategory.color,
-                      ),
-                      textStyle: TextStyle(color: model.selectedCategory.color),
+                      leadingIcon: viewModel.selectedCategory.name == 'General'
+                          ? null
+                          : Icon(Icons.category_outlined),
+                      textStyle: TextStyle(color: viewModel.selectedCategory.color),
                       inputDecorationTheme: const InputDecorationTheme(
                           border: OutlineInputBorder(
                               borderRadius:
@@ -135,14 +134,14 @@ class AddWindow extends StatelessWidget {
                                   borderRadius:
                                       BorderRadius.all(Radius.circular(16))))),
                       expandedInsets: EdgeInsets.zero,
-                      initialSelection: model.categories.isEmpty
+                      initialSelection: viewModel.categories.isEmpty
                           ? 'General'
-                          : model.selectedCategory.name,
+                          : viewModel.selectedCategory.name,
                       onSelected: (Object? newValue) {
-                        model.changeCurrentCategory(newValue as String);
+                        viewModel.changeCurrentCategory(newValue as String);
                       },
                       dropdownMenuEntries:
-                          model.categories.map<DropdownMenuEntry<String>>(
+                          viewModel.categories.map<DropdownMenuEntry<String>>(
                         (TransactionCategory c) {
                           return DropdownMenuEntry<String>(
                               value: c.id,
@@ -168,12 +167,12 @@ class AddWindow extends StatelessWidget {
                                   BorderRadius.all(Radius.circular(16)))),
                       expandedInsets: EdgeInsets.zero,
                       onSelected: (Object? newValue) {
-                        model.changeCurrentCurrency(newValue as String);
+                        viewModel.changeCurrentCurrency(newValue as String);
                       },
-                      initialSelection: model.currencies.isEmpty
+                      initialSelection: viewModel.currencies.isEmpty
                           ? 'CZK'
-                          : model.currencies.first.symbol,
-                      dropdownMenuEntries: model.currencies
+                          : viewModel.currencies.first.symbol,
+                      dropdownMenuEntries: viewModel.currencies
                           .map<DropdownMenuEntry<String>>((Currency cur) {
                         return DropdownMenuEntry<String>(
                             value: cur.id,
@@ -192,7 +191,7 @@ class AddWindow extends StatelessWidget {
               children: [
                 Expanded(
                   child: TextField(
-                    controller: model.dateController,
+                    controller: viewModel.dateController,
                     readOnly: true,
                     onTap: () async {
                       DateTime? date = await showDatePicker(
@@ -201,7 +200,7 @@ class AddWindow extends StatelessWidget {
                           firstDate: DateTime(2000),
                           lastDate: DateTime(2100));
                       if (date != null) {
-                        model.dateController.text =
+                        viewModel.dateController.text =
                             DateFormat('dd.MM.yyyy').format(date).toString();
                       }
                     },
@@ -216,13 +215,13 @@ class AddWindow extends StatelessWidget {
                 const SizedBox(width: 12),
                 Expanded(
                   child: TextField(
-                    controller: model.timeController,
+                    controller: viewModel.timeController,
                     readOnly: true,
                     onTap: () async {
                       TimeOfDay? time = await showTimePicker(
                           context: context, initialTime: TimeOfDay.now());
                       if (time != null) {
-                        model.timeController.text = time.format(context);
+                        viewModel.timeController.text = time.format(context);
                       }
                     },
                     decoration: const InputDecoration(
@@ -245,7 +244,7 @@ class AddWindow extends StatelessWidget {
                     foregroundColor: Theme.of(context).colorScheme.error,
                     side:
                         BorderSide(color: Theme.of(context).colorScheme.error)),
-                onPressed: () => {Navigator.pop(context), model.clearFields()},
+                onPressed: () => {Navigator.pop(context), viewModel.clearFields()},
                 child: const Text('Discard'),
               ),
               const SizedBox(width: 12),
@@ -255,14 +254,14 @@ class AddWindow extends StatelessWidget {
                     foregroundColor: Theme.of(context).colorScheme.onPrimary,
                   ),
                   onPressed: () {
-                    if (model.amountController.text.isEmpty) {
+                    if (viewModel.amountController.text.isEmpty) {
                       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                           behavior: SnackBarBehavior.floating,
                           content: Text('Amount is required!')));
                       return;
                     }
-                    model.saveTransaction();
-                    model.clearFields();
+                    viewModel.saveTransaction();
+                    viewModel.clearFields();
                     Navigator.pop(context);
                   },
                   child: const Text('Save Transaction')),

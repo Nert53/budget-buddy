@@ -37,11 +37,37 @@ class TransactionScreen extends StatelessWidget {
                   },
                 ),
               ),
-              Text(
-                '${model.currentMonthString} ${model.currentYear}',
-                style: const TextStyle(
-                  fontSize: 22,
-                ),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  model.currentDisplayedNewer
+                      ? IconButton.filled(
+                          onPressed: () => {
+                                model.upToDateDate(),
+                              },
+                          icon: Icon(Icons.keyboard_double_arrow_left_outlined))
+                      : const SizedBox(),
+                  SizedBox(
+                    width: 8,
+                  ),
+                  Text(
+                    '${model.currentMonthString} ${model.currentYear}',
+                    style: const TextStyle(
+                      fontSize: 22,
+                    ),
+                  ),
+                  SizedBox(
+                    width: 8,
+                  ),
+                  model.currentDisplayedOlder
+                      ? IconButton.filled(
+                          onPressed: () => {
+                                model.upToDateDate(),
+                              },
+                          icon:
+                              Icon(Icons.keyboard_double_arrow_right_outlined))
+                      : const SizedBox(),
+                ],
               ),
               Container(
                 alignment: Alignment.center,

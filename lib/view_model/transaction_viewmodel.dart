@@ -10,25 +10,69 @@ class TransactionViewModel extends ChangeNotifier {
 
   List<Transaction> transactions = [];
 
+  DateTime currrentDate = DateTime.now();
   int currentMonth = DateTime.now().month;
   String currentMonthString = convertMontNumToMonthName(DateTime.now().month);
   int currentYear = DateTime.now().year;
+  bool currentDisplayedOlder = false;
+  bool currentDisplayedNewer = false;
 
   TransactionViewModel(this._db) {
     _db.watchAllTransactions().listen((event) {
       getAllData();
     });
+
+    setDateValues();
     notifyListeners();
   }
 
   getAllData() {
+    setDateValues();
     getTransactions();
     isLoading = false;
   }
 
   refresh() {
+    setDateValues();
     getTransactions();
     notifyListeners();
+  }
+
+  setDateValues() {
+    var upToDateDate = DateTime.now();
+
+    if (upToDateDate.year < currrentDate.year) {
+      currentDisplayedOlder = true;
+      currentDisplayedNewer = false;
+      return;
+    } else if (upToDateDate.year == currrentDate.year) {
+      if (upToDateDate.month > currentMonth) {
+        currentDisplayedOlder = true;
+        currentDisplayedNewer = false;
+        return;
+      }
+    }
+    currentDisplayedOlder = false;
+
+    if (upToDateDate.year > currrentDate.year) {
+      currentDisplayedNewer = true;
+      currentDisplayedOlder = false;
+      return;
+    } else if (upToDateDate.year == currrentDate.year) {
+      if (upToDateDate.month < currentMonth) {
+        currentDisplayedNewer = true;
+        currentDisplayedOlder = false;
+        return;
+      }
+    }
+    currentDisplayedNewer = false;
+  }
+
+  upToDateDate() {
+    currentMonth = DateTime.now().month;
+    currentYear = DateTime.now().year;
+    currentMonthString = convertMontNumToMonthName(currentMonth);
+    refresh();
   }
 
   previousMonth() {
