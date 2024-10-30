@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:personal_finance/view/widget/transaction_skeleton.dart';
 import 'package:personal_finance/view_model/transaction_viewmodel.dart';
 import 'package:provider/provider.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 class TransactionScreen extends StatelessWidget {
   const TransactionScreen({
@@ -46,14 +48,17 @@ class TransactionScreen extends StatelessWidget {
                                 model.upToDateDate(),
                               },
                           icon: Icon(Icons.keyboard_double_arrow_left_outlined))
-                      : const SizedBox(),
+                      : const SizedBox(width: 16),
                   SizedBox(
                     width: 8,
                   ),
-                  Text(
-                    '${model.currentMonthString} ${model.currentYear}',
-                    style: const TextStyle(
-                      fontSize: 22,
+                  GestureDetector(
+                    onTap: model.getAllData,
+                    child: Text(
+                      '${model.currentMonthString} ${model.currentYear}',
+                      style: const TextStyle(
+                        fontSize: 22,
+                      ),
                     ),
                   ),
                   SizedBox(
@@ -66,7 +71,7 @@ class TransactionScreen extends StatelessWidget {
                               },
                           icon:
                               Icon(Icons.keyboard_double_arrow_right_outlined))
-                      : const SizedBox(),
+                      : const SizedBox(width: 16),
                 ],
               ),
               Container(
@@ -88,11 +93,7 @@ class TransactionScreen extends StatelessWidget {
           ),
         ),
         if (model.isLoading)
-          const Expanded(
-            child: Center(
-              child: CircularProgressIndicator(),
-            ),
-          )
+          Expanded(child: Skeletonizer(child: TransactionSkeleton()))
         else if (model.transactions.isEmpty)
           const Expanded(
             child: Center(

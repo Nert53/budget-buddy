@@ -8,6 +8,7 @@ import 'package:personal_finance/view/screen/settings_screen.dart';
 import 'package:personal_finance/view/screen/transaction_screen.dart';
 import 'package:personal_finance/view_model/add_transaction_viewmodel.dart';
 import 'package:personal_finance/view_model/dashboard_viewmodel.dart';
+import 'package:personal_finance/view_model/graph_viewmodel.dart';
 import 'package:personal_finance/view_model/transaction_viewmodel.dart';
 import 'package:provider/provider.dart';
 
@@ -23,6 +24,9 @@ void main() {
         create: (context) => DashboardViewmodel(context.read<AppDatabase>())),
     ChangeNotifierProvider<AddTransactionViewModel>(
       create: (context) => AddTransactionViewModel(context.read<AppDatabase>()),
+    ),
+    ChangeNotifierProvider<GraphViewModel>(
+      create: (context) => GraphViewModel(context.read<AppDatabase>()),
     ),
   ], child: const PersonalFinanceApp()));
 }
@@ -79,7 +83,7 @@ class PersonalFinanceApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
-      title: 'Personal Finance',
+      title: 'Budget Buddy',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: const Color(0x007fb9ae)),
         useMaterial3: true,

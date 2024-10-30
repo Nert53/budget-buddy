@@ -77,6 +77,7 @@ class AddTransactionViewModel extends ChangeNotifier {
   }
 
   getCategories() async {
+    categories.clear();
     List<CategoryItem> allCategories =
         await _db.select(_db.categoryItems).get().then((value) {
       return value.map((e) => e).toList();

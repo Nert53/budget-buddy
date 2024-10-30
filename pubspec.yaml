@@ -46,6 +46,7 @@ dependencies:
   drift_db_viewer: ^2.1.0
   fl_chart: ^0.69.0
   path_provider: ^2.1.4
+  skeletonizer: ^1.4.2
 
 dev_dependencies:
   flutter_test:

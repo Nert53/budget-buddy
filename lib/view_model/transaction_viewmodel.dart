@@ -26,7 +26,12 @@ class TransactionViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  getAllData() {
+  getAllData() async {
+    isLoading = true;
+    notifyListeners();
+
+    await Future.delayed(const Duration(seconds: 2));
+    
     setDateValues();
     getTransactions();
     isLoading = false;

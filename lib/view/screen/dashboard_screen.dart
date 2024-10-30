@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:personal_finance/constants.dart';
+import 'package:personal_finance/view/widget/extended_dashboard.dart';
 import 'package:personal_finance/view_model/dashboard_viewmodel.dart';
 import 'package:provider/provider.dart';
 import 'package:fl_chart/fl_chart.dart';
@@ -35,36 +36,99 @@ class DashboardScreen extends StatelessWidget {
           SizedBox(
             height: 16.0,
           ),
-          Container(
-            height: 340,
-            width: contentWidth,
-            padding: const EdgeInsets.all(16.0),
-            decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.surface,
-              borderRadius: const BorderRadius.all(Radius.circular(16.0)),
-              boxShadow: const [
-                BoxShadow(
-                  color: Colors.black26,
-                  offset: Offset(0, 1),
-                  blurRadius: 5.0,
+          Row(
+            children: [
+              Expanded(
+                flex: 3,
+                child: Container(
+                  height: 340,
+                  padding: const EdgeInsets.all(16.0),
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.surface,
+                    borderRadius: const BorderRadius.all(Radius.circular(16.0)),
+                    boxShadow: const [
+                      BoxShadow(
+                        color: Colors.black26,
+                        offset: Offset(0, 1),
+                        blurRadius: 5.0,
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text('Monthly spending overview',
+                          style: TextStyle(
+                              fontSize: 16.0, fontWeight: FontWeight.bold)),
+                      const SizedBox(height: 8.0),
+                      Expanded(
+                          child: PieChart(
+                        PieChartData(
+                            sectionsSpace: 4, sections: model.categoryPieData),
+                        // Optional
+                      ))
+                    ],
+                  ),
                 ),
-              ],
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text('Monthly spending overview',
-                    style: TextStyle(
-                        fontSize: 16.0, fontWeight: FontWeight.normal)),
-                const SizedBox(height: 8.0),
-                Expanded(
-                    child: PieChart(
-                  PieChartData(
-                      sectionsSpace: 6, sections: model.categoryPieData),
-                  // Optional
-                ))
-              ],
-            ),
+              ),
+              wideScreen ? const SizedBox(width: 16.0) : const SizedBox(),
+              wideScreen
+                  ? Expanded(
+                      flex: 1,
+                      child: Container(
+                        height: 340,
+                        padding: const EdgeInsets.all(16.0),
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.surface,
+                          borderRadius:
+                              const BorderRadius.all(Radius.circular(16.0)),
+                          boxShadow: const [
+                            BoxShadow(
+                              color: Colors.black26,
+                              offset: Offset(0, 1),
+                              blurRadius: 5.0,
+                            ),
+                          ],
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text('Pie chart exact values',
+                                style: TextStyle(
+                                    fontSize: 16.0,
+                                    fontWeight: FontWeight.bold)),
+                            const SizedBox(height: 8.0),
+                            Expanded(
+                                child: ListView.builder(
+                              itemCount: model.categoryPieData.length,
+                              itemBuilder: (BuildContext context, int index) {
+                                var category = model.categoryPieData[index];
+                                return Row(
+                                  children: [
+                                    Container(
+                                      width: 16.0,
+                                      height: 16.0,
+                                      decoration: BoxDecoration(
+                                          color: category.color,
+                                          borderRadius:
+                                              BorderRadius.circular(8.0)),
+                                    ),
+                                    const SizedBox(width: 6.0),
+                                    Text(
+                                        '${category.value.toStringAsFixed(0)} CZK',
+                                        style: const TextStyle(
+                                          fontSize: 16.0,
+                                        )),
+                                  ],
+                                );
+                              },
+                            ))
+                          ],
+                        ),
+                      ),
+                    )
+                  : const SizedBox(),
+            ],
           ),
           const SizedBox(height: 16.0),
           Row(
@@ -98,9 +162,8 @@ class DashboardScreen extends StatelessWidget {
                         child: Center(
                             child: Text('${model.accountBalance} CZK',
                                 style: TextStyle(
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .onSurface,
+                                    color:
+                                        Theme.of(context).colorScheme.onSurface,
                                     fontSize: 24.0,
                                     fontWeight: FontWeight.bold)))),
                   ],
@@ -110,7 +173,7 @@ class DashboardScreen extends StatelessWidget {
               Container(
                 height: 160,
                 width: wideScreen
-                    ? (contentWidth - 176) / 2
+                    ? (contentWidth - 176) / 4
                     : contentWidth / 2 - 8,
                 padding: const EdgeInsets.all(16.0),
                 decoration: BoxDecoration(
@@ -127,26 +190,31 @@ class DashboardScreen extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text('This month spendings',
+                    const Text('This month spent',
                         style: TextStyle(
                             fontSize: 16.0, fontWeight: FontWeight.normal)),
                     Expanded(
                         child: Center(
-                            child: Text('${model.thisMonthBalance} CZK',
+                            child: Text('${model.thisMonthSpent} CZK',
                                 style: TextStyle(
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .onSurface,
+                                    color:
+                                        Theme.of(context).colorScheme.onSurface,
                                     fontSize: 24.0,
                                     fontWeight: FontWeight.bold)))),
                   ],
                 ),
               ),
+              wideScreen ? const SizedBox(width: 16.0) : const SizedBox(),
+              wideScreen
+                  ? SpendingDetailExtension(
+                      containerHeight: 160,
+                    )
+                  : const SizedBox(),
             ],
           ),
           const SizedBox(height: 16.0),
           Container(
-            height: 90 * model.lastTransactions.length.toDouble(),
+            constraints: BoxConstraints(maxHeight: 380),
             padding: const EdgeInsets.all(16.0),
             decoration: BoxDecoration(
               color: Theme.of(context).colorScheme.surface,
@@ -165,16 +233,14 @@ class DashboardScreen extends StatelessWidget {
                 const Text('Last 5 transactions',
                     style: TextStyle(
                         fontSize: 16.0, fontWeight: FontWeight.normal)),
-                const Divider(thickness: 2),
+                SizedBox(height: 16.0),
                 Expanded(
                   child: ListView.separated(
                       separatorBuilder: (BuildContext context, int index) =>
                           const Divider(),
                       itemCount: model.lastTransactions.length,
                       itemBuilder: (BuildContext context, int index) {
-                        var currentTransaction =
-                            model.lastTransactions[index];
-    
+                        var currentTransaction = model.lastTransactions[index];
                         return ListTile(
                           key: ValueKey(currentTransaction.id.toString()),
                           title: Column(
@@ -183,8 +249,7 @@ class DashboardScreen extends StatelessWidget {
                               Row(
                                 children: [
                                   Icon(currentTransaction.categoryIcon,
-                                      color:
-                                          currentTransaction.categoryColor),
+                                      color: currentTransaction.categoryColor),
                                   const SizedBox(width: 6.0),
                                   Text(currentTransaction.categoryName,
                                       style: const TextStyle(
@@ -230,7 +295,8 @@ class DashboardScreen extends StatelessWidget {
                 ),
               ],
             ),
-          )
+          ),
+          SizedBox(height: 16.0),
         ],
       ),
     );

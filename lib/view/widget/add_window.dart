@@ -55,7 +55,7 @@ class AddWindow extends StatelessWidget {
                   const TextInputType.numberWithOptions(decimal: true),
               inputFormatters: <TextInputFormatter>[
                 // allow only numbers and dot/comma and comma is replaced with dot
-                FilteringTextInputFormatter.allow(RegExp(r'(^-?\d*[.,]?\d*)')),
+                FilteringTextInputFormatter.allow(RegExp(r'(^\d*[.,]?\d*)')),
                 TextInputFormatter.withFunction(
                   (oldValue, newValue) => newValue.copyWith(
                     text: newValue.text.replaceAll(',', '.'),
@@ -123,7 +123,8 @@ class AddWindow extends StatelessWidget {
                       leadingIcon: viewModel.selectedCategory.name == 'General'
                           ? null
                           : Icon(Icons.category_outlined),
-                      textStyle: TextStyle(color: viewModel.selectedCategory.color),
+                      textStyle:
+                          TextStyle(color: viewModel.selectedCategory.color),
                       inputDecorationTheme: const InputDecorationTheme(
                           border: OutlineInputBorder(
                               borderRadius:
@@ -244,7 +245,8 @@ class AddWindow extends StatelessWidget {
                     foregroundColor: Theme.of(context).colorScheme.error,
                     side:
                         BorderSide(color: Theme.of(context).colorScheme.error)),
-                onPressed: () => {Navigator.pop(context), viewModel.clearFields()},
+                onPressed: () =>
+                    {Navigator.pop(context), viewModel.clearFields()},
                 child: const Text('Discard'),
               ),
               const SizedBox(width: 12),

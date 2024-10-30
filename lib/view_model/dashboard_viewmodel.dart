@@ -11,7 +11,9 @@ class DashboardViewmodel extends ChangeNotifier {
   final AppDatabase _db;
 
   double accountBalance = 0.0;
-  double thisMonthBalance = 0.0;
+  double thisMonthSpent = 0.0;
+  double todaySpent = 0.0;
+  double predictedSpentThisMonth = 0.0;
   List<Transaction> lastTransactions = [];
   List<PieChartSectionData> categoryPieData = [];
 
@@ -30,7 +32,9 @@ class DashboardViewmodel extends ChangeNotifier {
   getAllData() {
     getAccountBalance();
     getLastNTransactions(numOfLastTransactions);
-    getThisMonthBalance();
+    getThisMonthSpent();
+    getTodaySpent();
+    getPredictedSpentThisMonth();
     getCategoryPieData();
     isLoading = false;
   }
@@ -86,7 +90,7 @@ class DashboardViewmodel extends ChangeNotifier {
     notifyListeners();
   }
 
-  getThisMonthBalance() {
+  getThisMonthSpent() {
     final query = _db.select(_db.transactionItems)
       ..where((transaction) =>
           transaction.date.month.equals(currentMonth) &
@@ -94,15 +98,32 @@ class DashboardViewmodel extends ChangeNotifier {
           transaction.isOutcome.equals(true));
 
     query.get().then((value) {
-      thisMonthBalance = value.fold(
+      thisMonthSpent = value.fold(
         0,
-        (previousValue, element) => element.isOutcome
-            ? previousValue - element.amount
-            : previousValue + element.amount,
+        (previousValue, element) => previousValue + element.amount,
       );
     });
     notifyListeners();
   }
+
+  getTodaySpent() {
+    final query = _db.select(_db.transactionItems)
+      ..where((transaction) =>
+          transaction.date.day.equals(currrentDate.day) &
+          transaction.date.month.equals(currrentDate.month) &
+          transaction.date.year.equals(currrentDate.year) &
+          transaction.isOutcome.equals(true));
+
+    query.get().then((value) {
+      todaySpent = value.fold(
+        0,
+        (previousValue, element) => previousValue + element.amount,
+      );
+    });
+    notifyListeners();
+  }
+
+  getPredictedSpentThisMonth() {}
 
   getCategoryPieData() async {
     final query = _db.selectOnly(_db.transactionItems)
@@ -143,7 +164,7 @@ class DashboardViewmodel extends ChangeNotifier {
       categoryPieData.add(PieChartSectionData(
         color: category.color,
         value: category.amount,
-        title: category.amount.toString(),
+        title: category.name,
         titleStyle: TextStyle(
           color: Colors.white,
         ),
