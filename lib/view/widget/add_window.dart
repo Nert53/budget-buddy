@@ -15,6 +15,7 @@ class AddWindow extends StatelessWidget {
   Widget build(BuildContext context) {
     final double screenHeight = MediaQuery.of(context).size.height;
     final double screenWidth = MediaQuery.of(context).size.width;
+    final bool wideScreen = screenWidth > 800;
 
     var viewModel = context.watch<AddTransactionViewModel>();
 
@@ -49,24 +50,62 @@ class AddWindow extends StatelessWidget {
           const SizedBox(height: 16),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: TextField(
-              controller: viewModel.amountController,
-              keyboardType:
-                  const TextInputType.numberWithOptions(decimal: true),
-              inputFormatters: <TextInputFormatter>[
-                // allow only numbers and dot/comma and comma is replaced with dot
-                FilteringTextInputFormatter.allow(RegExp(r'(^\d*[.,]?\d*)')),
-                TextInputFormatter.withFunction(
-                  (oldValue, newValue) => newValue.copyWith(
-                    text: newValue.text.replaceAll(',', '.'),
+            child: Row(
+              children: [
+                Expanded(
+                  flex: 5,
+                  child: TextField(
+                    controller: viewModel.amountController,
+                    keyboardType:
+                        const TextInputType.numberWithOptions(decimal: true),
+                    inputFormatters: <TextInputFormatter>[
+                      // allow only numbers and dot/comma and comma is replaced with dot
+                      FilteringTextInputFormatter.allow(
+                          RegExp(r'(^\d*[.,]?\d*)')),
+                      TextInputFormatter.withFunction(
+                        (oldValue, newValue) => newValue.copyWith(
+                          text: newValue.text.replaceAll(',', '.'),
+                        ),
+                      ),
+                    ],
+                    decoration: const InputDecoration(
+                        labelText: 'Amount',
+                        border: OutlineInputBorder(
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(16))),
+                        suffixIcon: Icon(Icons.paid_outlined)),
                   ),
                 ),
+                const SizedBox(width: 16),
+                Expanded(
+                  flex: 3,
+                  child: SegmentedButton<TransactionType>(
+                    showSelectedIcon: false,
+                    segments: const <ButtonSegment<TransactionType>>[
+                      ButtonSegment(
+                          value: TransactionType.income,
+                          label: Text('Income'),
+                          icon: Icon(
+                            Icons.arrow_drop_up,
+                            color: Colors.green,
+                            size: 24,
+                          )),
+                      ButtonSegment(
+                          value: TransactionType.outcome,
+                          label: Text('Outcome'),
+                          icon: Icon(
+                            Icons.arrow_drop_down,
+                            color: Colors.red,
+                            size: 24,
+                          )),
+                    ],
+                    selected: <TransactionType>{viewModel.selectedType},
+                    onSelectionChanged: (Set<TransactionType> newValue) {
+                      viewModel.changeTransactionType(newValue.first);
+                    },
+                  ),
+                )
               ],
-              decoration: const InputDecoration(
-                  labelText: 'Amount',
-                  border: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(16))),
-                  suffixIcon: Icon(Icons.paid_outlined)),
             ),
           ),
           const SizedBox(height: 12),

@@ -19,7 +19,7 @@ class ScreenContainer extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'Personal Finance',
+          'Budget Buddy',
           style: TextStyle(color: Colors.white),
         ),
         backgroundColor: Theme.of(context).colorScheme.primary,

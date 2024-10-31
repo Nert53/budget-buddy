@@ -123,7 +123,10 @@ class DashboardViewmodel extends ChangeNotifier {
     notifyListeners();
   }
 
-  getPredictedSpentThisMonth() {}
+  getPredictedSpentThisMonth() {
+    predictedSpentThisMonth = 5000;
+    notifyListeners();
+  }
 
   getCategoryPieData() async {
     final query = _db.selectOnly(_db.transactionItems)

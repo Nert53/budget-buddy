@@ -31,7 +31,7 @@ class TransactionViewModel extends ChangeNotifier {
     notifyListeners();
 
     await Future.delayed(const Duration(seconds: 2));
-    
+
     setDateValues();
     getTransactions();
     isLoading = false;
@@ -145,6 +145,13 @@ class TransactionViewModel extends ChangeNotifier {
 
   deleteTransaction(TransactionItem transaction) async {
     await _db.delete(_db.transactionItems).delete(transaction);
+    notifyListeners();
+  }
+
+  deleteTransactionById(String id) async {
+    await (_db.delete(_db.transactionItems)..where((t) => t.id.equals(id)))
+        .go();
+
     notifyListeners();
   }
 }

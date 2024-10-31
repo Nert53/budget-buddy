@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:personal_finance/constants.dart';
 import 'package:personal_finance/view/widget/extended_dashboard.dart';
 import 'package:personal_finance/view_model/dashboard_viewmodel.dart';
@@ -208,6 +209,8 @@ class DashboardScreen extends StatelessWidget {
               wideScreen
                   ? SpendingDetailExtension(
                       containerHeight: 160,
+                      todaySpent: model.todaySpent,
+                      predictedSpent: model.predictedSpentThisMonth,
                     )
                   : const SizedBox(),
             ],
@@ -231,8 +234,8 @@ class DashboardScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Text('Last 5 transactions',
-                    style: TextStyle(
-                        fontSize: 16.0, fontWeight: FontWeight.normal)),
+                    style:
+                        TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold)),
                 SizedBox(height: 16.0),
                 Expanded(
                   child: ListView.separated(
@@ -241,33 +244,36 @@ class DashboardScreen extends StatelessWidget {
                       itemCount: model.lastTransactions.length,
                       itemBuilder: (BuildContext context, int index) {
                         var currentTransaction = model.lastTransactions[index];
+                        DateFormat dateFormat = DateFormat('dd.MM.yyyy');
+                        DateFormat timeFormat = DateFormat('HH:mm');
+
                         return ListTile(
                           key: ValueKey(currentTransaction.id.toString()),
                           title: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Row(
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Icon(currentTransaction.categoryIcon,
-                                      color: currentTransaction.categoryColor),
-                                  const SizedBox(width: 6.0),
-                                  Text(currentTransaction.categoryName,
+                                  Text(currentTransaction.note,
                                       style: const TextStyle(
                                           fontSize: 16.0,
                                           fontWeight: FontWeight.bold)),
+                                  Text(
+                                    '${dateFormat.format(currentTransaction.date)} | ${timeFormat.format(currentTransaction.date)}',
+                                    style: TextStyle(
+                                        fontSize: 12, color: Colors.grey[700]),
+                                  )
                                 ],
                               ),
                             ],
                           ),
+                          leading: Icon(currentTransaction.categoryIcon,
+                              color: currentTransaction.categoryColor),
                           trailing: Column(
                             crossAxisAlignment: CrossAxisAlignment.end,
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text(
-                                  '${currentTransaction.date.day}.${currentTransaction.date.month}.${currentTransaction.date.year}',
-                                  style: const TextStyle(
-                                    fontSize: 14.0,
-                                  )),
                               Row(mainAxisSize: MainAxisSize.min, children: [
                                 currentTransaction.isOutcome
                                     ? const Icon(

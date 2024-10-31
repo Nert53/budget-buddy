@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:personal_finance/view/widget/edit_transaction.dart';
 import 'package:personal_finance/view/widget/transaction_skeleton.dart';
 import 'package:personal_finance/view_model/transaction_viewmodel.dart';
 import 'package:provider/provider.dart';
@@ -109,44 +110,64 @@ class TransactionScreen extends StatelessWidget {
                 itemBuilder: (BuildContext context, int index) {
                   var currentTransaction = model.transactions[index];
 
-                  return Card(
-                    child: ListTile(
-                        key: ValueKey(currentTransaction.id.toString()),
-                        title: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(currentTransaction.note),
-                            Text(
-                              '${dateFormat.format(model.transactions[index].date)} | ${timeFormat.format(model.transactions[index].date)}',
-                              style: TextStyle(
-                                  fontSize: 12, color: Colors.grey[700]),
-                            ),
-                          ],
-                        ),
-                        leading: Icon(
-                          currentTransaction.categoryIcon,
-                          color: currentTransaction.categoryColor,
-                        ),
-                        trailing:
-                            Row(mainAxisSize: MainAxisSize.min, children: [
-                          currentTransaction.isOutcome
-                              ? const Icon(
-                                  Icons.arrow_drop_down,
-                                  color: Colors.red,
-                                )
-                              : Icon(
-                                  Icons.arrow_drop_up,
-                                  color: Colors.green[700],
-                                ),
-                          Text(
-                            '${model.transactions[index].amount} ${model.transactions[index].currencyName}',
-                            style: TextStyle(
-                                color: currentTransaction.isOutcome
-                                    ? Colors.red
-                                    : Colors.green[700],
-                                fontSize: 14),
+                  return GestureDetector(
+                    onTap: () {
+                      showDialog<void>(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return EditTransaction(
+                            id: currentTransaction.id,
+                            note: currentTransaction.note,
+                            amount: currentTransaction.amount,
+                            date: currentTransaction.date,
+                            isOutcome: currentTransaction.isOutcome,
+                            viewModel: model,
+                          );
+                        },
+                      );
+                    },
+                    child: Card(
+                      child: ListTile(
+                          key: ValueKey(currentTransaction.id.toString()),
+                          title: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                currentTransaction.note,
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                              Text(
+                                '${dateFormat.format(currentTransaction.date)} | ${timeFormat.format(currentTransaction.date)}',
+                                style: TextStyle(
+                                    fontSize: 12, color: Colors.grey[700]),
+                              ),
+                            ],
                           ),
-                        ])),
+                          leading: Icon(
+                            currentTransaction.categoryIcon,
+                            color: currentTransaction.categoryColor,
+                          ),
+                          trailing:
+                              Row(mainAxisSize: MainAxisSize.min, children: [
+                            currentTransaction.isOutcome
+                                ? const Icon(
+                                    Icons.arrow_drop_down,
+                                    color: Colors.red,
+                                  )
+                                : Icon(
+                                    Icons.arrow_drop_up,
+                                    color: Colors.green[700],
+                                  ),
+                            Text(
+                              '${model.transactions[index].amount} ${model.transactions[index].currencyName}',
+                              style: TextStyle(
+                                  color: currentTransaction.isOutcome
+                                      ? Colors.red
+                                      : Colors.green[700],
+                                  fontSize: 14),
+                            ),
+                          ])),
+                    ),
                   );
                 },
               ),
