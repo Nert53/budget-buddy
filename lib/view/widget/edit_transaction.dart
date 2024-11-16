@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:personal_finance/model/transaction.dart';
 import 'package:personal_finance/view_model/transaction_viewmodel.dart';
 
 class EditTransaction extends StatefulWidget {
