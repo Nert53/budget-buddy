@@ -53,8 +53,6 @@ class DashboardViewmodel extends ChangeNotifier {
 
   getLastNTransactions(int n) async {
     var transactions = await (_db.select(_db.transactionItems)
-          ..where((t) => t.date.month.equals(currentMonth))
-          ..where((t) => t.date.year.equals(currentYear))
           ..orderBy([
             (t) => OrderingTerm(expression: t.date, mode: OrderingMode.desc)
           ])

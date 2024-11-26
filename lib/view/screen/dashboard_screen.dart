@@ -238,66 +238,71 @@ class DashboardScreen extends StatelessWidget {
                         TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold)),
                 SizedBox(height: 16.0),
                 Expanded(
-                  child: ListView.separated(
-                      separatorBuilder: (BuildContext context, int index) =>
-                          const Divider(),
-                      itemCount: model.lastTransactions.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        var currentTransaction = model.lastTransactions[index];
-                        DateFormat dateFormat = DateFormat('dd.MM.yyyy');
-                        DateFormat timeFormat = DateFormat('HH:mm');
+                  child: Scrollbar(
+                    thumbVisibility: true,
+                    child: ListView.separated(
+                        separatorBuilder: (BuildContext context, int index) =>
+                            const Divider(),
+                        itemCount: model.lastTransactions.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          var currentTransaction =
+                              model.lastTransactions[index];
+                          DateFormat dateFormat = DateFormat('dd.MM.yyyy');
+                          DateFormat timeFormat = DateFormat('HH:mm');
 
-                        return ListTile(
-                          key: ValueKey(currentTransaction.id.toString()),
-                          title: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(currentTransaction.note,
-                                      style: const TextStyle(
-                                          fontSize: 16.0,
-                                          fontWeight: FontWeight.bold)),
-                                  Text(
-                                    '${dateFormat.format(currentTransaction.date)} | ${timeFormat.format(currentTransaction.date)}',
-                                    style: TextStyle(
-                                        fontSize: 12, color: Colors.grey[700]),
-                                  )
-                                ],
-                              ),
-                            ],
-                          ),
-                          leading: Icon(currentTransaction.categoryIcon,
-                              color: currentTransaction.categoryColor),
-                          trailing: Column(
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Row(mainAxisSize: MainAxisSize.min, children: [
-                                currentTransaction.isOutcome
-                                    ? const Icon(
-                                        Icons.arrow_drop_down,
-                                        color: Colors.red,
-                                      )
-                                    : Icon(
-                                        Icons.arrow_drop_up,
-                                        color: Colors.green[700],
-                                      ),
-                                Text(
-                                  '${currentTransaction.amount} ${currentTransaction.currencyName}',
-                                  style: TextStyle(
-                                      color: currentTransaction.isOutcome
-                                          ? Colors.red
-                                          : Colors.green[700],
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold),
+                          return ListTile(
+                            key: ValueKey(currentTransaction.id.toString()),
+                            title: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(currentTransaction.note,
+                                        style: const TextStyle(
+                                            fontSize: 16.0,
+                                            fontWeight: FontWeight.bold)),
+                                    Text(
+                                      '${dateFormat.format(currentTransaction.date)} | ${timeFormat.format(currentTransaction.date)}',
+                                      style: TextStyle(
+                                          fontSize: 12,
+                                          color: Colors.grey[700]),
+                                    )
+                                  ],
                                 ),
-                              ]),
-                            ],
-                          ),
-                        );
-                      }),
+                              ],
+                            ),
+                            leading: Icon(currentTransaction.categoryIcon,
+                                color: currentTransaction.categoryColor),
+                            trailing: Column(
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Row(mainAxisSize: MainAxisSize.min, children: [
+                                  currentTransaction.isOutcome
+                                      ? const Icon(
+                                          Icons.arrow_drop_down,
+                                          color: Colors.red,
+                                        )
+                                      : Icon(
+                                          Icons.arrow_drop_up,
+                                          color: Colors.green[700],
+                                        ),
+                                  Text(
+                                    '${currentTransaction.amount} ${currentTransaction.currencyName}',
+                                    style: TextStyle(
+                                        color: currentTransaction.isOutcome
+                                            ? Colors.red
+                                            : Colors.green[700],
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                ]),
+                              ],
+                            ),
+                          );
+                        }),
+                  ),
                 ),
               ],
             ),

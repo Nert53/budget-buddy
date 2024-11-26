@@ -19,6 +19,14 @@ class AddWindow extends StatelessWidget {
 
     var viewModel = context.watch<AddTransactionViewModel>();
 
+    /*return LayoutBuilder(builder: (context, constraints) {
+      if (constraints.maxWidth < 840) {
+        return Text('aeaeg');
+      } else {
+        return Text('gae');
+      }
+    });*/
+
     return Dialog(
       insetPadding: EdgeInsets.only(
           top: screenHeight * 0.1,

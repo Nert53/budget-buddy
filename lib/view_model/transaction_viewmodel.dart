@@ -10,10 +10,8 @@ class TransactionViewModel extends ChangeNotifier {
 
   List<Transaction> transactions = [];
 
-  DateTime currrentDate = DateTime.now();
-  int currentMonth = DateTime.now().month;
+  DateTime currentDate = DateTime.now();
   String currentMonthString = convertMontNumToMonthName(DateTime.now().month);
-  int currentYear = DateTime.now().year;
   bool currentDisplayedOlder = false;
   bool currentDisplayedNewer = false;
 
@@ -30,7 +28,7 @@ class TransactionViewModel extends ChangeNotifier {
     isLoading = true;
     notifyListeners();
 
-    await Future.delayed(const Duration(seconds: 2));
+    await Future.delayed(const Duration(milliseconds: 500));
 
     setDateValues();
     getTransactions();
@@ -46,66 +44,66 @@ class TransactionViewModel extends ChangeNotifier {
   setDateValues() {
     var upToDateDate = DateTime.now();
 
-    if (upToDateDate.year < currrentDate.year) {
-      currentDisplayedOlder = true;
+    if (upToDateDate.year == currentDate.year &&
+        upToDateDate.month == currentDate.month) {
+      currentDisplayedOlder = false;
       currentDisplayedNewer = false;
       return;
-    } else if (upToDateDate.year == currrentDate.year) {
-      if (upToDateDate.month > currentMonth) {
-        currentDisplayedOlder = true;
-        currentDisplayedNewer = false;
-        return;
-      }
     }
-    currentDisplayedOlder = false;
 
-    if (upToDateDate.year > currrentDate.year) {
+    if (upToDateDate.year > currentDate.year) {
+      currentDisplayedNewer = false;
+      currentDisplayedOlder = true;
+      return;
+    } else if (upToDateDate.year < currentDate.year) {
       currentDisplayedNewer = true;
       currentDisplayedOlder = false;
       return;
-    } else if (upToDateDate.year == currrentDate.year) {
-      if (upToDateDate.month < currentMonth) {
+    }
+
+    if (upToDateDate.year == currentDate.year) {
+      if (upToDateDate.month > currentDate.month) {
+        currentDisplayedNewer = false;
+        currentDisplayedOlder = true;
+        return;
+      } else if (upToDateDate.month < currentDate.month) {
         currentDisplayedNewer = true;
         currentDisplayedOlder = false;
         return;
       }
     }
-    currentDisplayedNewer = false;
   }
 
-  upToDateDate() {
-    currentMonth = DateTime.now().month;
-    currentYear = DateTime.now().year;
-    currentMonthString = convertMontNumToMonthName(currentMonth);
+  upToDate() {
+    currentDate = DateTime.now();
+    currentMonthString = convertMontNumToMonthName(currentDate.month);
     refresh();
   }
 
   previousMonth() {
-    if (currentMonth == 1) {
-      currentMonth = 12;
-      currentYear--;
+    if (currentDate.month == 1) {
+      currentDate = DateTime(currentDate.year - 1, 12);
     } else {
-      currentMonth--;
+      currentDate = DateTime(currentDate.year, currentDate.month - 1);
     }
-    currentMonthString = convertMontNumToMonthName(currentMonth);
+    currentMonthString = convertMontNumToMonthName(currentDate.month);
     refresh();
   }
 
   nextMonth() {
-    if (currentMonth == 12) {
-      currentMonth = 1;
-      currentYear++;
+    if (currentDate.month == 12) {
+      currentDate = DateTime(currentDate.year + 1, 1);
     } else {
-      currentMonth++;
+      currentDate = DateTime(currentDate.year, currentDate.month + 1);
     }
-    currentMonthString = convertMontNumToMonthName(currentMonth);
+    currentMonthString = convertMontNumToMonthName(currentDate.month);
     refresh();
   }
 
   getTransactions() async {
     var transactionItems = await (_db.select(_db.transactionItems)
-          ..where((t) => t.date.month.equals(currentMonth))
-          ..where((t) => t.date.year.equals(currentYear))
+          ..where((t) => t.date.month.equals(currentDate.month))
+          ..where((t) => t.date.year.equals(currentDate.year))
           ..orderBy([
             (t) => OrderingTerm(expression: t.date, mode: OrderingMode.desc)
           ])) // Sort by date in descending order
@@ -153,5 +151,23 @@ class TransactionViewModel extends ChangeNotifier {
         .go();
 
     notifyListeners();
+  }
+
+  getAllCategories() async {
+    return await _db.select(_db.categoryItems).get();
+  }
+
+  getCategoryById(String id) async {
+    return await (_db.select(_db.categoryItems)..where((c) => c.id.equals(id)))
+        .getSingle();
+  }
+
+  getAllCurrencies() async {
+    return await _db.select(_db.currencyItems).get();
+  }
+
+  getCurrencyById(String id) async {
+    return await (_db.select(_db.currencyItems)..where((c) => c.id.equals(id)))
+        .getSingle();
   }
 }

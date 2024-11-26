@@ -46,7 +46,7 @@ class TransactionScreen extends StatelessWidget {
                   model.currentDisplayedNewer
                       ? IconButton.filled(
                           onPressed: () => {
-                                model.upToDateDate(),
+                                model.upToDate(),
                               },
                           icon: Icon(Icons.keyboard_double_arrow_left_outlined))
                       : const SizedBox(width: 16),
@@ -56,7 +56,7 @@ class TransactionScreen extends StatelessWidget {
                   GestureDetector(
                     onTap: model.getAllData,
                     child: Text(
-                      '${model.currentMonthString} ${model.currentYear}',
+                      '${model.currentMonthString} ${model.currentDate.year}',
                       style: const TextStyle(
                         fontSize: 22,
                       ),
@@ -68,7 +68,7 @@ class TransactionScreen extends StatelessWidget {
                   model.currentDisplayedOlder
                       ? IconButton.filled(
                           onPressed: () => {
-                                model.upToDateDate(),
+                                model.upToDate(),
                               },
                           icon:
                               Icon(Icons.keyboard_double_arrow_right_outlined))
@@ -116,12 +116,9 @@ class TransactionScreen extends StatelessWidget {
                         context: context,
                         builder: (BuildContext context) {
                           return EditTransaction(
-                            id: currentTransaction.id,
-                            note: currentTransaction.note,
+                            transactionId: currentTransaction.id,
                             amount: currentTransaction.amount,
-                            date: currentTransaction.date,
-                            isOutcome: currentTransaction.isOutcome,
-                            viewModel: model,
+                            note: currentTransaction.note,
                           );
                         },
                       );
