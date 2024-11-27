@@ -63,11 +63,15 @@ class DashboardScreen extends StatelessWidget {
                               fontSize: 16.0, fontWeight: FontWeight.bold)),
                       const SizedBox(height: 8.0),
                       Expanded(
-                          child: PieChart(
-                        PieChartData(
-                            sectionsSpace: 4, sections: model.categoryPieData),
-                        // Optional
-                      ))
+                          child: model.categoryPieData.isEmpty
+                              ? Center(
+                                  child: Text('No data to display in graph.'))
+                              : PieChart(
+                                  PieChartData(
+                                      sectionsSpace: 4,
+                                      sections: model.categoryPieData),
+                                  // Optional
+                                ))
                     ],
                   ),
                 ),

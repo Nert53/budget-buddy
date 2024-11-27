@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
@@ -34,6 +35,13 @@ class SettingsScreen extends StatelessWidget {
             leading: Icon(Icons.bug_report_outlined),
             title: Text('Insert Testing Data'),
             onTap: () {},
+          ),
+          ListTile(
+            leading: Icon(Icons.storage_outlined),
+            title: Text('View Database'),
+            onTap: () {
+              context.go('/database');
+            },
           ),
           ListTile(
             leading: Icon(Icons.ios_share_outlined),

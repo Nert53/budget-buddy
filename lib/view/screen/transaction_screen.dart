@@ -119,6 +119,10 @@ class TransactionScreen extends StatelessWidget {
                             transactionId: currentTransaction.id,
                             amount: currentTransaction.amount,
                             note: currentTransaction.note,
+                            date: currentTransaction.date,
+                            isOutcome: currentTransaction.isOutcome,
+                            categoryId: currentTransaction.categoryId,
+                            currencyId: currentTransaction.currencyId,
                           );
                         },
                       );

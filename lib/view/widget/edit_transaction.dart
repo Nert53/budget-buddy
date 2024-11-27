@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:personal_finance/model/category.dart';
 import 'package:personal_finance/model/currency.dart';
 import 'package:personal_finance/view_model/edit_transaction_viewmodel.dart';
@@ -8,12 +9,20 @@ class EditTransaction extends StatelessWidget {
   final String transactionId;
   final double amount;
   final String note;
+  final DateTime date;
+  final bool isOutcome;
+  final String categoryId;
+  final String currencyId;
 
   const EditTransaction({
     super.key,
     required this.transactionId,
     required this.amount,
     required this.note,
+    required this.date,
+    required this.isOutcome,
+    required this.categoryId,
+    required this.currencyId,
   });
 
   @override
@@ -22,6 +31,13 @@ class EditTransaction extends StatelessWidget {
 
     viewModel.amountController.text = amount.toString();
     viewModel.noteController.text = note;
+    viewModel.date = date;
+    viewModel.time = TimeOfDay.fromDateTime(date);
+    viewModel.selectedType =
+        isOutcome ? TransactionType.outcome : TransactionType.income;
+    viewModel.transactionId = transactionId;
+    viewModel.originalCategoryId = categoryId;
+    viewModel.originalCurrencyId = currencyId;
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -81,7 +97,9 @@ class EditTransaction extends StatelessWidget {
                         size: 30,
                       )),
                 ],
-                selected: <TransactionType>{viewModel.selectedType},
+                selected: <TransactionType>{
+                  viewModel.selectedType ?? TransactionType.outcome
+                },
                 onSelectionChanged: (Set<TransactionType> newValue) {
                   viewModel.changeTransactionType(newValue.first);
                 },
@@ -102,12 +120,16 @@ class EditTransaction extends StatelessWidget {
                             initialDate: viewModel.date,
                             firstDate: DateTime(2000),
                             lastDate: DateTime(2100),
-                          ).then((value) {
-                            if (value != null) {}
+                          ).then((newDate) {
+                            if (newDate != null) {
+                              viewModel.date = newDate;
+                            }
                           });
                         },
                         child: Text(
-                          viewModel.dateFormated,
+                          DateFormat('dd. MM. yyyy')
+                              .format(viewModel.date)
+                              .toString(),
                         ),
                       ),
                     ],
@@ -119,13 +141,21 @@ class EditTransaction extends StatelessWidget {
                         onPressed: () {
                           showTimePicker(
                             context: context,
-                            initialTime: TimeOfDay.fromDateTime(viewModel.date),
-                          ).then((value) {
-                            if (value != null) {}
+                            initialTime: viewModel.time,
+                          ).then((newTime) {
+                            if (newTime != null) {
+                              viewModel.time = newTime;
+                              viewModel.date = DateTime(
+                                  viewModel.date.year,
+                                  viewModel.date.month,
+                                  viewModel.date.day,
+                                  newTime.hour,
+                                  newTime.minute);
+                            }
                           });
                         },
                         child: Text(
-                          viewModel.timeFormated,
+                          DateFormat('HH:mm').format(viewModel.date).toString(),
                         ),
                       ),
                     ],
@@ -137,10 +167,13 @@ class EditTransaction extends StatelessWidget {
               ),
               DropdownMenu(
                   label: const Text('Category'),
-                  leadingIcon: viewModel.selectedCategory.name == 'General'
-                      ? null
-                      : Icon(Icons.category_outlined),
-                  textStyle: TextStyle(color: viewModel.selectedCategory.color),
+                  leadingIcon: viewModel.selectedCategory == null
+                      ? Icon(Icons.category_outlined)
+                      : Icon(viewModel.selectedCategory!.icon),
+                  textStyle: TextStyle(
+                      color: viewModel.selectedCategory == null
+                          ? Colors.black
+                          : viewModel.selectedCategory!.color),
                   inputDecorationTheme: const InputDecorationTheme(
                       border: OutlineInputBorder(
                           borderRadius: BorderRadius.all(Radius.circular(16)))),
@@ -203,6 +236,7 @@ class EditTransaction extends StatelessWidget {
             ),
             FilledButton(
               onPressed: () {
+                viewModel.saveTransaction();
                 Navigator.of(context).pop();
               },
               child: const Text('Save'),

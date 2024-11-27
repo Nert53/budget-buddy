@@ -1,6 +1,5 @@
 import 'package:drift/drift.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:personal_finance/data/database.dart';
 import 'package:personal_finance/model/category.dart';
 import 'package:personal_finance/model/currency.dart';
@@ -11,24 +10,21 @@ enum TransactionType { income, outcome }
 class EditTransactionViewmodel extends ChangeNotifier {
   bool isLoading = true;
   final AppDatabase _db;
+  String transactionId = '';
 
   final amountController = TextEditingController();
   final noteController = TextEditingController();
-  final date = DateTime.now();
-  final dateFormated =
-      DateFormat('dd. MM. yyyy').format(DateTime.now()).toString();
-  final timeFormated = DateFormat('HH:mm').format(DateTime.now()).toString();
+  DateTime date = DateTime.now();
+  TimeOfDay time = TimeOfDay.now();
+  String originalCategoryId = '1';
+  String originalCurrencyId = '1';
 
   List<TransactionCategory> categories = [];
   List<Currency> currencies = [];
 
-  TransactionCategory selectedCategory = TransactionCategory(
-      id: '1',
-      name: 'Groceries',
-      color: Colors.green,
-      icon: Icons.shopping_cart_outlined);
-  String selectedCurrency = 'CZK';
-  TransactionType selectedType = TransactionType.outcome;
+  TransactionCategory? selectedCategory;
+  Currency? selectedCurrency;
+  TransactionType? selectedType;
 
   EditTransactionViewmodel(this._db) {
     _db.watchAllTransactions().listen((event) {
@@ -39,32 +35,38 @@ class EditTransactionViewmodel extends ChangeNotifier {
   }
 
   void saveTransaction() async {
-    DateFormat dateFormat = DateFormat('dd.MM.yyyy');
-    DateFormat timeFormat = DateFormat('HH:mm');
-
     Value<double> amountToSave = amountController.text.isNotEmpty
         ? Value(double.parse(amountController.text))
         : const Value(0.0);
+    Value<DateTime> dateToSave = Value(
+        DateTime(date.year, date.month, date.day, time.hour, time.minute));
     Value<String> noteToSave = noteController.text.isNotEmpty
         ? Value(noteController.text)
         : const Value('');
     Value<bool> isOutcomeToSave = selectedType == TransactionType.outcome
         ? const Value(true)
         : const Value(false);
+    Value<String> categoryIdToSave = selectedCategory == null
+        ? Value(originalCategoryId)
+        : Value(selectedCategory!.id);
+    Value<String> currencyIdToSave = selectedCurrency == null
+        ? Value(originalCurrencyId)
+        : Value(selectedCurrency!.id);
 
-    Value<String> categoryToSaveId = Value(selectedCategory.id);
-    Value<String> currencyToSave = Value(selectedCurrency);
+    var result = await (_db.update(_db.transactionItems)
+          ..where((t) => t.id.equals(transactionId)))
+        .write(
+      TransactionItemsCompanion(
+        amount: amountToSave,
+        date: dateToSave,
+        note: noteToSave,
+        isOutcome: isOutcomeToSave,
+        category: categoryIdToSave,
+        currency: currencyIdToSave,
+      ),
+    );
 
-    await _db.into(_db.transactionItems).insert(
-          TransactionItemsCompanion(
-            amount: amountToSave,
-            date: Value(DateTime.now()),
-            note: noteToSave,
-            isOutcome: isOutcomeToSave,
-            category: categoryToSaveId,
-            currency: currencyToSave,
-          ),
-        );
+    print(result);
     notifyListeners();
   }
 
@@ -121,9 +123,16 @@ class EditTransactionViewmodel extends ChangeNotifier {
     }
   }
 
-  changeCurrentCurrency(String currency) {
-    selectedCurrency = currency;
-    notifyListeners();
+  changeCurrentCurrency(String newCurrencyId) {
+    _db.select(_db.currencyItems).get().then((currencies) {
+      for (var c in currencies) {
+        if (c.id == newCurrencyId) {
+          selectedCurrency = Currency(id: c.id, name: c.name, symbol: c.symbol);
+          notifyListeners();
+          return;
+        }
+      }
+    });
   }
 
   changeTransactionType(TransactionType type) {

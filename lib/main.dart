@@ -1,3 +1,4 @@
+import 'package:drift_db_viewer/drift_db_viewer.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:personal_finance/data/database.dart';
@@ -27,7 +28,8 @@ void main() {
       create: (context) => AddTransactionViewModel(context.read<AppDatabase>()),
     ),
     ChangeNotifierProvider<EditTransactionViewmodel>(
-      create: (context) => EditTransactionViewmodel(context.read<AppDatabase>()),
+      create: (context) =>
+          EditTransactionViewmodel(context.read<AppDatabase>()),
     ),
     ChangeNotifierProvider<GraphViewModel>(
       create: (context) => GraphViewModel(context.read<AppDatabase>()),
@@ -77,8 +79,25 @@ final _router = GoRouter(
                   return SettingsScreen();
                 },
               ),
-            ])
+            ]),
           ]),
+      GoRoute(
+        path: '/database',
+        builder: (BuildContext context, GoRouterState state) {
+          final db = AppDatabase();
+          return Scaffold(
+              appBar: AppBar(
+                leading: IconButton(
+                  icon: const Icon(Icons.home),
+                  onPressed: () {
+                    context.go('/dashboard');
+                  },
+                ),
+                backgroundColor: Theme.of(context).colorScheme.primary,
+              ),
+              body: DriftDbViewer(db));
+        },
+      ),
     ]);
 
 class PersonalFinanceApp extends StatelessWidget {
