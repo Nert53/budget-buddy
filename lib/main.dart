@@ -2,6 +2,8 @@ import 'package:drift_db_viewer/drift_db_viewer.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:personal_finance/data/database.dart';
+import 'package:personal_finance/theme/theme.dart';
+import 'package:personal_finance/theme/theme_provider.dart';
 import 'package:personal_finance/view/screen/dashboard_screen.dart';
 import 'package:personal_finance/view/screen/graph_screen.dart';
 import 'package:personal_finance/view/screen/screen_container.dart';
@@ -19,6 +21,7 @@ void main() {
     Provider<AppDatabase>(
       create: (_) => AppDatabase(),
     ),
+    ChangeNotifierProvider(create: (context) => ThemeProvider()),
     ChangeNotifierProvider<TransactionViewModel>(
       create: (context) => TransactionViewModel(context.read<AppDatabase>()),
     ),
@@ -107,12 +110,7 @@ class PersonalFinanceApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp.router(
       title: 'Budget Buddy',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0x007fb9ae)),
-        useMaterial3: true,
-        fontFamily: 'Poppins',
-        scaffoldBackgroundColor: const Color.fromARGB(255, 224, 224, 224),
-      ),
+      theme: Provider.of<ThemeProvider>(context).themeData,
       routerConfig: _router,
     );
   }
