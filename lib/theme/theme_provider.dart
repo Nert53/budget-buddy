@@ -77,7 +77,7 @@ class ThemeProvider with ChangeNotifier {
       colorScheme: ColorScheme.fromSeed(seedColor: newColor),
       useMaterial3: true,
       fontFamily: 'Poppins',
-      scaffoldBackgroundColor: _themeData.scaffoldBackgroundColor,
+      scaffoldBackgroundColor: const Color.fromARGB(255, 224, 224, 224),
     );
 
     if (currentPrimaryValue == mainPrimaryValue) {

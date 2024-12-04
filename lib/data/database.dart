@@ -7,6 +7,7 @@ part 'database.g.dart';
 class TransactionItems extends Table {
   TextColumn get id => text().clientDefault(() => ShortUid.create())();
   RealColumn get amount => real()();
+  RealColumn get amountInCZK => real()();
   DateTimeColumn get date => dateTime()();
   TextColumn get note => text()();
   BoolColumn get isOutcome => boolean()();
@@ -25,6 +26,7 @@ class CurrencyItems extends Table {
   TextColumn get id => text().clientDefault(() => ShortUid.create())();
   TextColumn get name => text().withLength(min: 1, max: 32)();
   TextColumn get symbol => text().withLength(min: 1, max: 3)();
+  RealColumn get exchangeRate => real()(); // exchange rate to CZK
 }
 
 @DriftDatabase(tables: [TransactionItems, CategoryItems, CurrencyItems])
@@ -63,6 +65,27 @@ class AppDatabase extends _$AppDatabase {
 
   Future<Null> initialCategoriesInsert() async {
     return await transaction(() async {
+      await into(categoryItems).insert(
+        CategoryItemsCompanion.insert(
+          name: 'Employment',
+          color: 0xFF0014a1, // dark blue
+          icon: 'work',
+        ),
+      );
+      await into(categoryItems).insert(
+        CategoryItemsCompanion.insert(
+          name: 'Freelance Job',
+          color: 0xFF795548, // brown
+          icon: 'handshake',
+        ),
+      );
+      await into(categoryItems).insert(
+        CategoryItemsCompanion.insert(
+          name: 'Home',
+          color: 0xFFf18117, // orange
+          icon: 'home',
+        ),
+      );
       await into(categoryItems).insert(
         CategoryItemsCompanion.insert(
           name: 'Groceries',
@@ -107,24 +130,28 @@ class AppDatabase extends _$AppDatabase {
         CurrencyItemsCompanion.insert(
           name: 'Euro',
           symbol: '€',
+          exchangeRate: 25.2,
         ),
       );
       await into(currencyItems).insert(
         CurrencyItemsCompanion.insert(
           name: 'Dollar',
           symbol: "\$",
+          exchangeRate: 24.0,
         ),
       );
       await into(currencyItems).insert(
         CurrencyItemsCompanion.insert(
           name: 'Czech Koruna',
           symbol: 'Kč',
+          exchangeRate: 1.0,
         ),
       );
       await into(currencyItems).insert(
         CurrencyItemsCompanion.insert(
           name: 'Pound',
           symbol: '£',
+          exchangeRate: 30.4,
         ),
       );
     });

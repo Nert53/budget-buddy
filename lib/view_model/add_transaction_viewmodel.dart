@@ -22,12 +22,8 @@ class AddTransactionViewModel extends ChangeNotifier {
   List<TransactionCategory> categories = [];
   List<Currency> currencies = [];
 
-  TransactionCategory selectedCategory = TransactionCategory(
-      id: '1',
-      name: 'Groceries',
-      color: Colors.green,
-      icon: Icons.shopping_cart_outlined);
-  String selectedCurrency = 'CZK';
+  TransactionCategory? selectedCategory;
+  Currency? selectedCurrency;
   TransactionType selectedType = TransactionType.outcome;
 
   AddTransactionViewModel(this._db) {
@@ -45,6 +41,9 @@ class AddTransactionViewModel extends ChangeNotifier {
     Value<double> amountToSave = amountController.text.isNotEmpty
         ? Value(double.parse(amountController.text))
         : const Value(0.0);
+    Value<double> amountInCzkToSave = selectedCurrency!.symbol.toLowerCase() == 'czk'
+        ? amountToSave
+        : Value(amountToSave.value * selectedCurrency!.exchangeRate);
     Value<String> noteToSave = noteController.text.isNotEmpty
         ? Value(noteController.text)
         : const Value('');
@@ -57,8 +56,8 @@ class AddTransactionViewModel extends ChangeNotifier {
     Value<DateTime> time = timeController.text.isNotEmpty
         ? Value(timeFormat.parse(timeController.text))
         : Value(DateTime.now());
-    Value<String> categoryToSaveId = Value(selectedCategory.id);
-    Value<String> currencyToSave = Value(selectedCurrency);
+    Value<String> categoryToSaveId = Value(selectedCategory!.id);
+    Value<String> currencyToSave = Value(selectedCurrency!.id);
 
     Value<DateTime> dateToSave = Value(DateTime(date.value.year,
         date.value.month, date.value.day, time.value.hour, time.value.minute));
@@ -66,6 +65,7 @@ class AddTransactionViewModel extends ChangeNotifier {
     await _db.into(_db.transactionItems).insert(
           TransactionItemsCompanion(
             amount: amountToSave,
+            amountInCZK: amountInCzkToSave,
             date: dateToSave,
             note: noteToSave,
             isOutcome: isOutcomeToSave,
@@ -118,13 +118,21 @@ class AddTransactionViewModel extends ChangeNotifier {
 
     for (var currency in allCurrencies) {
       currencies.add(Currency(
-          id: currency.id, name: currency.name, symbol: currency.symbol));
+          id: currency.id,
+          name: currency.name,
+          symbol: currency.symbol,
+          exchangeRate: currency.exchangeRate));
     }
   }
 
   changeCurrentCurrency(String currency) {
-    selectedCurrency = currency;
-    notifyListeners();
+    for (var c in currencies) {
+      if (c.id == currency) {
+        selectedCurrency = c;
+        notifyListeners();
+        return;
+      }
+    }
   }
 
   changeTransactionType(TransactionType type) {
@@ -137,6 +145,8 @@ class AddTransactionViewModel extends ChangeNotifier {
     noteController.clear();
     dateController.text = DateFormat('dd.MM.yyyy').format(DateTime.now());
     timeController.text = DateFormat('HH:mm').format(DateTime.now());
+    selectedCategory = null;
+    selectedCurrency = null;
     notifyListeners();
   }
 }

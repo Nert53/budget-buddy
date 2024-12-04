@@ -38,6 +38,10 @@ class EditTransactionViewmodel extends ChangeNotifier {
     Value<double> amountToSave = amountController.text.isNotEmpty
         ? Value(double.parse(amountController.text))
         : const Value(0.0);
+    Value<double> amountInCzkToSave =
+        selectedCurrency!.symbol.toLowerCase() == 'czk'
+            ? amountToSave
+            : Value(amountToSave.value * selectedCurrency!.exchangeRate);
     Value<DateTime> dateToSave = Value(
         DateTime(date.year, date.month, date.day, time.hour, time.minute));
     Value<String> noteToSave = noteController.text.isNotEmpty
@@ -58,6 +62,7 @@ class EditTransactionViewmodel extends ChangeNotifier {
         .write(
       TransactionItemsCompanion(
         amount: amountToSave,
+        amountInCZK: amountInCzkToSave,
         date: dateToSave,
         note: noteToSave,
         isOutcome: isOutcomeToSave,
@@ -65,8 +70,6 @@ class EditTransactionViewmodel extends ChangeNotifier {
         currency: currencyIdToSave,
       ),
     );
-
-    print(result);
     notifyListeners();
   }
 
@@ -119,7 +122,10 @@ class EditTransactionViewmodel extends ChangeNotifier {
 
     for (var currency in allCurrencies) {
       currencies.add(Currency(
-          id: currency.id, name: currency.name, symbol: currency.symbol));
+          id: currency.id,
+          name: currency.name,
+          symbol: currency.symbol,
+          exchangeRate: currency.exchangeRate));
     }
   }
 
@@ -127,7 +133,11 @@ class EditTransactionViewmodel extends ChangeNotifier {
     _db.select(_db.currencyItems).get().then((currencies) {
       for (var c in currencies) {
         if (c.id == newCurrencyId) {
-          selectedCurrency = Currency(id: c.id, name: c.name, symbol: c.symbol);
+          selectedCurrency = Currency(
+              id: c.id,
+              name: c.name,
+              symbol: c.symbol,
+              exchangeRate: c.exchangeRate);
           notifyListeners();
           return;
         }

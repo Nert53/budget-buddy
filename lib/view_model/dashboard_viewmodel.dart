@@ -45,8 +45,8 @@ class DashboardViewmodel extends ChangeNotifier {
     accountBalance = allTransactions.fold(
       0,
       (previousValue, element) => element.isOutcome
-          ? previousValue - element.amount
-          : previousValue + element.amount,
+          ? previousValue - element.amountInCZK
+          : previousValue + element.amountInCZK,
     );
     notifyListeners();
   }
@@ -98,7 +98,7 @@ class DashboardViewmodel extends ChangeNotifier {
     query.get().then((value) {
       thisMonthSpent = value.fold(
         0,
-        (previousValue, element) => previousValue + element.amount,
+        (previousValue, element) => previousValue + element.amountInCZK,
       );
     });
     notifyListeners();
@@ -115,7 +115,7 @@ class DashboardViewmodel extends ChangeNotifier {
     query.get().then((value) {
       todaySpent = value.fold(
         0,
-        (previousValue, element) => previousValue + element.amount,
+        (previousValue, element) => previousValue + element.amountInCZK,
       );
     });
     notifyListeners();
@@ -133,12 +133,15 @@ class DashboardViewmodel extends ChangeNotifier {
         _db.categoryItems.color, // Category color
         _db.categoryItems.icon, // Category icon
         _db.categoryItems.id, // Category ID
-        _db.transactionItems.amount.sum() // Total amount spent for the category
+        _db.transactionItems.isOutcome,
+        _db.transactionItems.amountInCZK
+            .sum() // Total amount spent for the category
       ])
       ..join([
         innerJoin(_db.categoryItems,
             _db.categoryItems.id.equalsExp(_db.transactionItems.category))
       ])
+      ..where(_db.transactionItems.isOutcome.equals(true))
       ..groupBy([
         _db.transactionItems.category,
         _db.categoryItems.name,
@@ -146,8 +149,8 @@ class DashboardViewmodel extends ChangeNotifier {
         _db.categoryItems.icon,
         _db.categoryItems.id
       ]);
-
     var result = await query.get();
+
     final List<CategorySpending> categorySpendings = result.map((row) {
       return CategorySpending(
         id: row.read<String>(_db.categoryItems.id) ?? '',
@@ -156,7 +159,7 @@ class DashboardViewmodel extends ChangeNotifier {
             row.read<int>(_db.categoryItems.color) ?? 0),
         icon: convertIconNameToIcon(
             row.read<String>(_db.categoryItems.icon) ?? ''),
-        amount: row.read<double>(_db.transactionItems.amount.sum()) ?? 0,
+        amount: row.read<double>(_db.transactionItems.amountInCZK.sum()) ?? 0,
       );
     }).toList();
 

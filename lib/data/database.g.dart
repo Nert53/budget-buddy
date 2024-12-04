@@ -301,8 +301,14 @@ class $CurrencyItemsTable extends CurrencyItems
           GeneratedColumn.checkTextLength(minTextLength: 1, maxTextLength: 3),
       type: DriftSqlType.string,
       requiredDuringInsert: true);
+  static const VerificationMeta _exchangeRateMeta =
+      const VerificationMeta('exchangeRate');
   @override
-  List<GeneratedColumn> get $columns => [id, name, symbol];
+  late final GeneratedColumn<double> exchangeRate = GeneratedColumn<double>(
+      'exchange_rate', aliasedName, false,
+      type: DriftSqlType.double, requiredDuringInsert: true);
+  @override
+  List<GeneratedColumn> get $columns => [id, name, symbol, exchangeRate];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
@@ -328,6 +334,14 @@ class $CurrencyItemsTable extends CurrencyItems
     } else if (isInserting) {
       context.missing(_symbolMeta);
     }
+    if (data.containsKey('exchange_rate')) {
+      context.handle(
+          _exchangeRateMeta,
+          exchangeRate.isAcceptableOrUnknown(
+              data['exchange_rate']!, _exchangeRateMeta));
+    } else if (isInserting) {
+      context.missing(_exchangeRateMeta);
+    }
     return context;
   }
 
@@ -343,6 +357,8 @@ class $CurrencyItemsTable extends CurrencyItems
           .read(DriftSqlType.string, data['${effectivePrefix}name'])!,
       symbol: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}symbol'])!,
+      exchangeRate: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}exchange_rate'])!,
     );
   }
 
@@ -356,14 +372,19 @@ class CurrencyItem extends DataClass implements Insertable<CurrencyItem> {
   final String id;
   final String name;
   final String symbol;
+  final double exchangeRate;
   const CurrencyItem(
-      {required this.id, required this.name, required this.symbol});
+      {required this.id,
+      required this.name,
+      required this.symbol,
+      required this.exchangeRate});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<String>(id);
     map['name'] = Variable<String>(name);
     map['symbol'] = Variable<String>(symbol);
+    map['exchange_rate'] = Variable<double>(exchangeRate);
     return map;
   }
 
@@ -372,6 +393,7 @@ class CurrencyItem extends DataClass implements Insertable<CurrencyItem> {
       id: Value(id),
       name: Value(name),
       symbol: Value(symbol),
+      exchangeRate: Value(exchangeRate),
     );
   }
 
@@ -382,6 +404,7 @@ class CurrencyItem extends DataClass implements Insertable<CurrencyItem> {
       id: serializer.fromJson<String>(json['id']),
       name: serializer.fromJson<String>(json['name']),
       symbol: serializer.fromJson<String>(json['symbol']),
+      exchangeRate: serializer.fromJson<double>(json['exchangeRate']),
     );
   }
   @override
@@ -391,20 +414,26 @@ class CurrencyItem extends DataClass implements Insertable<CurrencyItem> {
       'id': serializer.toJson<String>(id),
       'name': serializer.toJson<String>(name),
       'symbol': serializer.toJson<String>(symbol),
+      'exchangeRate': serializer.toJson<double>(exchangeRate),
     };
   }
 
-  CurrencyItem copyWith({String? id, String? name, String? symbol}) =>
+  CurrencyItem copyWith(
+          {String? id, String? name, String? symbol, double? exchangeRate}) =>
       CurrencyItem(
         id: id ?? this.id,
         name: name ?? this.name,
         symbol: symbol ?? this.symbol,
+        exchangeRate: exchangeRate ?? this.exchangeRate,
       );
   CurrencyItem copyWithCompanion(CurrencyItemsCompanion data) {
     return CurrencyItem(
       id: data.id.present ? data.id.value : this.id,
       name: data.name.present ? data.name.value : this.name,
       symbol: data.symbol.present ? data.symbol.value : this.symbol,
+      exchangeRate: data.exchangeRate.present
+          ? data.exchangeRate.value
+          : this.exchangeRate,
     );
   }
 
@@ -413,50 +442,58 @@ class CurrencyItem extends DataClass implements Insertable<CurrencyItem> {
     return (StringBuffer('CurrencyItem(')
           ..write('id: $id, ')
           ..write('name: $name, ')
-          ..write('symbol: $symbol')
+          ..write('symbol: $symbol, ')
+          ..write('exchangeRate: $exchangeRate')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(id, name, symbol);
+  int get hashCode => Object.hash(id, name, symbol, exchangeRate);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is CurrencyItem &&
           other.id == this.id &&
           other.name == this.name &&
-          other.symbol == this.symbol);
+          other.symbol == this.symbol &&
+          other.exchangeRate == this.exchangeRate);
 }
 
 class CurrencyItemsCompanion extends UpdateCompanion<CurrencyItem> {
   final Value<String> id;
   final Value<String> name;
   final Value<String> symbol;
+  final Value<double> exchangeRate;
   final Value<int> rowid;
   const CurrencyItemsCompanion({
     this.id = const Value.absent(),
     this.name = const Value.absent(),
     this.symbol = const Value.absent(),
+    this.exchangeRate = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   CurrencyItemsCompanion.insert({
     this.id = const Value.absent(),
     required String name,
     required String symbol,
+    required double exchangeRate,
     this.rowid = const Value.absent(),
   })  : name = Value(name),
-        symbol = Value(symbol);
+        symbol = Value(symbol),
+        exchangeRate = Value(exchangeRate);
   static Insertable<CurrencyItem> custom({
     Expression<String>? id,
     Expression<String>? name,
     Expression<String>? symbol,
+    Expression<double>? exchangeRate,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (name != null) 'name': name,
       if (symbol != null) 'symbol': symbol,
+      if (exchangeRate != null) 'exchange_rate': exchangeRate,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -465,11 +502,13 @@ class CurrencyItemsCompanion extends UpdateCompanion<CurrencyItem> {
       {Value<String>? id,
       Value<String>? name,
       Value<String>? symbol,
+      Value<double>? exchangeRate,
       Value<int>? rowid}) {
     return CurrencyItemsCompanion(
       id: id ?? this.id,
       name: name ?? this.name,
       symbol: symbol ?? this.symbol,
+      exchangeRate: exchangeRate ?? this.exchangeRate,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -486,6 +525,9 @@ class CurrencyItemsCompanion extends UpdateCompanion<CurrencyItem> {
     if (symbol.present) {
       map['symbol'] = Variable<String>(symbol.value);
     }
+    if (exchangeRate.present) {
+      map['exchange_rate'] = Variable<double>(exchangeRate.value);
+    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -498,6 +540,7 @@ class CurrencyItemsCompanion extends UpdateCompanion<CurrencyItem> {
           ..write('id: $id, ')
           ..write('name: $name, ')
           ..write('symbol: $symbol, ')
+          ..write('exchangeRate: $exchangeRate, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -521,6 +564,12 @@ class $TransactionItemsTable extends TransactionItems
   @override
   late final GeneratedColumn<double> amount = GeneratedColumn<double>(
       'amount', aliasedName, false,
+      type: DriftSqlType.double, requiredDuringInsert: true);
+  static const VerificationMeta _amountInCZKMeta =
+      const VerificationMeta('amountInCZK');
+  @override
+  late final GeneratedColumn<double> amountInCZK = GeneratedColumn<double>(
+      'amount_in_c_z_k', aliasedName, false,
       type: DriftSqlType.double, requiredDuringInsert: true);
   static const VerificationMeta _dateMeta = const VerificationMeta('date');
   @override
@@ -561,7 +610,7 @@ class $TransactionItemsTable extends TransactionItems
           GeneratedColumn.constraintIsAlways('REFERENCES currency_items (id)'));
   @override
   List<GeneratedColumn> get $columns =>
-      [id, amount, date, note, isOutcome, category, currency];
+      [id, amount, amountInCZK, date, note, isOutcome, category, currency];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
@@ -580,6 +629,14 @@ class $TransactionItemsTable extends TransactionItems
           amount.isAcceptableOrUnknown(data['amount']!, _amountMeta));
     } else if (isInserting) {
       context.missing(_amountMeta);
+    }
+    if (data.containsKey('amount_in_c_z_k')) {
+      context.handle(
+          _amountInCZKMeta,
+          amountInCZK.isAcceptableOrUnknown(
+              data['amount_in_c_z_k']!, _amountInCZKMeta));
+    } else if (isInserting) {
+      context.missing(_amountInCZKMeta);
     }
     if (data.containsKey('date')) {
       context.handle(
@@ -624,6 +681,8 @@ class $TransactionItemsTable extends TransactionItems
           .read(DriftSqlType.string, data['${effectivePrefix}id'])!,
       amount: attachedDatabase.typeMapping
           .read(DriftSqlType.double, data['${effectivePrefix}amount'])!,
+      amountInCZK: attachedDatabase.typeMapping.read(
+          DriftSqlType.double, data['${effectivePrefix}amount_in_c_z_k'])!,
       date: attachedDatabase.typeMapping
           .read(DriftSqlType.dateTime, data['${effectivePrefix}date'])!,
       note: attachedDatabase.typeMapping
@@ -646,6 +705,7 @@ class $TransactionItemsTable extends TransactionItems
 class TransactionItem extends DataClass implements Insertable<TransactionItem> {
   final String id;
   final double amount;
+  final double amountInCZK;
   final DateTime date;
   final String note;
   final bool isOutcome;
@@ -654,6 +714,7 @@ class TransactionItem extends DataClass implements Insertable<TransactionItem> {
   const TransactionItem(
       {required this.id,
       required this.amount,
+      required this.amountInCZK,
       required this.date,
       required this.note,
       required this.isOutcome,
@@ -664,6 +725,7 @@ class TransactionItem extends DataClass implements Insertable<TransactionItem> {
     final map = <String, Expression>{};
     map['id'] = Variable<String>(id);
     map['amount'] = Variable<double>(amount);
+    map['amount_in_c_z_k'] = Variable<double>(amountInCZK);
     map['date'] = Variable<DateTime>(date);
     map['note'] = Variable<String>(note);
     map['is_outcome'] = Variable<bool>(isOutcome);
@@ -676,6 +738,7 @@ class TransactionItem extends DataClass implements Insertable<TransactionItem> {
     return TransactionItemsCompanion(
       id: Value(id),
       amount: Value(amount),
+      amountInCZK: Value(amountInCZK),
       date: Value(date),
       note: Value(note),
       isOutcome: Value(isOutcome),
@@ -690,6 +753,7 @@ class TransactionItem extends DataClass implements Insertable<TransactionItem> {
     return TransactionItem(
       id: serializer.fromJson<String>(json['id']),
       amount: serializer.fromJson<double>(json['amount']),
+      amountInCZK: serializer.fromJson<double>(json['amountInCZK']),
       date: serializer.fromJson<DateTime>(json['date']),
       note: serializer.fromJson<String>(json['note']),
       isOutcome: serializer.fromJson<bool>(json['isOutcome']),
@@ -703,6 +767,7 @@ class TransactionItem extends DataClass implements Insertable<TransactionItem> {
     return <String, dynamic>{
       'id': serializer.toJson<String>(id),
       'amount': serializer.toJson<double>(amount),
+      'amountInCZK': serializer.toJson<double>(amountInCZK),
       'date': serializer.toJson<DateTime>(date),
       'note': serializer.toJson<String>(note),
       'isOutcome': serializer.toJson<bool>(isOutcome),
@@ -714,6 +779,7 @@ class TransactionItem extends DataClass implements Insertable<TransactionItem> {
   TransactionItem copyWith(
           {String? id,
           double? amount,
+          double? amountInCZK,
           DateTime? date,
           String? note,
           bool? isOutcome,
@@ -722,6 +788,7 @@ class TransactionItem extends DataClass implements Insertable<TransactionItem> {
       TransactionItem(
         id: id ?? this.id,
         amount: amount ?? this.amount,
+        amountInCZK: amountInCZK ?? this.amountInCZK,
         date: date ?? this.date,
         note: note ?? this.note,
         isOutcome: isOutcome ?? this.isOutcome,
@@ -732,6 +799,8 @@ class TransactionItem extends DataClass implements Insertable<TransactionItem> {
     return TransactionItem(
       id: data.id.present ? data.id.value : this.id,
       amount: data.amount.present ? data.amount.value : this.amount,
+      amountInCZK:
+          data.amountInCZK.present ? data.amountInCZK.value : this.amountInCZK,
       date: data.date.present ? data.date.value : this.date,
       note: data.note.present ? data.note.value : this.note,
       isOutcome: data.isOutcome.present ? data.isOutcome.value : this.isOutcome,
@@ -745,6 +814,7 @@ class TransactionItem extends DataClass implements Insertable<TransactionItem> {
     return (StringBuffer('TransactionItem(')
           ..write('id: $id, ')
           ..write('amount: $amount, ')
+          ..write('amountInCZK: $amountInCZK, ')
           ..write('date: $date, ')
           ..write('note: $note, ')
           ..write('isOutcome: $isOutcome, ')
@@ -755,14 +825,15 @@ class TransactionItem extends DataClass implements Insertable<TransactionItem> {
   }
 
   @override
-  int get hashCode =>
-      Object.hash(id, amount, date, note, isOutcome, category, currency);
+  int get hashCode => Object.hash(
+      id, amount, amountInCZK, date, note, isOutcome, category, currency);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is TransactionItem &&
           other.id == this.id &&
           other.amount == this.amount &&
+          other.amountInCZK == this.amountInCZK &&
           other.date == this.date &&
           other.note == this.note &&
           other.isOutcome == this.isOutcome &&
@@ -773,6 +844,7 @@ class TransactionItem extends DataClass implements Insertable<TransactionItem> {
 class TransactionItemsCompanion extends UpdateCompanion<TransactionItem> {
   final Value<String> id;
   final Value<double> amount;
+  final Value<double> amountInCZK;
   final Value<DateTime> date;
   final Value<String> note;
   final Value<bool> isOutcome;
@@ -782,6 +854,7 @@ class TransactionItemsCompanion extends UpdateCompanion<TransactionItem> {
   const TransactionItemsCompanion({
     this.id = const Value.absent(),
     this.amount = const Value.absent(),
+    this.amountInCZK = const Value.absent(),
     this.date = const Value.absent(),
     this.note = const Value.absent(),
     this.isOutcome = const Value.absent(),
@@ -792,6 +865,7 @@ class TransactionItemsCompanion extends UpdateCompanion<TransactionItem> {
   TransactionItemsCompanion.insert({
     this.id = const Value.absent(),
     required double amount,
+    required double amountInCZK,
     required DateTime date,
     required String note,
     required bool isOutcome,
@@ -799,6 +873,7 @@ class TransactionItemsCompanion extends UpdateCompanion<TransactionItem> {
     required String currency,
     this.rowid = const Value.absent(),
   })  : amount = Value(amount),
+        amountInCZK = Value(amountInCZK),
         date = Value(date),
         note = Value(note),
         isOutcome = Value(isOutcome),
@@ -807,6 +882,7 @@ class TransactionItemsCompanion extends UpdateCompanion<TransactionItem> {
   static Insertable<TransactionItem> custom({
     Expression<String>? id,
     Expression<double>? amount,
+    Expression<double>? amountInCZK,
     Expression<DateTime>? date,
     Expression<String>? note,
     Expression<bool>? isOutcome,
@@ -817,6 +893,7 @@ class TransactionItemsCompanion extends UpdateCompanion<TransactionItem> {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (amount != null) 'amount': amount,
+      if (amountInCZK != null) 'amount_in_c_z_k': amountInCZK,
       if (date != null) 'date': date,
       if (note != null) 'note': note,
       if (isOutcome != null) 'is_outcome': isOutcome,
@@ -829,6 +906,7 @@ class TransactionItemsCompanion extends UpdateCompanion<TransactionItem> {
   TransactionItemsCompanion copyWith(
       {Value<String>? id,
       Value<double>? amount,
+      Value<double>? amountInCZK,
       Value<DateTime>? date,
       Value<String>? note,
       Value<bool>? isOutcome,
@@ -838,6 +916,7 @@ class TransactionItemsCompanion extends UpdateCompanion<TransactionItem> {
     return TransactionItemsCompanion(
       id: id ?? this.id,
       amount: amount ?? this.amount,
+      amountInCZK: amountInCZK ?? this.amountInCZK,
       date: date ?? this.date,
       note: note ?? this.note,
       isOutcome: isOutcome ?? this.isOutcome,
@@ -855,6 +934,9 @@ class TransactionItemsCompanion extends UpdateCompanion<TransactionItem> {
     }
     if (amount.present) {
       map['amount'] = Variable<double>(amount.value);
+    }
+    if (amountInCZK.present) {
+      map['amount_in_c_z_k'] = Variable<double>(amountInCZK.value);
     }
     if (date.present) {
       map['date'] = Variable<DateTime>(date.value);
@@ -882,6 +964,7 @@ class TransactionItemsCompanion extends UpdateCompanion<TransactionItem> {
     return (StringBuffer('TransactionItemsCompanion(')
           ..write('id: $id, ')
           ..write('amount: $amount, ')
+          ..write('amountInCZK: $amountInCZK, ')
           ..write('date: $date, ')
           ..write('note: $note, ')
           ..write('isOutcome: $isOutcome, ')
@@ -1157,6 +1240,7 @@ typedef $$CurrencyItemsTableCreateCompanionBuilder = CurrencyItemsCompanion
   Value<String> id,
   required String name,
   required String symbol,
+  required double exchangeRate,
   Value<int> rowid,
 });
 typedef $$CurrencyItemsTableUpdateCompanionBuilder = CurrencyItemsCompanion
@@ -1164,6 +1248,7 @@ typedef $$CurrencyItemsTableUpdateCompanionBuilder = CurrencyItemsCompanion
   Value<String> id,
   Value<String> name,
   Value<String> symbol,
+  Value<double> exchangeRate,
   Value<int> rowid,
 });
 
@@ -1208,6 +1293,9 @@ class $$CurrencyItemsTableFilterComposer
   ColumnFilters<String> get symbol => $composableBuilder(
       column: $table.symbol, builder: (column) => ColumnFilters(column));
 
+  ColumnFilters<double> get exchangeRate => $composableBuilder(
+      column: $table.exchangeRate, builder: (column) => ColumnFilters(column));
+
   Expression<bool> transactionItemsRefs(
       Expression<bool> Function($$TransactionItemsTableFilterComposer f) f) {
     final $$TransactionItemsTableFilterComposer composer = $composerBuilder(
@@ -1247,6 +1335,10 @@ class $$CurrencyItemsTableOrderingComposer
 
   ColumnOrderings<String> get symbol => $composableBuilder(
       column: $table.symbol, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<double> get exchangeRate => $composableBuilder(
+      column: $table.exchangeRate,
+      builder: (column) => ColumnOrderings(column));
 }
 
 class $$CurrencyItemsTableAnnotationComposer
@@ -1266,6 +1358,9 @@ class $$CurrencyItemsTableAnnotationComposer
 
   GeneratedColumn<String> get symbol =>
       $composableBuilder(column: $table.symbol, builder: (column) => column);
+
+  GeneratedColumn<double> get exchangeRate => $composableBuilder(
+      column: $table.exchangeRate, builder: (column) => column);
 
   Expression<T> transactionItemsRefs<T extends Object>(
       Expression<T> Function($$TransactionItemsTableAnnotationComposer a) f) {
@@ -1315,24 +1410,28 @@ class $$CurrencyItemsTableTableManager extends RootTableManager<
             Value<String> id = const Value.absent(),
             Value<String> name = const Value.absent(),
             Value<String> symbol = const Value.absent(),
+            Value<double> exchangeRate = const Value.absent(),
             Value<int> rowid = const Value.absent(),
           }) =>
               CurrencyItemsCompanion(
             id: id,
             name: name,
             symbol: symbol,
+            exchangeRate: exchangeRate,
             rowid: rowid,
           ),
           createCompanionCallback: ({
             Value<String> id = const Value.absent(),
             required String name,
             required String symbol,
+            required double exchangeRate,
             Value<int> rowid = const Value.absent(),
           }) =>
               CurrencyItemsCompanion.insert(
             id: id,
             name: name,
             symbol: symbol,
+            exchangeRate: exchangeRate,
             rowid: rowid,
           ),
           withReferenceMapper: (p0) => p0
@@ -1385,6 +1484,7 @@ typedef $$TransactionItemsTableCreateCompanionBuilder
     = TransactionItemsCompanion Function({
   Value<String> id,
   required double amount,
+  required double amountInCZK,
   required DateTime date,
   required String note,
   required bool isOutcome,
@@ -1396,6 +1496,7 @@ typedef $$TransactionItemsTableUpdateCompanionBuilder
     = TransactionItemsCompanion Function({
   Value<String> id,
   Value<double> amount,
+  Value<double> amountInCZK,
   Value<DateTime> date,
   Value<String> note,
   Value<bool> isOutcome,
@@ -1413,8 +1514,7 @@ final class $$TransactionItemsTableReferences extends BaseReferences<
       db.categoryItems.createAlias($_aliasNameGenerator(
           db.transactionItems.category, db.categoryItems.id));
 
-  $$CategoryItemsTableProcessedTableManager? get category {
-    if ($_item.category == null) return null;
+  $$CategoryItemsTableProcessedTableManager get category {
     final manager = $$CategoryItemsTableTableManager($_db, $_db.categoryItems)
         .filter((f) => f.id($_item.category!));
     final item = $_typedResult.readTableOrNull(_categoryTable($_db));
@@ -1427,8 +1527,7 @@ final class $$TransactionItemsTableReferences extends BaseReferences<
       db.currencyItems.createAlias($_aliasNameGenerator(
           db.transactionItems.currency, db.currencyItems.id));
 
-  $$CurrencyItemsTableProcessedTableManager? get currency {
-    if ($_item.currency == null) return null;
+  $$CurrencyItemsTableProcessedTableManager get currency {
     final manager = $$CurrencyItemsTableTableManager($_db, $_db.currencyItems)
         .filter((f) => f.id($_item.currency!));
     final item = $_typedResult.readTableOrNull(_currencyTable($_db));
@@ -1452,6 +1551,9 @@ class $$TransactionItemsTableFilterComposer
 
   ColumnFilters<double> get amount => $composableBuilder(
       column: $table.amount, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<double> get amountInCZK => $composableBuilder(
+      column: $table.amountInCZK, builder: (column) => ColumnFilters(column));
 
   ColumnFilters<DateTime> get date => $composableBuilder(
       column: $table.date, builder: (column) => ColumnFilters(column));
@@ -1518,6 +1620,9 @@ class $$TransactionItemsTableOrderingComposer
   ColumnOrderings<double> get amount => $composableBuilder(
       column: $table.amount, builder: (column) => ColumnOrderings(column));
 
+  ColumnOrderings<double> get amountInCZK => $composableBuilder(
+      column: $table.amountInCZK, builder: (column) => ColumnOrderings(column));
+
   ColumnOrderings<DateTime> get date => $composableBuilder(
       column: $table.date, builder: (column) => ColumnOrderings(column));
 
@@ -1582,6 +1687,9 @@ class $$TransactionItemsTableAnnotationComposer
 
   GeneratedColumn<double> get amount =>
       $composableBuilder(column: $table.amount, builder: (column) => column);
+
+  GeneratedColumn<double> get amountInCZK => $composableBuilder(
+      column: $table.amountInCZK, builder: (column) => column);
 
   GeneratedColumn<DateTime> get date =>
       $composableBuilder(column: $table.date, builder: (column) => column);
@@ -1659,6 +1767,7 @@ class $$TransactionItemsTableTableManager extends RootTableManager<
           updateCompanionCallback: ({
             Value<String> id = const Value.absent(),
             Value<double> amount = const Value.absent(),
+            Value<double> amountInCZK = const Value.absent(),
             Value<DateTime> date = const Value.absent(),
             Value<String> note = const Value.absent(),
             Value<bool> isOutcome = const Value.absent(),
@@ -1669,6 +1778,7 @@ class $$TransactionItemsTableTableManager extends RootTableManager<
               TransactionItemsCompanion(
             id: id,
             amount: amount,
+            amountInCZK: amountInCZK,
             date: date,
             note: note,
             isOutcome: isOutcome,
@@ -1679,6 +1789,7 @@ class $$TransactionItemsTableTableManager extends RootTableManager<
           createCompanionCallback: ({
             Value<String> id = const Value.absent(),
             required double amount,
+            required double amountInCZK,
             required DateTime date,
             required String note,
             required bool isOutcome,
@@ -1689,6 +1800,7 @@ class $$TransactionItemsTableTableManager extends RootTableManager<
               TransactionItemsCompanion.insert(
             id: id,
             amount: amount,
+            amountInCZK: amountInCZK,
             date: date,
             note: note,
             isOutcome: isOutcome,

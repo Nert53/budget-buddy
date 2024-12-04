@@ -1,3 +1,4 @@
+import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
@@ -167,11 +168,16 @@ class AddWindow extends StatelessWidget {
                   flex: 2,
                   child: DropdownMenu(
                       label: const Text('Category'),
-                      leadingIcon: viewModel.selectedCategory.name == 'General'
-                          ? null
-                          : Icon(Icons.category_outlined),
-                      textStyle:
-                          TextStyle(color: viewModel.selectedCategory.color),
+                      leadingIcon: viewModel.selectedCategory == null
+                          ? Icon(Icons.category_outlined)
+                          : Icon(
+                              viewModel.selectedCategory!.icon,
+                              color: viewModel.selectedCategory!.color,
+                            ),
+                      textStyle: TextStyle(
+                          color: viewModel.selectedCategory == null
+                              ? Theme.of(context).colorScheme.onSurface
+                              : viewModel.selectedCategory!.color),
                       inputDecorationTheme: const InputDecorationTheme(
                           border: OutlineInputBorder(
                               borderRadius:
@@ -182,24 +188,21 @@ class AddWindow extends StatelessWidget {
                                   borderRadius:
                                       BorderRadius.all(Radius.circular(16))))),
                       expandedInsets: EdgeInsets.zero,
-                      initialSelection: viewModel.categories.isEmpty
-                          ? 'General'
-                          : viewModel.selectedCategory.name,
                       onSelected: (Object? newValue) {
                         viewModel.changeCurrentCategory(newValue as String);
                       },
                       dropdownMenuEntries:
                           viewModel.categories.map<DropdownMenuEntry<String>>(
-                        (TransactionCategory c) {
+                        (TransactionCategory cat) {
                           return DropdownMenuEntry<String>(
-                              value: c.id,
-                              label: c.name,
+                              value: cat.id,
+                              label: cat.name,
                               style: ButtonStyle(
                                   foregroundColor:
-                                      WidgetStateProperty.all(c.color)),
+                                      WidgetStateProperty.all(cat.color)),
                               trailingIcon: Icon(
-                                c.icon,
-                                color: c.color,
+                                cat.icon,
+                                color: cat.color,
                               ));
                         },
                       ).toList()),
@@ -217,9 +220,6 @@ class AddWindow extends StatelessWidget {
                       onSelected: (Object? newValue) {
                         viewModel.changeCurrentCurrency(newValue as String);
                       },
-                      initialSelection: viewModel.currencies.isEmpty
-                          ? 'CZK'
-                          : viewModel.currencies.first.symbol,
                       dropdownMenuEntries: viewModel.currencies
                           .map<DropdownMenuEntry<String>>((Currency cur) {
                         return DropdownMenuEntry<String>(
@@ -303,12 +303,24 @@ class AddWindow extends StatelessWidget {
                     foregroundColor: Theme.of(context).colorScheme.onPrimary,
                   ),
                   onPressed: () {
-                    if (viewModel.amountController.text.isEmpty) {
-                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                          behavior: SnackBarBehavior.floating,
-                          content: Text('Amount is required!')));
+                    if (viewModel.amountController.text.isEmpty ||
+                        viewModel.selectedCategory == null ||
+                        viewModel.selectedCurrency == null) {
+                      Flushbar(
+                        icon: Icon(Icons.error_outline,
+                            color: Theme.of(context).colorScheme.surface),
+                        message:
+                            "Amount, category and currency can't be empty. Please enter a valid values.",
+                        shouldIconPulse: false,
+                        messageColor: Theme.of(context).colorScheme.surface,
+                        backgroundColor: Theme.of(context).colorScheme.error,
+                        borderRadius: BorderRadius.circular(16),
+                        margin: const EdgeInsets.all(12),
+                        duration: Duration(seconds: 4),
+                      ).show(context);
                       return;
                     }
+
                     viewModel.saveTransaction();
                     viewModel.clearFields();
                     Navigator.pop(context);

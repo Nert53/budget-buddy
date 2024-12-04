@@ -34,6 +34,9 @@ class SettingsScreen extends StatelessWidget {
             child: ExpansionTile(
               leading: Icon(Icons.color_lens_outlined),
               title: Text('Color Theme'),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12.0),
+              ),
               children: [
                 ListTile(
                   leading: Container(
@@ -99,6 +102,19 @@ class SettingsScreen extends StatelessWidget {
               ),
               onTap: () {
                 context.go('/database');
+              },
+            ),
+          ),
+          Card(
+            child: ListTile(
+              leading: Icon(
+                Icons.delete_forever_outlined,
+                color: Colors.orange,
+              ),
+              title: Text('Delete All Transactions',
+                  style: TextStyle(color: Colors.orange)),
+              onTap: () {
+                
               },
             ),
           ),

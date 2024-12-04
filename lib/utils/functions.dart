@@ -12,6 +12,12 @@ convertIconNameToIcon(String iconName) {
       return Icons.celebration_outlined;
     case 'health':
       return Icons.health_and_safety_outlined;
+    case 'home':
+      return Icons.cottage_outlined;
+    case 'work':
+      return Icons.work_outline;
+    case 'handshake':
+      return Icons.handshake_outlined;
     default:
       return Icons.attach_money;
   }

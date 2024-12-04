@@ -98,7 +98,7 @@ class TransactionScreen extends StatelessWidget {
         else if (model.transactions.isEmpty)
           const Expanded(
             child: Center(
-              child: Text('No transactions found'),
+              child: Text('No transactions found in this month.'),
             ),
           )
         else
