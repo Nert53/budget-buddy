@@ -29,7 +29,7 @@ class TransactionViewModel extends ChangeNotifier {
     notifyListeners();
 
     //! Only for testing purposes (to see the animation)
-    await Future.delayed(const Duration(milliseconds: 500));
+    await Future.delayed(const Duration(milliseconds: 200));
 
     setDateValues();
     getTransactions();

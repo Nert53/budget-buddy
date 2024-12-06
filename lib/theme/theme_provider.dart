@@ -1,15 +1,13 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:personal_finance/theme/theme.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ThemeProvider with ChangeNotifier {
-  ThemeData _themeData = mainThemeMode;
-  ThemeData get themeData => _themeData;
-  final _currentBrightness =
-      SchedulerBinding.instance.platformDispatcher.platformBrightness;
-  bool _isSystemColorMode = false;
-  bool get isSystemColorMode => _isSystemColorMode;
+  ThemeData themeData = mainThemeMode;
+  final brightness = PlatformDispatcher.instance.platformBrightness;
+  int _themeColorNum = 0;
+  int get themeColorNum => _themeColorNum;
 
   ThemeProvider() {
     loadTheme();
@@ -17,27 +15,12 @@ class ThemeProvider with ChangeNotifier {
 
   void loadTheme() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    _isSystemColorMode = prefs.getBool('isSystemColorMode') ?? false;
+    _themeColorNum = prefs.getInt('themeColor') ?? 0;
 
-    if (_isSystemColorMode) {
-      themeData = _currentBrightness == Brightness.dark
-          ? secondThemeMode
-          : mainThemeMode;
-      return;
-    }
-
-    bool isDark = prefs.getBool('isDarkMode') ?? false;
-    themeData = isDark ? secondThemeMode : mainThemeMode;
+    setColor(_themeColorNum);
   }
 
-  set themeData(ThemeData themeData) {
-    _themeData = themeData;
-    SharedPreferences.getInstance().then((prefs) {
-      prefs.setBool('isDarMode', themeData == secondThemeMode);
-    });
-    notifyListeners();
-  }
-
+  /*
   void setDarkMode(bool value) {
     themeData = value ? secondThemeMode : mainThemeMode;
     SharedPreferences.getInstance().then((prefs) {
@@ -49,11 +32,9 @@ class ThemeProvider with ChangeNotifier {
   bool isDarkMode() {
     return themeData == secondThemeMode;
   }
+  */
 
   void setColor(int value) {
-    int currentPrimaryValue = _themeData.colorScheme.primary.value;
-    int mainPrimaryValue = mainThemeMode.colorScheme.primary.value;
-
     Color color1 = Colors.green;
     Color color2 = Colors.blue;
     Color color3 = Colors.red;
@@ -80,13 +61,9 @@ class ThemeProvider with ChangeNotifier {
       scaffoldBackgroundColor: const Color.fromARGB(255, 224, 224, 224),
     );
 
-    if (currentPrimaryValue == mainPrimaryValue) {
-      themeData = newThemeData;
-    } else {
-      themeData = newThemeData;
-    }
+    themeData = newThemeData;
     SharedPreferences.getInstance().then((prefs) {
-      prefs.setBool('isDarkMode', themeData == secondThemeMode);
+      prefs.setInt('themeColor', value);
     });
     notifyListeners();
   }

@@ -15,6 +15,7 @@ class DashboardScreen extends StatelessWidget {
     bool wideScreen = screenWidth > mediumScreenWidth;
     double contentWidth =
         screenWidth - (wideScreen ? (navigationRailWidth + 32) : 32);
+    final ScrollController scrollController = ScrollController();
 
     final model = context.watch<DashboardViewmodel>();
 
@@ -243,6 +244,7 @@ class DashboardScreen extends StatelessWidget {
                 SizedBox(height: 16.0),
                 Expanded(
                   child: Scrollbar(
+                    controller: scrollController,
                     thumbVisibility: true,
                     child: ListView.separated(
                         separatorBuilder: (BuildContext context, int index) =>
