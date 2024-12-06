@@ -12,6 +12,7 @@ import 'package:personal_finance/view_model/add_transaction_viewmodel.dart';
 import 'package:personal_finance/view_model/dashboard_viewmodel.dart';
 import 'package:personal_finance/view_model/edit_transaction_viewmodel.dart';
 import 'package:personal_finance/view_model/graph_viewmodel.dart';
+import 'package:personal_finance/view_model/settings_viewmodel.dart';
 import 'package:personal_finance/view_model/transaction_viewmodel.dart';
 import 'package:provider/provider.dart';
 
@@ -36,6 +37,7 @@ void main() {
     ChangeNotifierProvider<GraphViewModel>(
       create: (context) => GraphViewModel(context.read<AppDatabase>()),
     ),
+    ChangeNotifierProvider<SettingsViewmodel>(create: (context) => SettingsViewmodel(context.read<AppDatabase>())),
   ], child: const PersonalFinanceApp()));
 }
 

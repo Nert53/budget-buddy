@@ -33,8 +33,17 @@ class SpendingDetailExtension extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Today spent'),
-                Expanded(child: Center(child: Text(todaySpent.toString()))),
+                Text(
+                  'Today spent',
+                ),
+                Expanded(
+                    child: Center(
+                  child: Text('$todaySpent CZK',
+                      style: TextStyle(
+                          color: Theme.of(context).colorScheme.onSurface,
+                          fontSize: 24.0,
+                          fontWeight: FontWeight.bold)),
+                )),
               ],
             ),
           ),

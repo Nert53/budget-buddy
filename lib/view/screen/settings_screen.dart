@@ -24,10 +24,29 @@ class SettingsScreen extends StatelessWidget {
             ),
           ),
           Card(
-            child: ListTile(
+            child: ExpansionTile(
               leading: Icon(Icons.currency_exchange_outlined),
               title: Text('Currency settings'),
-              onTap: () {},
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12.0),
+              ),
+              children: [
+                ListTile(
+                  leading: Icon(Icons.euro_outlined),
+                  title: Text('CZK'),
+                  onTap: () {},
+                ),
+                ListTile(
+                  leading: Icon(Icons.euro_outlined),
+                  title: Text('EUR'),
+                  onTap: () {},
+                ),
+                ListTile(
+                  leading: Icon(Icons.euro_outlined),
+                  title: Text('USD'),
+                  onTap: () {},
+                ),
+              ],
             ),
           ),
           Card(
@@ -113,9 +132,7 @@ class SettingsScreen extends StatelessWidget {
               ),
               title: Text('Delete All Transactions',
                   style: TextStyle(color: Colors.orange)),
-              onTap: () {
-                
-              },
+              onTap: () {},
             ),
           ),
           Card(
