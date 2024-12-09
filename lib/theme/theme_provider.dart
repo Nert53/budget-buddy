@@ -1,13 +1,14 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:personal_finance/theme/theme.dart';
+import 'package:personal_finance/utils/functions.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ThemeProvider with ChangeNotifier {
   ThemeData themeData = mainThemeMode;
   final brightness = PlatformDispatcher.instance.platformBrightness;
-  int _themeColorNum = 0;
-  int get themeColorNum => _themeColorNum;
+  String _themeColorName = 'teal';
+  String get themeColorName => _themeColorName;
 
   ThemeProvider() {
     loadTheme();
@@ -15,9 +16,10 @@ class ThemeProvider with ChangeNotifier {
 
   void loadTheme() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    _themeColorNum = prefs.getInt('themeColor') ?? 0;
+    _themeColorName = prefs.getString('themeColorName') ?? 'teal';
 
-    setColor(_themeColorNum);
+    Color themeColor = convertThemeColorNameToColor(themeColorName);
+    setColor(themeColor, themeColorName);
   }
 
   /*
@@ -34,26 +36,7 @@ class ThemeProvider with ChangeNotifier {
   }
   */
 
-  void setColor(int value) {
-    Color color1 = Colors.green;
-    Color color2 = Colors.blue;
-    Color color3 = Colors.red;
-    Color newColor = color1;
-
-    switch (value) {
-      case 0:
-        newColor = color1;
-        break;
-      case 1:
-        newColor = color2;
-        break;
-      case 2:
-        newColor = color3;
-        break;
-      default:
-        newColor = color1;
-    }
-
+  void setColor(Color newColor, String newColorName) {
     ThemeData newThemeData = ThemeData(
       colorScheme: ColorScheme.fromSeed(seedColor: newColor),
       useMaterial3: true,
@@ -63,7 +46,7 @@ class ThemeProvider with ChangeNotifier {
 
     themeData = newThemeData;
     SharedPreferences.getInstance().then((prefs) {
-      prefs.setInt('themeColor', value);
+      prefs.setString('themeColorName', newColorName);
     });
     notifyListeners();
   }

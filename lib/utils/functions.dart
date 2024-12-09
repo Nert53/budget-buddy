@@ -58,6 +58,27 @@ convertColorCodeToColor(int colorCode) {
   return Color(colorCode);
 }
 
+convertThemeColorNameToColor(String themeColorName) {
+  switch (themeColorName) {
+    case 'teal':
+      return Colors.teal;
+    case 'blue':
+      return Colors.blue;
+    case 'green':
+      return Colors.green;
+    case 'orange':
+      return Colors.orangeAccent;
+    case 'purple':
+      return Colors.purple;
+    case 'red':
+      return Colors.red;
+    case 'yellow':
+      return Colors.yellow;
+    default:
+      return Colors.teal;
+  }
+}
+
 extension DateTimeExtension on DateTime {
   int daysInMonth() {
     switch (month) {

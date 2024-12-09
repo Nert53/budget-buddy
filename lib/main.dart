@@ -4,12 +4,14 @@ import 'package:go_router/go_router.dart';
 import 'package:personal_finance/data/database.dart';
 import 'package:personal_finance/theme/theme_provider.dart';
 import 'package:personal_finance/view/screen/dashboard_screen.dart';
+import 'package:personal_finance/view/screen/edit_categories_screen.dart';
 import 'package:personal_finance/view/screen/graph_screen.dart';
 import 'package:personal_finance/view/screen/screen_container.dart';
 import 'package:personal_finance/view/screen/settings_screen.dart';
 import 'package:personal_finance/view/screen/transaction_screen.dart';
 import 'package:personal_finance/view_model/add_transaction_viewmodel.dart';
 import 'package:personal_finance/view_model/dashboard_viewmodel.dart';
+import 'package:personal_finance/view_model/edit_categories_viewmodel.dart';
 import 'package:personal_finance/view_model/edit_transaction_viewmodel.dart';
 import 'package:personal_finance/view_model/graph_viewmodel.dart';
 import 'package:personal_finance/view_model/settings_viewmodel.dart';
@@ -37,7 +39,9 @@ void main() {
     ChangeNotifierProvider<GraphViewModel>(
       create: (context) => GraphViewModel(context.read<AppDatabase>()),
     ),
-    ChangeNotifierProvider<SettingsViewmodel>(create: (context) => SettingsViewmodel(context.read<AppDatabase>())),
+    ChangeNotifierProvider<SettingsViewmodel>(
+        create: (context) => SettingsViewmodel(context.read<AppDatabase>())),
+    ChangeNotifierProvider(create: (context) => EditCategoriesViewmodel()),
   ], child: const PersonalFinanceApp()));
 }
 
@@ -85,6 +89,11 @@ final _router = GoRouter(
               ),
             ]),
           ]),
+      GoRoute(
+          path: '/edit-categories',
+          builder: (BuildContext context, GoRouterState state) {
+            return EditCategoriesScreen();
+          }),
       GoRoute(
         path: '/database',
         builder: (BuildContext context, GoRouterState state) {
