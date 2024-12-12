@@ -121,8 +121,22 @@ class DashboardViewmodel extends ChangeNotifier {
     notifyListeners();
   }
 
-  getPredictedSpentThisMonth() {
-    predictedSpentThisMonth = 5000;
+  getPredictedSpentThisMonth() async {
+    final q = _db.select(_db.transactionItems)
+      ..where((transaction) =>
+          transaction.date.month.equals(currentMonth) &
+          transaction.date.year.equals(currentYear) &
+          transaction.isOutcome.equals(true));
+
+    double tillNowSpent = 0;
+    await q.get().then((value) {
+      tillNowSpent = value.fold(
+        0,
+        (previousValue, element) => previousValue + element.amountInCZK,
+      );
+    });
+
+    predictedSpentThisMonth = tillNowSpent / currrentDate.day * 30;
     notifyListeners();
   }
 
@@ -142,6 +156,7 @@ class DashboardViewmodel extends ChangeNotifier {
             _db.categoryItems.id.equalsExp(_db.transactionItems.category))
       ])
       ..where(_db.transactionItems.isOutcome.equals(true))
+      ..where(_db.transactionItems.date.month.equals(currentMonth))
       ..groupBy([
         _db.transactionItems.category,
         _db.categoryItems.name,

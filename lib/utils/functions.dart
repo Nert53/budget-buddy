@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-convertIconNameToIcon(String iconName) {
+IconData convertIconNameToIcon(String iconName) {
   switch (iconName.toLowerCase()) {
     case 'grocery':
       return Icons.local_grocery_store_outlined;
@@ -23,7 +23,7 @@ convertIconNameToIcon(String iconName) {
   }
 }
 
-convertMontNumToMonthName(int monthNum) {
+String convertMontNumToMonthName(int monthNum) {
   switch (monthNum) {
     case 1:
       return 'January';
@@ -54,11 +54,11 @@ convertMontNumToMonthName(int monthNum) {
   }
 }
 
-convertColorCodeToColor(int colorCode) {
+Color convertColorCodeToColor(int colorCode) {
   return Color(colorCode);
 }
 
-convertThemeColorNameToColor(String themeColorName) {
+Color convertThemeColorNameToColor(String themeColorName) {
   switch (themeColorName) {
     case 'teal':
       return Colors.teal;

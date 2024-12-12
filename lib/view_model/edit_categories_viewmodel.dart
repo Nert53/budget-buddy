@@ -1,21 +1,33 @@
 import 'package:flutter/material.dart';
+import 'package:personal_finance/data/database.dart';
 
 class EditCategoriesViewmodel extends ChangeNotifier {
+  final AppDatabase _db;
   bool isLoading = true;
-  List<String> categories = [];
+  List<CategoryItem> categories = [];
 
-  EditCategoriesViewmodel() {
-    loadCategories();
+  EditCategoriesViewmodel(this._db) {
+    _db.watchAllTransactions().listen((event) {
+      getAllData();
+    });
+    isLoading = false;
+    notifyListeners();
   }
 
-  void loadCategories() {
+  getAllData() {
     isLoading = true;
+    loadCategories();
+    isLoading = false;
     notifyListeners();
-    // Simulate a network request
-    Future.delayed(Duration(seconds: 1), () {
-      categories = ['Food', 'Transport', 'Entertainment', 'Utilities'];
-      isLoading = false;
-      notifyListeners();
-    });
+  }
+
+  void loadCategories() async {
+    categories = await _db.select(_db.categoryItems).get();
+  }
+
+  void deleteCategory(CategoryItem category) async {
+    // will also delete all transactions with this category
+    await _db.deleteCategoryHard(category);
+    getAllData();
   }
 }

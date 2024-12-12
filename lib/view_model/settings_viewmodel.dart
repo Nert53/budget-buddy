@@ -17,13 +17,9 @@ class SettingsViewmodel extends ChangeNotifier {
 
   getAllData() {
     getCurrencies();
-
-    isLoading = false;
-    notifyListeners();
   }
 
   getCurrencies() async {
     currencies = await _db.select(_db.currencyItems).get();
   }
-
 }

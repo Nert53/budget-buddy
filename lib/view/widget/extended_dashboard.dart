@@ -38,7 +38,7 @@ class SpendingDetailExtension extends StatelessWidget {
                 ),
                 Expanded(
                     child: Center(
-                  child: Text('$todaySpent CZK',
+                  child: Text('${todaySpent.toStringAsFixed(2)} CZK',
                       style: TextStyle(
                           color: Theme.of(context).colorScheme.onSurface,
                           fontSize: 24.0,
@@ -70,7 +70,12 @@ class SpendingDetailExtension extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text('Predicted month spent'),
-                Expanded(child: Center(child: Text(predictedSpent.toString()))),
+                Expanded(
+                    child: Center(
+                        child: Text(
+                  '${predictedSpent.toStringAsFixed(0)} CZK',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24.0),
+                ))),
               ],
             ),
           ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:personal_finance/constants.dart';
+import 'package:personal_finance/model/transaction.dart';
 import 'package:personal_finance/view/widget/extended_dashboard.dart';
 import 'package:personal_finance/view_model/dashboard_viewmodel.dart';
 import 'package:provider/provider.dart';
@@ -123,7 +124,8 @@ class DashboardScreen extends StatelessWidget {
                                 child: ListView.builder(
                               itemCount: model.categoryPieData.length,
                               itemBuilder: (BuildContext context, int index) {
-                                var category = model.categoryPieData[index];
+                                PieChartSectionData category =
+                                    model.categoryPieData[index];
                                 return Row(
                                   children: [
                                     Container(
@@ -181,7 +183,8 @@ class DashboardScreen extends StatelessWidget {
                     ),
                     Expanded(
                         child: Center(
-                            child: Text('${model.accountBalance} CZK',
+                            child: Text(
+                                '${model.accountBalance.toStringAsFixed(2)} CZK',
                                 style: TextStyle(
                                     color:
                                         Theme.of(context).colorScheme.onSurface,
@@ -216,7 +219,8 @@ class DashboardScreen extends StatelessWidget {
                             fontSize: 16.0, fontWeight: FontWeight.normal)),
                     Expanded(
                         child: Center(
-                            child: Text('${model.thisMonthSpent} CZK',
+                            child: Text(
+                                '${model.thisMonthSpent.toStringAsFixed(2)} CZK',
                                 style: TextStyle(
                                     color:
                                         Theme.of(context).colorScheme.onSurface,
@@ -258,66 +262,92 @@ class DashboardScreen extends StatelessWidget {
                         TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold)),
                 SizedBox(height: 16.0),
                 Expanded(
-                  child: ListView.separated(
-                      separatorBuilder: (BuildContext context, int index) =>
-                          const Divider(),
-                      itemCount: model.lastTransactions.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        var currentTransaction = model.lastTransactions[index];
-                        DateFormat dateFormat = DateFormat('dd.MM.yyyy');
-                        DateFormat timeFormat = DateFormat('HH:mm');
+                  child: model.lastTransactions.isEmpty
+                      ? Center(
+                          child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            CircleAvatar(
+                              radius: 32,
+                              backgroundColor: Theme.of(context)
+                                  .colorScheme
+                                  .surfaceContainer,
+                              child: Icon(
+                                Icons.sentiment_dissatisfied,
+                                size: 24,
+                              ),
+                            ),
+                            SizedBox(height: 16.0),
+                            Text('No transaction to display.'),
+                          ],
+                        ))
+                      : ListView.separated(
+                          separatorBuilder: (BuildContext context, int index) =>
+                              const Divider(),
+                          itemCount: model.lastTransactions.length,
+                          itemBuilder: (BuildContext context, int index) {
+                            Transaction currentTransaction =
+                                model.lastTransactions[index];
+                            DateFormat dateFormat = DateFormat('dd.MM.yyyy');
+                            DateFormat timeFormat = DateFormat('HH:mm');
 
-                        return ListTile(
-                          key: ValueKey(currentTransaction.id.toString()),
-                          title: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Column(
+                            return ListTile(
+                              key: ValueKey(currentTransaction.id.toString()),
+                              title: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(currentTransaction.note,
-                                      style: const TextStyle(
-                                          fontSize: 16.0,
-                                          fontWeight: FontWeight.bold)),
-                                  Text(
-                                    '${dateFormat.format(currentTransaction.date)} | ${timeFormat.format(currentTransaction.date)}',
-                                    style: TextStyle(
-                                        fontSize: 12, color: Colors.grey[700]),
-                                  )
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(currentTransaction.note,
+                                          style: const TextStyle(
+                                              fontSize: 16.0,
+                                              fontWeight: FontWeight.bold)),
+                                      Text(
+                                        '${dateFormat.format(currentTransaction.date)} | ${timeFormat.format(currentTransaction.date)}',
+                                        style: TextStyle(
+                                            fontSize: 12,
+                                            color: Colors.grey[700]),
+                                      )
+                                    ],
+                                  ),
                                 ],
                               ),
-                            ],
-                          ),
-                          leading: Icon(currentTransaction.categoryIcon,
-                              color: currentTransaction.categoryColor),
-                          trailing: Column(
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Row(mainAxisSize: MainAxisSize.min, children: [
-                                currentTransaction.isOutcome
-                                    ? const Icon(
-                                        Icons.arrow_drop_down,
-                                        color: Colors.red,
-                                      )
-                                    : Icon(
-                                        Icons.arrow_drop_up,
-                                        color: Colors.green[700],
-                                      ),
-                                Text(
-                                  '${currentTransaction.amount} ${currentTransaction.currencyName}',
-                                  style: TextStyle(
-                                      color: currentTransaction.isOutcome
-                                          ? Colors.red
-                                          : Colors.green[700],
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                              ]),
-                            ],
-                          ),
-                        );
-                      }),
+                              leading: Icon(currentTransaction.categoryIcon,
+                                  color: currentTransaction.categoryColor),
+                              trailing: Column(
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        currentTransaction.isOutcome
+                                            ? const Icon(
+                                                Icons.arrow_drop_down,
+                                                color: Colors.red,
+                                              )
+                                            : Icon(
+                                                Icons.arrow_drop_up,
+                                                color: Colors.green[700],
+                                              ),
+                                        Text(
+                                          '${currentTransaction.amount} ${currentTransaction.currencyName}',
+                                          style: TextStyle(
+                                              color:
+                                                  currentTransaction.isOutcome
+                                                      ? Colors.red
+                                                      : Colors.green[700],
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                      ]),
+                                ],
+                              ),
+                            );
+                          }),
                 ),
               ],
             ),

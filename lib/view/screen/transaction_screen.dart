@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:personal_finance/model/transaction.dart';
 import 'package:personal_finance/view/widget/edit_transaction.dart';
 import 'package:personal_finance/view/widget/transaction_skeleton.dart';
 import 'package:personal_finance/view_model/transaction_viewmodel.dart';
@@ -13,7 +14,7 @@ class TransactionScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var model = context.watch<TransactionViewModel>();
+    TransactionViewModel viewModel = context.watch<TransactionViewModel>();
 
     DateFormat dateFormat = DateFormat('dd.MM.yyyy');
     DateFormat timeFormat = DateFormat('HH:mm');
@@ -36,17 +37,17 @@ class TransactionScreen extends StatelessWidget {
                     Icons.arrow_back_ios_new_outlined,
                   ),
                   onPressed: () {
-                    model.previousMonth();
+                    viewModel.previousMonth();
                   },
                 ),
               ),
               Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  model.currentDisplayedNewer
+                  viewModel.currentDisplayedNewer
                       ? IconButton.filled(
                           onPressed: () => {
-                                model.upToDate(),
+                                viewModel.upToDate(),
                               },
                           icon: Icon(Icons.keyboard_double_arrow_left_outlined))
                       : const SizedBox(width: 16),
@@ -54,9 +55,9 @@ class TransactionScreen extends StatelessWidget {
                     width: 8,
                   ),
                   GestureDetector(
-                    onTap: model.getAllData,
+                    onTap: viewModel.getAllData,
                     child: Text(
-                      '${model.currentMonthString} ${model.currentDate.year}',
+                      '${viewModel.currentMonthString} ${viewModel.currentDate.year}',
                       style: const TextStyle(
                         fontSize: 22,
                       ),
@@ -65,10 +66,10 @@ class TransactionScreen extends StatelessWidget {
                   SizedBox(
                     width: 8,
                   ),
-                  model.currentDisplayedOlder
+                  viewModel.currentDisplayedOlder
                       ? IconButton.filled(
                           onPressed: () => {
-                                model.upToDate(),
+                                viewModel.upToDate(),
                               },
                           icon:
                               Icon(Icons.keyboard_double_arrow_right_outlined))
@@ -86,16 +87,16 @@ class TransactionScreen extends StatelessWidget {
                     Icons.arrow_forward_ios_outlined,
                   ),
                   onPressed: () {
-                    model.nextMonth();
+                    viewModel.nextMonth();
                   },
                 ),
               ),
             ],
           ),
         ),
-        if (model.isLoading)
+        if (viewModel.isLoading)
           Expanded(child: Skeletonizer(child: TransactionSkeleton()))
-        else if (model.transactions.isEmpty)
+        else if (viewModel.transactions.isEmpty)
           const Expanded(
             child: Center(
               child: Text('No transactions found in this month.'),
@@ -106,9 +107,9 @@ class TransactionScreen extends StatelessWidget {
             child: Padding(
               padding: const EdgeInsets.only(left: 8.0, right: 8.0),
               child: ListView.builder(
-                itemCount: model.transactions.length,
+                itemCount: viewModel.transactions.length,
                 itemBuilder: (BuildContext context, int index) {
-                  var currentTransaction = model.transactions[index];
+                  Transaction currentTransaction = viewModel.transactions[index];
 
                   return GestureDetector(
                     onTap: () {
@@ -160,7 +161,7 @@ class TransactionScreen extends StatelessWidget {
                                     color: Colors.green[700],
                                   ),
                             Text(
-                              '${model.transactions[index].amount} ${model.transactions[index].currencyName}',
+                              '${viewModel.transactions[index].amount} ${viewModel.transactions[index].currencyName}',
                               style: TextStyle(
                                   color: currentTransaction.isOutcome
                                       ? Colors.red

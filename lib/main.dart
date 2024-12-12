@@ -41,7 +41,7 @@ void main() {
     ),
     ChangeNotifierProvider<SettingsViewmodel>(
         create: (context) => SettingsViewmodel(context.read<AppDatabase>())),
-    ChangeNotifierProvider(create: (context) => EditCategoriesViewmodel()),
+    ChangeNotifierProvider(create: (context) => EditCategoriesViewmodel(context.read<AppDatabase>())),
   ], child: const PersonalFinanceApp()));
 }
 

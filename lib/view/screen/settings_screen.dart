@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:personal_finance/data/database.dart';
 import 'package:personal_finance/theme/seed_colors.dart';
 import 'package:personal_finance/theme/theme_provider.dart';
 import 'package:personal_finance/view_model/settings_viewmodel.dart';
@@ -10,7 +11,7 @@ class SettingsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var viewModel = context.watch<SettingsViewmodel>();
+    SettingsViewmodel viewModel = context.watch<SettingsViewmodel>();
 
     if (viewModel.isLoading) {
       return Center(
@@ -40,14 +41,16 @@ class SettingsScreen extends StatelessWidget {
                 leading: Icon(Icons.currency_exchange_outlined),
                 title: Text('Currency settings'),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12.0),
+                  borderRadius: BorderRadius.circular(
+                      12.0), // makes clikable are rounded as same card
                 ),
                 children: [
                   ListView.builder(
                       shrinkWrap: true,
                       itemCount: viewModel.currencies.length,
                       itemBuilder: (BuildContext context, int index) {
-                        var currentCurrency = viewModel.currencies[index];
+                        CurrencyItem currentCurrency =
+                            viewModel.currencies[index];
 
                         return ListTile(
                           title: Text(
@@ -94,13 +97,6 @@ class SettingsScreen extends StatelessWidget {
                     },
                   ),
                 ],
-              ),
-            ),
-            Card(
-              child: ListTile(
-                leading: Icon(Icons.bug_report_outlined),
-                title: Text('Insert Testing Data'),
-                onTap: () {},
               ),
             ),
             Card(

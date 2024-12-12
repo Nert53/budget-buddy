@@ -63,6 +63,28 @@ class AppDatabase extends _$AppDatabase {
     });
   }
 
+  getAllCategories() {
+    return select(categoryItems).get();
+  }
+
+  Future<bool> deleteCategoryHard(CategoryItem category) async {
+    // delete all transactions with this category and the category
+    try {
+      transaction(() async {
+        await (delete(transactionItems)
+              ..where((tbl) => tbl.category.equals(category.id)))
+            .go();
+
+        await (delete(categoryItems)
+              ..where((tbl) => tbl.id.equals(category.id)))
+            .go();
+      });
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
   Future<Null> initialCategoriesInsert() async {
     return await transaction(() async {
       await into(categoryItems).insert(
