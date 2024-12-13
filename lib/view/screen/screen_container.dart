@@ -51,7 +51,11 @@ class ScreenContainer extends StatelessWidget {
                       showDialog<void>(
                         context: context,
                         builder: (BuildContext context) {
-                          return const AddWindow();
+                          if (screenWidth < mediumScreenWidth) {
+                            return const AddWindowFullScreen();
+                          } else {
+                            return const AddWindow();
+                          }
                         },
                       );
                     },
@@ -97,7 +101,11 @@ class ScreenContainer extends StatelessWidget {
                 showDialog<void>(
                   context: context,
                   builder: (BuildContext context) {
-                    return const AddWindow();
+                    if (screenWidth < mediumScreenWidth) {
+                      return const AddWindowFullScreen();
+                    } else {
+                      return const AddWindow();
+                    }
                   },
                 );
               },
