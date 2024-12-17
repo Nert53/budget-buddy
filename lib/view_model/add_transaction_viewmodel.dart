@@ -2,7 +2,7 @@ import 'package:drift/drift.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:personal_finance/data/database.dart';
-import 'package:personal_finance/model/category.dart';
+import 'package:personal_finance/model/transaction_category.dart';
 import 'package:personal_finance/model/currency.dart';
 import 'package:personal_finance/utils/functions.dart';
 
@@ -41,9 +41,10 @@ class AddTransactionViewModel extends ChangeNotifier {
     Value<double> amountToSave = amountController.text.isNotEmpty
         ? Value(double.parse(amountController.text))
         : const Value(0.0);
-    Value<double> amountInCzkToSave = selectedCurrency!.symbol.toLowerCase() == 'czk'
-        ? amountToSave
-        : Value(amountToSave.value * selectedCurrency!.exchangeRate);
+    Value<double> amountInCzkToSave =
+        selectedCurrency!.symbol.toLowerCase() == 'czk'
+            ? amountToSave
+            : Value(amountToSave.value * selectedCurrency!.exchangeRate);
     Value<String> noteToSave = noteController.text.isNotEmpty
         ? Value(noteController.text)
         : const Value('');
@@ -147,6 +148,7 @@ class AddTransactionViewModel extends ChangeNotifier {
     timeController.text = DateFormat('HH:mm').format(DateTime.now());
     selectedCategory = null;
     selectedCurrency = null;
+    selectedType = TransactionType.outcome;
     notifyListeners();
   }
 }

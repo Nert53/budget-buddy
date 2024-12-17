@@ -1,5 +1,6 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:personal_finance/theme/theme.dart';
 import 'package:personal_finance/utils/functions.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -40,7 +41,7 @@ class ThemeProvider with ChangeNotifier {
     ThemeData newThemeData = ThemeData(
       colorScheme: ColorScheme.fromSeed(seedColor: newColor),
       useMaterial3: true,
-      fontFamily: 'Poppins',
+      textTheme: GoogleFonts.poppinsTextTheme(),
       scaffoldBackgroundColor: const Color.fromARGB(255, 224, 224, 224),
     );
 

@@ -9,6 +9,8 @@ class TransactionViewModel extends ChangeNotifier {
   final AppDatabase _db;
 
   List<Transaction> transactions = [];
+  List<CategoryItem> categories = [];
+  List<CurrencyItem> currencies = [];
 
   DateTime currentDate = DateTime.now();
   String currentMonthString = convertMontNumToMonthName(DateTime.now().month);
@@ -33,6 +35,8 @@ class TransactionViewModel extends ChangeNotifier {
 
     setDateValues();
     getTransactions();
+    getAllCategories();
+    getAllCurrencies();
     isLoading = false;
   }
 
@@ -118,8 +122,10 @@ class TransactionViewModel extends ChangeNotifier {
 
       var selectedCurrency = _db.select(_db.currencyItems)
         ..where((c) => c.id.equals(t.currency));
-      var currencyName =
+      var currencySymbol =
           await selectedCurrency.getSingle().then((value) => value.symbol);
+      var currencyName =
+          await selectedCurrency.getSingle().then((value) => value.name);
 
       transactions.add(Transaction(
         id: t.id.toString(),
@@ -133,11 +139,42 @@ class TransactionViewModel extends ChangeNotifier {
         categoryColor: Color(category.color),
         currencyId: t.currency,
         currencyName: currencyName,
+        currencySymbol: currencySymbol,
       ));
     }
 
     transactions.sort((a, b) => b.date.compareTo(a.date));
     isLoading = false;
+
+    notifyListeners();
+  }
+
+  updateTransaction(
+      String transactionId,
+      double amount,
+      String note,
+      bool isOutcome,
+      DateTime date,
+      String categoryId,
+      String currencyId) async {
+    double exchangeRate = await (_db.select(_db.currencyItems)
+          ..where((c) => c.id.equals(currencyId)))
+        .getSingle()
+        .then((value) => value.exchangeRate);
+
+    await (_db.update(_db.transactionItems)
+          ..where((t) => t.id.equals(transactionId)))
+        .write(
+      TransactionItemsCompanion(
+        amount: Value(amount),
+        note: Value(note),
+        isOutcome: Value(isOutcome),
+        date: Value(date),
+        category: Value(categoryId),
+        currency: Value(currencyId),
+        amountInCZK: Value(exchangeRate * amount),
+      ),
+    );
 
     notifyListeners();
   }
@@ -155,7 +192,7 @@ class TransactionViewModel extends ChangeNotifier {
   }
 
   getAllCategories() async {
-    return await _db.select(_db.categoryItems).get();
+    categories = await _db.select(_db.categoryItems).get();
   }
 
   getCategoryById(String id) async {
@@ -164,7 +201,7 @@ class TransactionViewModel extends ChangeNotifier {
   }
 
   getAllCurrencies() async {
-    return await _db.select(_db.currencyItems).get();
+    currencies = await _db.select(_db.currencyItems).get();
   }
 
   getCurrencyById(String id) async {

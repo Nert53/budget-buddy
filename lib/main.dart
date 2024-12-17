@@ -8,14 +8,13 @@ import 'package:personal_finance/view/screen/edit_categories_screen.dart';
 import 'package:personal_finance/view/screen/graph_screen.dart';
 import 'package:personal_finance/view/screen/screen_container.dart';
 import 'package:personal_finance/view/screen/settings_screen.dart';
-import 'package:personal_finance/view/screen/transaction_screen.dart';
+import 'package:personal_finance/view/screen/transactions_screen.dart';
 import 'package:personal_finance/view_model/add_transaction_viewmodel.dart';
 import 'package:personal_finance/view_model/dashboard_viewmodel.dart';
 import 'package:personal_finance/view_model/edit_categories_viewmodel.dart';
-import 'package:personal_finance/view_model/edit_transaction_viewmodel.dart';
 import 'package:personal_finance/view_model/graph_viewmodel.dart';
 import 'package:personal_finance/view_model/settings_viewmodel.dart';
-import 'package:personal_finance/view_model/transaction_viewmodel.dart';
+import 'package:personal_finance/view_model/transactions_viewmodel.dart';
 import 'package:provider/provider.dart';
 
 void main() {
@@ -32,16 +31,14 @@ void main() {
     ChangeNotifierProvider<AddTransactionViewModel>(
       create: (context) => AddTransactionViewModel(context.read<AppDatabase>()),
     ),
-    ChangeNotifierProvider<EditTransactionViewmodel>(
-      create: (context) =>
-          EditTransactionViewmodel(context.read<AppDatabase>()),
-    ),
     ChangeNotifierProvider<GraphViewModel>(
       create: (context) => GraphViewModel(context.read<AppDatabase>()),
     ),
     ChangeNotifierProvider<SettingsViewmodel>(
         create: (context) => SettingsViewmodel(context.read<AppDatabase>())),
-    ChangeNotifierProvider(create: (context) => EditCategoriesViewmodel(context.read<AppDatabase>())),
+    ChangeNotifierProvider(
+        create: (context) =>
+            EditCategoriesViewmodel(context.read<AppDatabase>())),
   ], child: const PersonalFinanceApp()));
 }
 
@@ -60,7 +57,7 @@ final _router = GoRouter(
               GoRoute(
                 path: '/dashboard',
                 builder: (BuildContext context, GoRouterState state) {
-                  return const DashboardScreen();
+                  return DashboardScreen();
                 },
               ),
             ]),
@@ -119,6 +116,7 @@ class PersonalFinanceApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
+      debugShowCheckedModeBanner: false,
       title: 'Budget Buddy',
       theme: Provider.of<ThemeProvider>(context).themeData,
       routerConfig: _router,

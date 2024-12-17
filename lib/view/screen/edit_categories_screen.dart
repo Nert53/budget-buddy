@@ -31,9 +31,7 @@ class EditCategoriesScreen extends StatelessWidget {
           leading: IconButton(
             icon: Icon(Icons.arrow_back),
             onPressed: () {
-              context.go(
-                '/settings',
-              );
+              context.pop();
             },
           ),
           backgroundColor: Theme.of(context).colorScheme.primary,
@@ -71,11 +69,11 @@ class EditCategoriesScreen extends StatelessWidget {
                     constraints: BoxConstraints(maxWidth: largeScreenWidth),
                     child: GridView.builder(
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: rowCardCount,
-                        crossAxisSpacing: 12,
-                        mainAxisSpacing: 12,
-                        childAspectRatio: 2,
-                      ),
+                          crossAxisCount: rowCardCount,
+                          crossAxisSpacing: 12,
+                          mainAxisSpacing: 12,
+                          childAspectRatio:
+                              screenWidth < mediumScreenWidth ? 2.5 : 2),
                       itemCount: viewModel.categories.length +
                           1, // makes place for "new category" button
                       itemBuilder: (BuildContext context, int index) {

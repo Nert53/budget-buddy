@@ -14,6 +14,7 @@ class Transaction {
   Color categoryColor;
   String currencyId;
   String currencyName;
+  String currencySymbol;
 
   Transaction({
     required this.id,
@@ -27,5 +28,6 @@ class Transaction {
     required this.categoryColor,
     required this.currencyId,
     required this.currencyName,
+    required this.currencySymbol,
   });
 }

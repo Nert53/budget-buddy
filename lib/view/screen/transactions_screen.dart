@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:personal_finance/model/transaction.dart';
-import 'package:personal_finance/view/widget/edit_transaction.dart';
-import 'package:personal_finance/view/widget/transaction_skeleton.dart';
-import 'package:personal_finance/view_model/transaction_viewmodel.dart';
+import 'package:personal_finance/view/widget/edit_transaction_dialog.dart';
+import 'package:personal_finance/view/widget/transaction_list_skeleton.dart';
+import 'package:personal_finance/view_model/transactions_viewmodel.dart';
 import 'package:provider/provider.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
@@ -109,7 +109,8 @@ class TransactionScreen extends StatelessWidget {
               child: ListView.builder(
                 itemCount: viewModel.transactions.length,
                 itemBuilder: (BuildContext context, int index) {
-                  Transaction currentTransaction = viewModel.transactions[index];
+                  Transaction currentTransaction =
+                      viewModel.transactions[index];
 
                   return GestureDetector(
                     onTap: () {
@@ -122,8 +123,15 @@ class TransactionScreen extends StatelessWidget {
                             note: currentTransaction.note,
                             date: currentTransaction.date,
                             isOutcome: currentTransaction.isOutcome,
+                            categories: viewModel.categories,
+                            currencies: viewModel.currencies,
                             categoryId: currentTransaction.categoryId,
+                            categoryName: currentTransaction.categoryName,
+                            categoryColor: currentTransaction.categoryColor,
+                            categoryIcon: currentTransaction.categoryIcon,
                             currencyId: currentTransaction.currencyId,
+                            currencyName: currentTransaction.currencyName,
+                            currencySymbol: currentTransaction.currencySymbol,
                           );
                         },
                       );
@@ -134,10 +142,17 @@ class TransactionScreen extends StatelessWidget {
                           title: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                currentTransaction.note,
-                                style: TextStyle(fontWeight: FontWeight.bold),
-                              ),
+                              currentTransaction.note.isEmpty
+                                  ? Text(
+                                      '---',
+                                      style: const TextStyle(
+                                          fontSize: 15, color: Colors.grey),
+                                    )
+                                  : Text(
+                                      currentTransaction.note,
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold),
+                                    ),
                               Text(
                                 '${dateFormat.format(currentTransaction.date)} | ${timeFormat.format(currentTransaction.date)}',
                                 style: TextStyle(
@@ -161,7 +176,7 @@ class TransactionScreen extends StatelessWidget {
                                     color: Colors.green[700],
                                   ),
                             Text(
-                              '${viewModel.transactions[index].amount} ${viewModel.transactions[index].currencyName}',
+                              '${viewModel.transactions[index].amount} ${viewModel.transactions[index].currencySymbol}',
                               style: TextStyle(
                                   color: currentTransaction.isOutcome
                                       ? Colors.red

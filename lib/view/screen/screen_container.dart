@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:personal_finance/constants.dart';
 import 'package:personal_finance/view/nav_destinations.dart';
-import 'package:personal_finance/view/widget/add_window.dart';
+import 'package:personal_finance/view/widget/add_transaction_dialog.dart';
 
 class ScreenContainer extends StatelessWidget {
   const ScreenContainer({super.key, required this.navigationShell});
@@ -15,6 +15,9 @@ class ScreenContainer extends StatelessWidget {
     bool mediumScreen =
         screenWidth > mediumScreenWidth && screenWidth < largeScreenWidth;
     bool largeScreen = screenWidth > largeScreenWidth;
+
+    bool graphsActive = navigationShell.currentIndex == 2;
+    bool settingsActive = navigationShell.currentIndex == 3;
 
     return Scaffold(
       appBar: AppBar(
@@ -92,25 +95,26 @@ class ScreenContainer extends StatelessWidget {
                 navigationShell.goBranch(index);
               },
             ),
-      floatingActionButton: mediumScreen || largeScreen
-          ? null
-          : FloatingActionButton(
-              backgroundColor: Theme.of(context).colorScheme.primary,
-              foregroundColor: Theme.of(context).colorScheme.onPrimary,
-              onPressed: () {
-                showDialog<void>(
-                  context: context,
-                  builder: (BuildContext context) {
-                    if (screenWidth < mediumScreenWidth) {
-                      return const AddWindowFullScreen();
-                    } else {
-                      return const AddWindow();
-                    }
+      floatingActionButton:
+          mediumScreen || largeScreen || settingsActive || graphsActive
+              ? null
+              : FloatingActionButton(
+                  backgroundColor: Theme.of(context).colorScheme.primary,
+                  foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                  onPressed: () {
+                    showDialog<void>(
+                      context: context,
+                      builder: (BuildContext context) {
+                        if (screenWidth < mediumScreenWidth) {
+                          return const AddWindowFullScreen();
+                        } else {
+                          return const AddWindow();
+                        }
+                      },
+                    );
                   },
-                );
-              },
-              child: const Icon(Icons.add),
-            ),
+                  child: const Icon(Icons.add),
+                ),
     );
   }
 }

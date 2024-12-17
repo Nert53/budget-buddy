@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:personal_finance/constants.dart';
+import 'package:personal_finance/model/category_spent_graph.dart';
 import 'package:personal_finance/model/transaction.dart';
 import 'package:personal_finance/view/widget/extended_dashboard.dart';
 import 'package:personal_finance/view_model/dashboard_viewmodel.dart';
 import 'package:provider/provider.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:syncfusion_flutter_charts/charts.dart';
 
 class DashboardScreen extends StatelessWidget {
   const DashboardScreen({super.key});
@@ -64,31 +66,58 @@ class DashboardScreen extends StatelessWidget {
                               fontSize: 16.0, fontWeight: FontWeight.bold)),
                       const SizedBox(height: 8.0),
                       Expanded(
-                          child: model.categoryPieData.isEmpty
-                              ? Center(
-                                  child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    CircleAvatar(
-                                      radius: 32,
-                                      backgroundColor: Theme.of(context)
-                                          .colorScheme
-                                          .surfaceContainer,
-                                      child: Icon(
-                                        Icons.sentiment_dissatisfied,
-                                        size: 32,
-                                      ),
+                        child: model.categoryGraphData.isEmpty
+                            ? Center(
+                                child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  CircleAvatar(
+                                    radius: 32,
+                                    backgroundColor: Theme.of(context)
+                                        .colorScheme
+                                        .surfaceContainer,
+                                    child: Icon(
+                                      Icons.sentiment_dissatisfied,
+                                      size: 32,
                                     ),
-                                    SizedBox(height: 16.0),
-                                    Text('No data to display in graph.'),
-                                  ],
-                                ))
-                              : PieChart(
-                                  PieChartData(
-                                      sectionsSpace: 4,
-                                      sections: model.categoryPieData),
-                                  // Optional
-                                ))
+                                  ),
+                                  SizedBox(height: 16.0),
+                                  Text('No data to display in graph.'),
+                                ],
+                              ))
+                            : SfCircularChart(
+                                margin: const EdgeInsets.all(0),
+                                legend: Legend(
+                                  isVisible: screenWidth > mediumScreenWidth
+                                      ? true
+                                      : false,
+                                  alignment: ChartAlignment.center,
+                                  position: LegendPosition.left,
+                                  overflowMode: LegendItemOverflowMode.scroll,
+                                ),
+                                series: <CircularSeries>[
+                                    // Renders doughnut chart
+                                    DoughnutSeries<CategorySpentGraph, String>(
+                                        dataSource: model.categoryGraphData,
+                                        pointColorMapper:
+                                            (CategorySpentGraph data, _) =>
+                                                data.color,
+                                        dataLabelMapper:
+                                            (CategorySpentGraph data, index) =>
+                                                data.name,
+                                        dataLabelSettings: DataLabelSettings(
+                                            labelPosition:
+                                                ChartDataLabelPosition.inside,
+                                            useSeriesColor: true,
+                                            isVisible: true),
+                                        xValueMapper:
+                                            (CategorySpentGraph data, _) =>
+                                                data.name,
+                                        yValueMapper:
+                                            (CategorySpentGraph data, _) =>
+                                                data.amount)
+                                  ]),
+                      )
                     ],
                   ),
                 ),
@@ -184,7 +213,7 @@ class DashboardScreen extends StatelessWidget {
                     Expanded(
                         child: Center(
                             child: Text(
-                                '${model.accountBalance.toStringAsFixed(2)} CZK',
+                                '${NumberFormat('#,###').format(model.accountBalance).replaceAll(',', ' ')} CZK',
                                 style: TextStyle(
                                     color:
                                         Theme.of(context).colorScheme.onSurface,
@@ -220,7 +249,7 @@ class DashboardScreen extends StatelessWidget {
                     Expanded(
                         child: Center(
                             child: Text(
-                                '${model.thisMonthSpent.toStringAsFixed(2)} CZK',
+                                '${model.thisMonthSpent.toStringAsFixed(0)} CZK',
                                 style: TextStyle(
                                     color:
                                         Theme.of(context).colorScheme.onSurface,
@@ -273,8 +302,8 @@ class DashboardScreen extends StatelessWidget {
                                   .colorScheme
                                   .surfaceContainer,
                               child: Icon(
-                                Icons.sentiment_dissatisfied,
-                                size: 24,
+                                Icons.playlist_remove,
+                                size: 30,
                               ),
                             ),
                             SizedBox(height: 16.0),
@@ -300,10 +329,17 @@ class DashboardScreen extends StatelessWidget {
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      Text(currentTransaction.note,
-                                          style: const TextStyle(
-                                              fontSize: 16.0,
-                                              fontWeight: FontWeight.bold)),
+                                      currentTransaction.note.isEmpty
+                                          ? Text(
+                                              '---',
+                                              style: const TextStyle(
+                                                  fontSize: 15,
+                                                  color: Colors.grey),
+                                            )
+                                          : Text(currentTransaction.note,
+                                              style: const TextStyle(
+                                                  fontSize: 16.0,
+                                                  fontWeight: FontWeight.bold)),
                                       Text(
                                         '${dateFormat.format(currentTransaction.date)} | ${timeFormat.format(currentTransaction.date)}',
                                         style: TextStyle(
@@ -334,7 +370,7 @@ class DashboardScreen extends StatelessWidget {
                                                 color: Colors.green[700],
                                               ),
                                         Text(
-                                          '${currentTransaction.amount} ${currentTransaction.currencyName}',
+                                          '${currentTransaction.amount} ${currentTransaction.currencySymbol}',
                                           style: TextStyle(
                                               color:
                                                   currentTransaction.isOutcome

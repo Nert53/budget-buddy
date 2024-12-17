@@ -32,7 +32,7 @@ class SettingsScreen extends StatelessWidget {
                 trailing: Icon(Icons.keyboard_arrow_right),
                 title: Text('Categories editor'),
                 onTap: () {
-                  context.go('/edit-categories');
+                  context.push('/edit-categories');
                 },
               ),
             ),

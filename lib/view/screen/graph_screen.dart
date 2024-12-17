@@ -7,40 +7,49 @@ class GraphScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final viewModel = context.watch<GraphViewModel>();
+    return Consumer<GraphViewModel>(builder: (context, viewModel, child) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 12.0),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Flexible(
+              child: ListView.builder(
+                itemCount: 2 + 1,
+                itemBuilder: (context, index) {
+                  if (index == 2) {
+                    return Column(
+                      children: [
+                        SizedBox(height: 16.0),
+                        FilledButton.tonalIcon(
+                          onPressed: () {},
+                          label: Text('Add new graph'),
+                          icon: Icon(Icons.add),
+                        ),
+                      ],
+                    );
+                  }
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 12.0),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          Flexible(
-            child: ListView(
-              children: [
-                SizedBox(height: 12.0),
-                Card(
-                  elevation: 4,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(15.0),
-                  ),
-                  child: SizedBox(
-                    height: 200,
-                    child: Center(
-                      child: Text('Graph'),
+                  return Card(
+                    elevation: 4,
+                    margin: EdgeInsets.symmetric(vertical: 6.0),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15.0),
                     ),
-                  ),
-                ),
-              ],
+                    child: SizedBox(
+                      height: 200,
+                      child: Center(
+                        child: Text('Graph'),
+                      ),
+                    ),
+                  );
+                },
+              ),
             ),
-          ),
-          FilledButton.tonalIcon(
-            onPressed: () => {},
-            label: Text('Add new graph'),
-            icon: Icon(Icons.add),
-          ),
-        ],
-      ),
-    );
+          ],
+        ),
+      );
+    });
   }
 }

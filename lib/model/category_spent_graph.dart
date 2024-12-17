@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
-class CategorySpending {
+class CategorySpentGraph {
   final String id;
   final String name;
   final Color color;
   final IconData icon;
   final double amount;
 
-  CategorySpending({
+  CategorySpentGraph({
     required this.name,
     required this.color,
     required this.icon,

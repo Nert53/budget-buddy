@@ -10,5 +10,7 @@ const navigationRailWidth = 111.0;
 // UI customisation
 const tealColor = Color(0x007fb9ae);
 
+const maxNoteLength = 1000;
+
 // database
 const databaseName = 'personal_finance_db';
