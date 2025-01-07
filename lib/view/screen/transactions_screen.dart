@@ -59,7 +59,7 @@ class TransactionScreen extends StatelessWidget {
                     child: Text(
                       '${viewModel.currentMonthString} ${viewModel.currentDate.year}',
                       style: const TextStyle(
-                        fontSize: 22,
+                        fontSize: 20,
                       ),
                     ),
                   ),

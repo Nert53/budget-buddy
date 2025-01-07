@@ -19,7 +19,7 @@ class CategoryItems extends Table {
   TextColumn get id => text().clientDefault(() => ShortUid.create())();
   TextColumn get name => text().withLength(min: 1, max: 32)();
   IntColumn get color => integer()();
-  TextColumn get icon => text().withLength(min: 1, max: 32)();
+  IntColumn get icon => integer()();
 }
 
 class CurrencyItems extends Table {
@@ -85,62 +85,74 @@ class AppDatabase extends _$AppDatabase {
     }
   }
 
+  Future<bool> updateCategory(CategoryItem category) async {
+    try {
+      await (update(categoryItems)
+        ..where((tbl) => tbl.id.equals(category.id)))
+          .write(category);
+
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
   Future<Null> initialCategoriesInsert() async {
     return await transaction(() async {
       await into(categoryItems).insert(
         CategoryItemsCompanion.insert(
           name: 'Employment',
-          color: 0xFF0014a1, // dark blue
-          icon: 'work',
+          color: 4282339765, // dark blue
+          icon: 983750,
         ),
       );
       await into(categoryItems).insert(
         CategoryItemsCompanion.insert(
           name: 'Freelance Job',
-          color: 0xFF795548, // brown
-          icon: 'handshake',
+          color: 4286141768, // brown
+          icon: 984740,
         ),
       );
       await into(categoryItems).insert(
         CategoryItemsCompanion.insert(
           name: 'Home',
-          color: 0xFFf18117, // orange
-          icon: 'home',
+          color: 4294940672, // orange
+          icon: 61703,
         ),
       );
       await into(categoryItems).insert(
         CategoryItemsCompanion.insert(
           name: 'Groceries',
-          color: 0xFF558B2F, // dark green
-          icon: 'grocery',
+          color: 4283215696, // dark green
+          icon: 61821,
         ),
       );
       await into(categoryItems).insert(
         CategoryItemsCompanion.insert(
           name: 'Dining',
-          color: 0xFF546E7A, // blue gray
-          icon: 'restaurant',
+          color: 4288585374, // blue gray
+          icon: 62230,
         ),
       );
       await into(categoryItems).insert(
         CategoryItemsCompanion.insert(
           name: 'Transport',
-          color: 0xFFFFCA28, // amber
-          icon: 'directions_car',
+          color: 4294951175, // amber
+          icon: 61382,
         ),
       );
       await into(categoryItems).insert(
         CategoryItemsCompanion.insert(
           name: 'Entertainment',
-          color: 0xFF9C27B0, // purple
-          icon: 'celebration',
+          color: 4293467747, // purple
+          icon: 62606,
         ),
       );
       await into(categoryItems).insert(
         CategoryItemsCompanion.insert(
           name: 'Health',
-          color: 0xFFD50000, // dark red
-          icon: 'health',
+          color: 4294198070, // dark red
+          icon: 61887,
         ),
       );
     });

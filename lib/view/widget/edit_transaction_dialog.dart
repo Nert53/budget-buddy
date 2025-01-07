@@ -1,4 +1,3 @@
-import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
@@ -87,7 +86,7 @@ class _EditTransactionState extends State<EditTransaction> {
       selectedCategoryId = newCategory.id;
       widget.categoryId = newCategory.id;
       widget.categoryName = newCategory.name;
-      widget.categoryIcon = convertIconNameToIcon(newCategory.icon);
+      widget.categoryIcon = convertIconCodePointToIcon(newCategory.icon);
       widget.categoryColor = convertColorCodeToColor(newCategory.color);
     });
   }
@@ -303,7 +302,7 @@ class _EditTransactionState extends State<EditTransaction> {
                                     style: ButtonStyle(
                                         foregroundColor: WidgetStateProperty.all(
                                             convertColorCodeToColor(category.color))),
-                                    trailingIcon: Icon(convertIconNameToIcon(category.icon), color: convertColorCodeToColor(category.color))))
+                                    trailingIcon: Icon(convertIconCodePointToIcon(category.icon), color: convertColorCodeToColor(category.color))))
                                 .toList()),
                         SizedBox(
                           height: 16,

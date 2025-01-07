@@ -1,26 +1,11 @@
 import 'package:flutter/material.dart';
 
-IconData convertIconNameToIcon(String iconName) {
-  switch (iconName.toLowerCase()) {
-    case 'grocery':
-      return Icons.local_grocery_store_outlined;
-    case 'restaurant':
-      return Icons.restaurant;
-    case 'directions_car':
-      return Icons.directions_car_outlined;
-    case 'celebration':
-      return Icons.celebration_outlined;
-    case 'health':
-      return Icons.health_and_safety_outlined;
-    case 'home':
-      return Icons.cottage_outlined;
-    case 'work':
-      return Icons.work_outline;
-    case 'handshake':
-      return Icons.handshake_outlined;
-    default:
-      return Icons.attach_money;
-  }
+IconData convertIconCodePointToIcon(int iconCodePoint) {
+  return IconData(iconCodePoint, fontFamily: 'MaterialIcons');
+}
+
+int convertIconToIconCodePoint(IconData icon) {
+  return icon.codePoint;
 }
 
 String convertMontNumToMonthName(int monthNum) {
@@ -78,6 +63,8 @@ Color convertThemeColorNameToColor(String themeColorName) {
       return Colors.teal;
   }
 }
+
+
 
 extension DateTimeExtension on DateTime {
   int daysInMonth() {

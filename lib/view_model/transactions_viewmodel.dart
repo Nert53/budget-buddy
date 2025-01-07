@@ -22,6 +22,14 @@ class TransactionViewModel extends ChangeNotifier {
       getAllData();
     });
 
+    _db.watchAllCategories().listen((event) {
+      getAllCategories();
+    });
+
+    _db.watchAllCurrencies().listen((event) {
+      getAllCurrencies();
+    });
+
     setDateValues();
     notifyListeners();
   }
@@ -135,7 +143,7 @@ class TransactionViewModel extends ChangeNotifier {
         isOutcome: t.isOutcome,
         categoryId: t.category,
         categoryName: category.name,
-        categoryIcon: convertIconNameToIcon(category.icon),
+        categoryIcon: convertIconCodePointToIcon(category.icon),
         categoryColor: Color(category.color),
         currencyId: t.currency,
         currencyName: currencyName,

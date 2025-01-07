@@ -89,7 +89,7 @@ class AddTransactionViewModel extends ChangeNotifier {
           id: category.id,
           name: category.name,
           color: Color(category.color),
-          icon: convertIconNameToIcon(category.icon)));
+          icon: convertIconCodePointToIcon(category.icon)));
     }
 
     notifyListeners();
@@ -103,7 +103,7 @@ class AddTransactionViewModel extends ChangeNotifier {
               id: c.id,
               name: c.name,
               color: Color(c.color),
-              icon: convertIconNameToIcon(c.icon));
+              icon: convertIconCodePointToIcon(c.icon));
           notifyListeners();
           return;
         }

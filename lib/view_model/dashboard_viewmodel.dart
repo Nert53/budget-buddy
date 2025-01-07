@@ -81,7 +81,7 @@ class DashboardViewmodel extends ChangeNotifier {
         isOutcome: t.isOutcome,
         categoryId: t.category,
         categoryName: category.name,
-        categoryIcon: convertIconNameToIcon(category.icon),
+        categoryIcon: convertIconCodePointToIcon(category.icon),
         categoryColor: Color(category.color),
         currencyId: t.currency,
         currencyName: currencyName,
@@ -176,8 +176,8 @@ class DashboardViewmodel extends ChangeNotifier {
         name: row.read<String>(_db.categoryItems.name) ?? '',
         color: convertColorCodeToColor(
             row.read<int>(_db.categoryItems.color) ?? 0),
-        icon: convertIconNameToIcon(
-            row.read<String>(_db.categoryItems.icon) ?? ''),
+        icon: convertIconCodePointToIcon(
+            row.read<int>(_db.categoryItems.icon) ?? 0),
         amount: row.read<double>(_db.transactionItems.amountInCZK.sum()) ?? 0,
       );
     }).toList();

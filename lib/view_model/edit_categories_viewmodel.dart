@@ -30,4 +30,9 @@ class EditCategoriesViewmodel extends ChangeNotifier {
     await _db.deleteCategoryHard(category);
     getAllData();
   }
+
+  void updateCategory(CategoryItem category) async {
+    bool succesUpdate = await _db.updateCategory(category);
+    getAllData();
+  }
 }

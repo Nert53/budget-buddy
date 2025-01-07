@@ -82,7 +82,8 @@ class EditCategoriesScreen extends StatelessWidget {
                             onPressed: () {
                               // Do something
                             },
-                            label: Text('New category'),
+                            label: Text('New category',
+                                style: TextStyle(fontSize: 18)),
                             icon: Icon(Icons.add),
                             style: ElevatedButton.styleFrom(
                               shape: RoundedRectangleBorder(
@@ -107,7 +108,7 @@ class EditCategoriesScreen extends StatelessWidget {
                                   Row(
                                     children: [
                                       Icon(
-                                        convertIconNameToIcon(
+                                        convertIconCodePointToIcon(
                                             viewModel.categories[index].icon),
                                       ),
                                       SizedBox(width: 8.0),
@@ -139,69 +140,22 @@ class EditCategoriesScreen extends StatelessWidget {
                                       showDialog(
                                           context: context,
                                           builder: (BuildContext context) {
-                                            return AlertDialog(
-                                              title: Text('Edit category'),
-                                              content: screenWidth <
-                                                      mediumScreenWidth
-                                                  ? EditCategoryDialogSmall(
-                                                      categoryName: viewModel
+                                            return EditCategoryDialogSmall(
+                                              viewModel: viewModel,
+                                              categoryId: viewModel
+                                                  .categories[index].id,
+                                              categoryName: viewModel
+                                                  .categories[index].name,
+                                              categoryColor:
+                                                  convertColorCodeToColor(
+                                                      viewModel
                                                           .categories[index]
-                                                          .name,
-                                                      categoryColor:
-                                                          convertColorCodeToColor(
-                                                              viewModel
-                                                                  .categories[
-                                                                      index]
-                                                                  .color),
-                                                      categoryIcon:
-                                                          convertIconNameToIcon(
-                                                              viewModel
-                                                                  .categories[
-                                                                      index]
-                                                                  .icon),
-                                                    )
-                                                  : EditCategoryDialogLarge(
-                                                      categoryName: viewModel
+                                                          .color),
+                                              categoryIcon:
+                                                  convertIconCodePointToIcon(
+                                                      viewModel
                                                           .categories[index]
-                                                          .name,
-                                                      categoryColor:
-                                                          convertColorCodeToColor(
-                                                              viewModel
-                                                                  .categories[
-                                                                      index]
-                                                                  .color),
-                                                      categoryIcon:
-                                                          convertIconNameToIcon(
-                                                              viewModel
-                                                                  .categories[
-                                                                      index]
-                                                                  .icon),
-                                                    ),
-                                              actions: [
-                                                TextButton(
-                                                  onPressed: () {
-                                                    Navigator.of(context).pop();
-                                                  },
-                                                  child: Text(
-                                                    'Cancel',
-                                                    style: TextStyle(
-                                                        color: Theme.of(context)
-                                                            .colorScheme
-                                                            .secondary),
-                                                  ),
-                                                ),
-                                                TextButton(
-                                                  onPressed: () {
-                                                    Navigator.of(context).pop();
-                                                  },
-                                                  child: Text(
-                                                    'Save',
-                                                    style: TextStyle(
-                                                        fontWeight:
-                                                            FontWeight.bold),
-                                                  ),
-                                                ),
-                                              ],
+                                                          .icon),
                                             );
                                           });
                                     },
@@ -239,19 +193,28 @@ class EditCategoriesScreen extends StatelessWidget {
                                                   },
                                                   child: Text('Cancel'),
                                                 ),
-                                                TextButton(
+                                                FilledButton(
                                                   onPressed: () {
                                                     viewModel.deleteCategory(
                                                         viewModel
                                                             .categories[index]);
                                                     Navigator.of(context).pop();
                                                   },
+                                                  style: ButtonStyle(
+                                                    backgroundColor:
+                                                        WidgetStateProperty.all<
+                                                            Color>(
+                                                      Theme.of(context)
+                                                          .colorScheme
+                                                          .error,
+                                                    ),
+                                                  ),
                                                   child: Text(
                                                     'Delete',
                                                     style: TextStyle(
-                                                        color: Theme.of(context)
-                                                            .colorScheme
-                                                            .error),
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                    ),
                                                   ),
                                                 ),
                                               ],
@@ -263,28 +226,7 @@ class EditCategoriesScreen extends StatelessWidget {
                               )
                             ],
                           ),
-                        )
-                            /*
-                          ListTile(
-                            title: Text(viewModel.categories[index].name),
-                            leading: Icon(
-                              convertIconNameToIcon(
-                                  viewModel.categories[index].icon),
-                            ),
-                            trailing: Container(
-                              width: 30.0,
-                              height: 30.0,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: convertColorCodeToColor(
-                                    viewModel.categories[index].color),
-                              ),
-                            ),
-                            onTap: () {
-                              // Do something
-                            },
-                          ),*/
-                            );
+                        ));
                       },
                     ),
                   ),
