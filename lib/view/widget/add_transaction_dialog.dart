@@ -539,11 +539,10 @@ class AddWindow extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              OutlinedButton(
-                style: OutlinedButton.styleFrom(
-                    foregroundColor: Theme.of(context).colorScheme.error,
-                    side:
-                        BorderSide(color: Theme.of(context).colorScheme.error)),
+              TextButton(
+                style: TextButton.styleFrom(
+                  foregroundColor: Theme.of(context).colorScheme.error,
+                ),
                 onPressed: () =>
                     {Navigator.pop(context), viewModel.clearFields()},
                 child: const Text('Discard'),

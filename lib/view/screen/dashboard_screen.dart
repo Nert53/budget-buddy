@@ -150,9 +150,9 @@ class DashboardScreen extends StatelessWidget {
                             const SizedBox(height: 8.0),
                             Expanded(
                                 child: ListView.builder(
-                              itemCount: 3,
+                              itemCount: model.categoryGraphData.length,
                               itemBuilder: (BuildContext context, int index) {
-                                var category = 555;
+                                var category = model.categoryGraphData[index];
 
                                 return Row(
                                   children: [
@@ -160,12 +160,13 @@ class DashboardScreen extends StatelessWidget {
                                       width: 16.0,
                                       height: 16.0,
                                       decoration: BoxDecoration(
-                                          color: Color(0xFFE57373),
+                                          color: category.color,
                                           borderRadius:
                                               BorderRadius.circular(8.0)),
                                     ),
                                     const SizedBox(width: 6.0),
-                                    Text('${category.toStringAsFixed(0)} CZK',
+                                    Text(
+                                        '${category.amount.toStringAsFixed(0)} CZK',
                                         style: const TextStyle(
                                           fontSize: 16.0,
                                         )),

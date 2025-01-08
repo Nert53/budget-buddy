@@ -23,25 +23,18 @@ class GraphScreen extends StatelessWidget {
                     return Column(
                       children: [
                         SizedBox(height: 16.0),
-                        FilledButton.tonalIcon(
+                        FilledButton.icon(
                           onPressed: () {
-                            showDialog(context: context, builder: 
-                            (context) {
-                              return GraphSelectDialog(viewModel: viewModel);
-                            });
+                            showDialog(
+                                context: context,
+                                builder: (context) {
+                                  return GraphSelectDialog(
+                                      viewModel: viewModel);
+                                });
                           },
                           label: Text('Add new graph'),
                           icon: Icon(
                             Icons.add,
-                            color: Theme.of(context).colorScheme.onPrimary,
-                          ),
-                          style: ButtonStyle(
-                            backgroundColor: WidgetStateProperty.all(
-                              Theme.of(context).primaryColor,
-                            ),
-                            foregroundColor: WidgetStateProperty.all(
-                              Theme.of(context).colorScheme.onPrimary,
-                            ),
                           ),
                         ),
                       ],

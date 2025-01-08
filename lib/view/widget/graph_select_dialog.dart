@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:personal_finance/view_model/graph_viewmodel.dart';
+import 'dart:math';
 
 class GraphSelectDialog extends StatefulWidget {
   final GraphViewModel viewModel;
@@ -10,7 +11,6 @@ class GraphSelectDialog extends StatefulWidget {
 }
 
 class _GraphSelectDialogState extends State<GraphSelectDialog> {
-  List<bool> _selectedGraphs = List.generate(6, (index) => true);
 
   @override
   void initState() {
@@ -18,9 +18,8 @@ class _GraphSelectDialogState extends State<GraphSelectDialog> {
   }
 
   void setSelectedGraph(int index, bool value) {
-    widget.viewModel.allGraphs[index].selected = value;
     setState(() {
-      _selectedGraphs[index] = value;
+      widget.viewModel.allGraphs[index].selected = value;
     });
   }
 
@@ -43,7 +42,7 @@ class _GraphSelectDialogState extends State<GraphSelectDialog> {
         ),
       ],
       content: SizedBox(
-        width: double.maxFinite,
+        width: min(400, MediaQuery.of(context).size.width),
         child: ListView.builder(
             shrinkWrap: true,
             itemCount: widget.viewModel.allGraphs.length,
