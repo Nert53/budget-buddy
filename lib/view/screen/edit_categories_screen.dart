@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:personal_finance/constants.dart';
 import 'package:personal_finance/utils/functions.dart';
+import 'package:personal_finance/view/widget/add_category_dialog.dart';
 import 'package:personal_finance/view/widget/edit_category_dialog.dart';
 import 'package:personal_finance/view_model/edit_categories_viewmodel.dart';
 import 'package:provider/provider.dart';
@@ -80,7 +81,13 @@ class EditCategoriesScreen extends StatelessWidget {
                         if (index == viewModel.categories.length) {
                           return FilledButton.icon(
                             onPressed: () {
-                              // Do something
+                              showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return AddCategoryDialog(
+                                      viewModel: viewModel,
+                                    );
+                                  });
                             },
                             label: Text('New category',
                                 style: TextStyle(fontSize: 18)),

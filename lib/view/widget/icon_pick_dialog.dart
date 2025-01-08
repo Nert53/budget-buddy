@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:personal_finance/constants.dart';
+import 'package:personal_finance/utils/functions.dart';
 
 class IconPickDialog extends StatefulWidget {
-  const IconPickDialog({super.key});
+  final int iconCode;
+  const IconPickDialog({super.key, required this.iconCode});
 
   @override
   State<IconPickDialog> createState() => _IconPickDialogState();
@@ -15,14 +17,17 @@ class _IconPickDialogState extends State<IconPickDialog> {
   @override
   void initState() {
     super.initState();
-    selectedIcon = Icons.ac_unit;
-    selecteedIconIndex = 0;
+    selectedIcon = convertIconCodePointToIcon(widget.iconCode);
+    selecteedIconIndex = allCategoryIcons.indexOf(selectedIcon);
+    print(selectedIcon.codePoint);
+    print(selecteedIconIndex);
   }
 
   void changeSelectedIcon(IconData newIcon, int index) {
     setState(() {
       selectedIcon = newIcon;
       selecteedIconIndex = index;
+      print(selectedIcon.codePoint);
     });
   }
 

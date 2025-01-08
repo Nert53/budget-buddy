@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:personal_finance/constants.dart';
+import 'package:personal_finance/utils/functions.dart';
 
 class ColorPickDialog extends StatefulWidget {
-  const ColorPickDialog({super.key});
+  final int initialColor;
+  const ColorPickDialog({super.key, required this.initialColor});
 
   @override
   State<ColorPickDialog> createState() => _ColorPickDialogState();
@@ -15,7 +17,7 @@ class _ColorPickDialogState extends State<ColorPickDialog> {
   @override
   void initState() {
     super.initState();
-    selectedColor = Colors.red;
+    selectedColor = convertColorCodeToColor(widget.initialColor);
   }
 
   void changeSelectedColor(Color newColor) {
@@ -47,8 +49,6 @@ class _ColorPickDialogState extends State<ColorPickDialog> {
           pickerColor: selectedColor,
           availableColors: allCategoryColors,
           onColorChanged: (newColor) {
-            print(newColor.value);
-
             changeSelectedColor(newColor);
           },
         ),

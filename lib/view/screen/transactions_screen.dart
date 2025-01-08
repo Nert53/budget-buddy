@@ -97,9 +97,24 @@ class TransactionScreen extends StatelessWidget {
         if (viewModel.isLoading)
           Expanded(child: Skeletonizer(child: TransactionSkeleton()))
         else if (viewModel.transactions.isEmpty)
-          const Expanded(
+          Expanded(
             child: Center(
-              child: Text('No transactions found in this month.'),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  CircleAvatar(
+                    radius: 32,
+                    backgroundColor: Colors.grey[200],
+                    child: Icon(
+                      Icons.search_off,
+                      size: 36,
+                      color: Colors.grey,
+                    ),
+                  ),
+                  SizedBox(height: 16),
+                  Text('No transactions found in this month.'),
+                ],
+              ),
             ),
           )
         else

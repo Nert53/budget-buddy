@@ -67,6 +67,13 @@ class AppDatabase extends _$AppDatabase {
     return select(categoryItems).get();
   }
 
+  void insertCategory(String name, int colorCode, int iconCode) {
+    transaction(() async {
+      await into(categoryItems).insert(CategoryItem(
+          id: ShortUid.create(), name: name, color: colorCode, icon: iconCode));
+    });
+  }
+
   Future<bool> deleteCategoryHard(CategoryItem category) async {
     // delete all transactions with this category and the category
     try {
@@ -87,8 +94,7 @@ class AppDatabase extends _$AppDatabase {
 
   Future<bool> updateCategory(CategoryItem category) async {
     try {
-      await (update(categoryItems)
-        ..where((tbl) => tbl.id.equals(category.id)))
+      await (update(categoryItems)..where((tbl) => tbl.id.equals(category.id)))
           .write(category);
 
       return true;
@@ -124,7 +130,7 @@ class AppDatabase extends _$AppDatabase {
         CategoryItemsCompanion.insert(
           name: 'Groceries',
           color: 4283215696, // dark green
-          icon: 61821,
+          icon: 62335,
         ),
       );
       await into(categoryItems).insert(

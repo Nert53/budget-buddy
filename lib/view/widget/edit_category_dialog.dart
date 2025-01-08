@@ -107,7 +107,8 @@ class _EditCategoryDialogSmallState extends State<EditCategoryDialogSmall> {
                     var newCategoryIcon = await showDialog(
                         context: context,
                         builder: (BuildContext context) {
-                          return IconPickDialog();
+                          return IconPickDialog(
+                              iconCode: widget.categoryIcon.codePoint);
                         });
 
                     // navigator pop context on "discard" will return another type
@@ -130,11 +131,14 @@ class _EditCategoryDialogSmallState extends State<EditCategoryDialogSmall> {
                     var newCategoryColor = await showDialog(
                         context: context,
                         builder: (BuildContext context) {
-                          return ColorPickDialog();
+                          return ColorPickDialog(
+                            initialColor: widget.categoryColor.value,
+                          );
                         });
 
                     // navigator pop context on "discard" will return another type
-                    if (newCategoryColor.runtimeType == MaterialColor) {
+                    if (newCategoryColor.runtimeType == MaterialColor ||
+                        newCategoryColor.runtimeType == Color) {
                       changeSelectedCategoryColor(newCategoryColor);
                     }
                   },

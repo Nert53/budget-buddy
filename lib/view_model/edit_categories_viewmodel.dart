@@ -7,9 +7,10 @@ class EditCategoriesViewmodel extends ChangeNotifier {
   List<CategoryItem> categories = [];
 
   EditCategoriesViewmodel(this._db) {
-    _db.watchAllTransactions().listen((event) {
+    _db.watchAllCategories().listen((event) {
       getAllData();
     });
+
     isLoading = false;
     notifyListeners();
   }
@@ -23,6 +24,11 @@ class EditCategoriesViewmodel extends ChangeNotifier {
 
   void loadCategories() async {
     categories = await _db.select(_db.categoryItems).get();
+  }
+
+  void addCategory(String name, Color color, IconData icon) async {
+    _db.insertCategory(name, color.value, icon.codePoint);
+    getAllData();
   }
 
   void deleteCategory(CategoryItem category) async {
