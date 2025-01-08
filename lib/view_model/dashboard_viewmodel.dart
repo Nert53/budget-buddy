@@ -1,5 +1,4 @@
 import 'package:drift/drift.dart';
-import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:personal_finance/data/database.dart';
 import 'package:personal_finance/model/category_spent_graph.dart';
@@ -15,7 +14,6 @@ class DashboardViewmodel extends ChangeNotifier {
   double todaySpent = 0.0;
   double predictedSpentThisMonth = 0.0;
   List<Transaction> lastTransactions = [];
-  List<PieChartSectionData> categoryPieData = [];
   List<CategorySpentGraph> categoryGraphData = [];
 
   DateTime currrentDate = DateTime.now();

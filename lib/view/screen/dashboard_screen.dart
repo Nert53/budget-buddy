@@ -6,7 +6,6 @@ import 'package:personal_finance/model/transaction.dart';
 import 'package:personal_finance/view/widget/extended_dashboard.dart';
 import 'package:personal_finance/view_model/dashboard_viewmodel.dart';
 import 'package:provider/provider.dart';
-import 'package:fl_chart/fl_chart.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
 class DashboardScreen extends StatelessWidget {
@@ -151,23 +150,22 @@ class DashboardScreen extends StatelessWidget {
                             const SizedBox(height: 8.0),
                             Expanded(
                                 child: ListView.builder(
-                              itemCount: model.categoryPieData.length,
+                              itemCount: 3,
                               itemBuilder: (BuildContext context, int index) {
-                                PieChartSectionData category =
-                                    model.categoryPieData[index];
+                                var category = 555;
+
                                 return Row(
                                   children: [
                                     Container(
                                       width: 16.0,
                                       height: 16.0,
                                       decoration: BoxDecoration(
-                                          color: category.color,
+                                          color: Color(0xFFE57373),
                                           borderRadius:
                                               BorderRadius.circular(8.0)),
                                     ),
                                     const SizedBox(width: 6.0),
-                                    Text(
-                                        '${category.value.toStringAsFixed(0)} CZK',
+                                    Text('${category.toStringAsFixed(0)} CZK',
                                         style: const TextStyle(
                                           fontSize: 16.0,
                                         )),
