@@ -53,6 +53,8 @@ class _EditTransactionState extends State<EditTransaction> {
   final TextEditingController currencyController = TextEditingController();
   late String selectedCategoryId;
   late String selectedCurrencyId;
+  bool categoryModified = false;
+  bool currencyModified = false;
 
   changeIsOutcome(bool newValue) {
     setState(() {
@@ -84,6 +86,7 @@ class _EditTransactionState extends State<EditTransaction> {
 
     setState(() {
       selectedCategoryId = newCategory.id;
+      categoryModified = true;
       widget.categoryId = newCategory.id;
       widget.categoryName = newCategory.name;
       widget.categoryIcon = convertIconCodePointToIcon(newCategory.icon);
@@ -102,6 +105,7 @@ class _EditTransactionState extends State<EditTransaction> {
 
     setState(() {
       selectedCurrencyId = newCurrency.id;
+      currencyModified = true;
       widget.currencyId = newCurrency.id;
       widget.currencyName = newCurrency.name;
       widget.currencySymbol = newCurrency.symbol;
@@ -278,7 +282,11 @@ class _EditTransactionState extends State<EditTransaction> {
                         ),
                         DropdownMenu<String>(
                             controller: categoryController,
-                            label: const Text('Category'),
+                            label: categoryController.text.isEmpty || categoryModified
+                                ? const Text('Category')
+                                : Text(categoryController.text,
+                                    style:
+                                        TextStyle(color: widget.categoryColor)),
                             leadingIcon: Icon(widget.categoryIcon,
                                 color: widget.categoryColor),
                             textStyle: TextStyle(color: widget.categoryColor),
@@ -300,8 +308,7 @@ class _EditTransactionState extends State<EditTransaction> {
                                     value: category.id,
                                     label: category.name,
                                     style: ButtonStyle(
-                                        foregroundColor: WidgetStateProperty.all(
-                                            convertColorCodeToColor(category.color))),
+                                        foregroundColor: WidgetStateProperty.all(convertColorCodeToColor(category.color))),
                                     trailingIcon: Icon(convertIconCodePointToIcon(category.icon), color: convertColorCodeToColor(category.color))))
                                 .toList()),
                         SizedBox(
@@ -309,7 +316,12 @@ class _EditTransactionState extends State<EditTransaction> {
                         ),
                         DropdownMenu<String>(
                             controller: currencyController,
-                            label: const Text('Currency'),
+                            label: currencyController.text.isEmpty ||
+                                    currencyModified
+                                ? const Text('Currency')
+                                : Text(
+                                    currencyController.text,
+                                  ),
                             leadingIcon: CircleAvatar(
                                 backgroundColor: Colors.transparent,
                                 child: Text(widget.currencySymbol)),

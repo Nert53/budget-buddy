@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:personal_finance/view/widget/graph_select_dialog.dart';
 import 'package:personal_finance/view_model/graph_viewmodel.dart';
 import 'package:provider/provider.dart';
 
@@ -23,9 +24,25 @@ class GraphScreen extends StatelessWidget {
                       children: [
                         SizedBox(height: 16.0),
                         FilledButton.tonalIcon(
-                          onPressed: () {},
+                          onPressed: () {
+                            showDialog(context: context, builder: 
+                            (context) {
+                              return GraphSelectDialog(viewModel: viewModel);
+                            });
+                          },
                           label: Text('Add new graph'),
-                          icon: Icon(Icons.add),
+                          icon: Icon(
+                            Icons.add,
+                            color: Theme.of(context).colorScheme.onPrimary,
+                          ),
+                          style: ButtonStyle(
+                            backgroundColor: WidgetStateProperty.all(
+                              Theme.of(context).primaryColor,
+                            ),
+                            foregroundColor: WidgetStateProperty.all(
+                              Theme.of(context).colorScheme.onPrimary,
+                            ),
+                          ),
                         ),
                       ],
                     );

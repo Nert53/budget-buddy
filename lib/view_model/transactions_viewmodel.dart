@@ -23,11 +23,11 @@ class TransactionViewModel extends ChangeNotifier {
     });
 
     _db.watchAllCategories().listen((event) {
-      getAllCategories();
+      getAllData();
     });
 
     _db.watchAllCurrencies().listen((event) {
-      getAllCurrencies();
+      getAllData();
     });
 
     setDateValues();

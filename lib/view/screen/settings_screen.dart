@@ -47,66 +47,29 @@ class SettingsScreen extends StatelessWidget {
                 children: [
                   ListView.builder(
                       shrinkWrap: true,
-                      itemCount: viewModel.currencies.length + 1,
+                      itemCount: viewModel.currencies.length,
                       itemBuilder: (BuildContext context, int index) {
-                        if (index == 0) {
-                          return Column(
+                        CurrencyItem currentCurrency =
+                            viewModel.currencies[index];
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 8),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 16, vertical: 8),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(
-                                      'Currency',
-                                      style: TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                    Text('Exchange Rate to CZK'),
-                                  ],
+                              Text(
+                                  '${currentCurrency.name} (${currentCurrency.symbol})'),
+                              Row(children: [
+                                OutlinedButton(
+                                  child: Text(
+                                      currentCurrency.exchangeRate.toString()),
+                                  onPressed: () => {},
                                 ),
-                              ),
-                              Divider(),
+                              ]),
                             ],
-                          );
-                        } else {
-                          CurrencyItem currentCurrency =
-                              viewModel.currencies[index - 1];
-                          return Padding(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 16, vertical: 8),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                    '${currentCurrency.name} (${currentCurrency.symbol})'),
-                                Row(children: [
-                                  OutlinedButton(
-                                    child: Text(currentCurrency.exchangeRate
-                                        .toString()),
-                                    onPressed: () => {},
-                                  ),
-                                ]),
-                              ],
-                            ),
-                          );
-
-                          /*
-                        ListTile(
-                          title: Text(
-                              '${currentCurrency.name} (${currentCurrency.symbol})'),
-                          trailing: OutlinedButton(
-                            child:
-                                Text(currentCurrency.exchangeRate.toString()),
-                            onPressed: () => {},
                           ),
-                          onTap: () {},
-                        );*/
-                        }
-                      }),
+                        );
+                      })
                 ],
               ),
             ),

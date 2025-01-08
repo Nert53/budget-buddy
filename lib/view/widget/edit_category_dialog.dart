@@ -1,3 +1,4 @@
+import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:personal_finance/data/database.dart';
 import 'package:personal_finance/utils/functions.dart';
@@ -27,12 +28,14 @@ class EditCategoryDialogSmall extends StatefulWidget {
 }
 
 class _EditCategoryDialogSmallState extends State<EditCategoryDialogSmall> {
+  TextEditingController categoryNameController = TextEditingController();
   late Color selectedCategoryColor;
   late IconData selectedCategoryIcon;
 
   @override
   void initState() {
     super.initState();
+    categoryNameController.text = widget.categoryName;
     selectedCategoryColor = widget.categoryColor;
     selectedCategoryIcon = widget.categoryIcon;
   }
@@ -65,11 +68,27 @@ class _EditCategoryDialogSmallState extends State<EditCategoryDialogSmall> {
         ),
         FilledButton(
           onPressed: () {
+            if (categoryNameController.text.isEmpty) {
+              Flushbar(
+                icon: Icon(Icons.error_outline,
+                    color: Theme.of(context).colorScheme.surface),
+                message:
+                    "Name of category can't be empty. Please enter some name.",
+                shouldIconPulse: false,
+                messageColor: Theme.of(context).colorScheme.surface,
+                backgroundColor: Theme.of(context).colorScheme.error,
+                borderRadius: BorderRadius.circular(16),
+                margin: const EdgeInsets.all(12),
+                duration: Duration(seconds: 4),
+              ).show(context);
+              return;
+            }
+
             String stringColorCode =
                 selectedCategoryColor.value.toRadixString(16);
             CategoryItem updatedCategory = CategoryItem(
               id: widget.categoryId,
-              name: widget.categoryName,
+              name: categoryNameController.text,
               icon: convertIconToIconCodePoint(selectedCategoryIcon),
               color: int.parse(stringColorCode, radix: 16),
             );
@@ -86,10 +105,10 @@ class _EditCategoryDialogSmallState extends State<EditCategoryDialogSmall> {
         mainAxisSize: MainAxisSize.min,
         children: [
           TextField(
-            controller: TextEditingController(text: widget.categoryName),
+            controller: categoryNameController,
             decoration: InputDecoration(
               labelText: 'Name',
-              hintText: widget.categoryName,
+              hintText: 'Enter category name',
               border:
                   OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
             ),

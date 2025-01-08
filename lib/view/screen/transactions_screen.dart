@@ -104,11 +104,11 @@ class TransactionScreen extends StatelessWidget {
                 children: [
                   CircleAvatar(
                     radius: 32,
-                    backgroundColor: Colors.grey[200],
+                    backgroundColor: Colors.white,
                     child: Icon(
                       Icons.search_off,
                       size: 36,
-                      color: Colors.grey,
+                      color: Theme.of(context).textTheme.bodyMedium?.color,
                     ),
                   ),
                   SizedBox(height: 16),

@@ -27,6 +27,13 @@ class DashboardViewmodel extends ChangeNotifier {
     _db.watchAllTransactions().listen((event) {
       getAllData();
     });
+    _db.watchAllCategories().listen((event) {
+      getAllData();
+    });
+    _db.watchAllCurrencies().listen((event) {
+      getAllData();
+    });
+
     notifyListeners();
   }
 

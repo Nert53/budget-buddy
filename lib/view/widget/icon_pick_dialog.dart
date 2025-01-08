@@ -19,15 +19,12 @@ class _IconPickDialogState extends State<IconPickDialog> {
     super.initState();
     selectedIcon = convertIconCodePointToIcon(widget.iconCode);
     selecteedIconIndex = allCategoryIcons.indexOf(selectedIcon);
-    print(selectedIcon.codePoint);
-    print(selecteedIconIndex);
   }
 
   void changeSelectedIcon(IconData newIcon, int index) {
     setState(() {
       selectedIcon = newIcon;
       selecteedIconIndex = index;
-      print(selectedIcon.codePoint);
     });
   }
 

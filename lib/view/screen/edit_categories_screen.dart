@@ -41,7 +41,13 @@ class EditCategoriesScreen extends StatelessWidget {
         floatingActionButton: screenWidth < mediumScreenWidth
             ? FloatingActionButton(
                 onPressed: () {
-                  // Do something
+                  showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AddCategoryDialog(
+                          viewModel: viewModel,
+                        );
+                      });
                 },
                 backgroundColor: Theme.of(context).colorScheme.primary,
                 foregroundColor: Theme.of(context).colorScheme.onPrimary,
