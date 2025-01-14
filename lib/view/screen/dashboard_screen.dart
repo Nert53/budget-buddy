@@ -105,8 +105,10 @@ class DashboardScreen extends StatelessWidget {
                                             (CategorySpentGraph data, index) =>
                                                 data.name,
                                         dataLabelSettings: DataLabelSettings(
-                                            labelPosition:
-                                                ChartDataLabelPosition.inside,
+                                            labelPosition: screenWidth >
+                                                    largeScreenWidth
+                                                ? ChartDataLabelPosition.outside
+                                                : ChartDataLabelPosition.inside,
                                             useSeriesColor: true,
                                             isVisible: true),
                                         xValueMapper:
@@ -143,7 +145,7 @@ class DashboardScreen extends StatelessWidget {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text('Pie chart exact values',
+                            Text('Categories exactly spent',
                                 style: TextStyle(
                                     fontSize: 16.0,
                                     fontWeight: FontWeight.bold)),

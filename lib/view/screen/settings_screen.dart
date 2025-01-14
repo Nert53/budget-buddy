@@ -1,3 +1,4 @@
+import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:personal_finance/data/database.dart';
@@ -11,13 +12,13 @@ class SettingsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    SettingsViewmodel viewModel = context.watch<SettingsViewmodel>();
+    return Consumer<SettingsViewmodel>(builder: (context, viewModel, child) {
+      if (viewModel.isLoading) {
+        return Center(
+          child: CircularProgressIndicator(),
+        );
+      }
 
-    if (viewModel.isLoading) {
-      return Center(
-        child: CircularProgressIndicator(),
-      );
-    } else {
       return Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10.0),
         child: ListView(
@@ -42,7 +43,7 @@ class SettingsScreen extends StatelessWidget {
                 title: Text('Currency settings'),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(
-                      12.0), // makes clikable are rounded as same card
+                      12.0), // makes clikable are rounded same as card
                 ),
                 children: [
                   ListView.builder(
@@ -63,7 +64,49 @@ class SettingsScreen extends StatelessWidget {
                                 OutlinedButton(
                                   child: Text(
                                       currentCurrency.exchangeRate.toString()),
-                                  onPressed: () => {},
+                                  onPressed: () => {
+                                    if (currentCurrency.name.toLowerCase() ==
+                                        'czech koruna')
+                                      {
+                                        Flushbar(
+                                          title: 'Error',
+                                          message:
+                                              'Cannot change exchange rate for CZK',
+                                          duration: Duration(seconds: 3),
+                                        )..show(context)
+                                      }
+                                    else
+                                      {
+                                        showDialog(
+                                            context: context,
+                                            builder: (context) {
+                                              TextEditingController
+                                                  _controller =
+                                                  TextEditingController();
+                                              return AlertDialog(
+                                                title: Text(
+                                                    'Change exchange rate'),
+                                                content: TextField(
+                                                  controller: _controller,
+                                                  keyboardType:
+                                                      TextInputType.number,
+                                                ),
+                                                actions: [
+                                                  TextButton(
+                                                    onPressed: () {
+                                                      Navigator.pop(context);
+                                                    },
+                                                    child: Text('Cancel'),
+                                                  ),
+                                                  TextButton(
+                                                    onPressed: () {},
+                                                    child: Text('Save'),
+                                                  ),
+                                                ],
+                                              );
+                                            })
+                                      }
+                                  },
                                 ),
                               ]),
                             ],
@@ -156,6 +199,6 @@ class SettingsScreen extends StatelessWidget {
           ],
         ),
       );
-    }
+    });
   }
 }

@@ -8,18 +8,27 @@ class SettingsViewmodel extends ChangeNotifier {
   List<CurrencyItem> currencies = [];
 
   SettingsViewmodel(this._db) {
-    _db.watchAllTransactions().listen((event) {
+    isLoading = true;
+    _db.watchAllCurrencies().listen((event) {
       getAllData();
     });
-    isLoading = false;
+    _db.watchAllCategories().listen((event) {
+      getAllData();
+    });
+
+    getAllData();
     notifyListeners();
   }
 
   getAllData() {
+    isLoading = true;
     getCurrencies();
+    isLoading = false;
   }
 
   getCurrencies() async {
     currencies = await _db.select(_db.currencyItems).get();
+    
+    notifyListeners();
   }
 }
