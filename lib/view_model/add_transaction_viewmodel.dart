@@ -27,9 +27,13 @@ class AddTransactionViewModel extends ChangeNotifier {
   TransactionType selectedType = TransactionType.outcome;
 
   AddTransactionViewModel(this._db) {
-    _db.watchAllTransactions().listen((event) {
+    _db.watchAllCategories().listen((event) {
       getCategories();
     });
+    _db.watchAllCurrencies().listen((event) {
+      getCurrencies();
+    });
+
     getCurrencies();
     isLoading = false;
   }
@@ -112,6 +116,7 @@ class AddTransactionViewModel extends ChangeNotifier {
   }
 
   getCurrencies() async {
+    currencies.clear();
     List<CurrencyItem> allCurrencies =
         await _db.select(_db.currencyItems).get().then((value) {
       return value.map((e) => e).toList();

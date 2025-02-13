@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:personal_finance/data/database.dart';
 import 'package:personal_finance/theme/seed_colors.dart';
 import 'package:personal_finance/theme/theme_provider.dart';
+import 'package:personal_finance/view/widget/add_currency_dialog.dart';
 import 'package:personal_finance/view_model/settings_viewmodel.dart';
 import 'package:provider/provider.dart';
 
@@ -48,8 +49,27 @@ class SettingsScreen extends StatelessWidget {
                 children: [
                   ListView.builder(
                       shrinkWrap: true,
-                      itemCount: viewModel.currencies.length,
+                      itemCount: viewModel.currencies.length + 1,
                       itemBuilder: (BuildContext context, int index) {
+                        if (index == viewModel.currencies.length) {
+                          return ListTile(
+                            leading: Icon(Icons.add),
+                            title: Text(
+                              'Add new currency',
+                              style: TextStyle(fontSize: 14),
+                            ),
+                            onTap: () {
+                              showDialog(
+                                context: context,
+                                builder: (context) {
+                                  return AddCurrencyDialog(
+                                      viewModel: viewModel);
+                                },
+                              );
+                            },
+                          );
+                        }
+
                         CurrencyItem currentCurrency =
                             viewModel.currencies[index];
                         return Padding(
@@ -69,27 +89,67 @@ class SettingsScreen extends StatelessWidget {
                                         'czech koruna')
                                       {
                                         Flushbar(
-                                          title: 'Error',
+                                          icon: Icon(Icons.error_outline,
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .surface),
                                           message:
-                                              'Cannot change exchange rate for CZK',
-                                          duration: Duration(seconds: 3),
-                                        )..show(context)
+                                              "You can't change exchange rate for Czech Koruna.",
+                                          shouldIconPulse: false,
+                                          messageColor: Theme.of(context)
+                                              .colorScheme
+                                              .surface,
+                                          backgroundColor: Theme.of(context)
+                                              .colorScheme
+                                              .error,
+                                          borderRadius:
+                                              BorderRadius.circular(16),
+                                          margin: const EdgeInsets.all(12),
+                                          duration: Duration(seconds: 4),
+                                        ).show(context)
                                       }
                                     else
                                       {
                                         showDialog(
                                             context: context,
                                             builder: (context) {
-                                              TextEditingController
-                                                  _controller =
+                                              TextEditingController controller =
                                                   TextEditingController();
+                                              controller.text = currentCurrency
+                                                  .exchangeRate
+                                                  .toString();
+
                                               return AlertDialog(
                                                 title: Text(
                                                     'Change exchange rate'),
-                                                content: TextField(
-                                                  controller: _controller,
-                                                  keyboardType:
-                                                      TextInputType.number,
+                                                content: Row(
+                                                  children: [
+                                                    Expanded(
+                                                      child: TextField(
+                                                        controller: controller,
+                                                        keyboardType:
+                                                            TextInputType
+                                                                .number,
+                                                        decoration: InputDecoration(
+                                                            label: Text(
+                                                                '1 ${currentCurrency.name} (${currentCurrency.symbol}) = '),
+                                                            suffixText: 'CZK',
+                                                            border: OutlineInputBorder(
+                                                                borderRadius: BorderRadius
+                                                                    .all(Radius
+                                                                        .circular(
+                                                                            16)))),
+                                                      ),
+                                                    ),
+                                                    SizedBox(width: 8),
+                                                    IconButton.filled(
+                                                      onPressed: () {},
+                                                      icon: Icon(
+                                                          Icons.change_circle),
+                                                      tooltip:
+                                                          'Adjust exchange rate from internet.',
+                                                    ),
+                                                  ],
                                                 ),
                                                 actions: [
                                                   TextButton(
@@ -98,8 +158,16 @@ class SettingsScreen extends StatelessWidget {
                                                     },
                                                     child: Text('Cancel'),
                                                   ),
-                                                  TextButton(
-                                                    onPressed: () {},
+                                                  FilledButton(
+                                                    onPressed: () {
+                                                      viewModel
+                                                          .updateExchangeRate(
+                                                              currentCurrency,
+                                                              double.parse(
+                                                                  controller
+                                                                      .text));
+                                                      Navigator.pop(context);
+                                                    },
                                                     child: Text('Save'),
                                                   ),
                                                 ],

@@ -1,3 +1,4 @@
+import 'package:drift/drift.dart';
 import 'package:flutter/material.dart';
 import 'package:personal_finance/data/database.dart';
 
@@ -28,7 +29,17 @@ class SettingsViewmodel extends ChangeNotifier {
 
   getCurrencies() async {
     currencies = await _db.select(_db.currencyItems).get();
-    
+
+    notifyListeners();
+  }
+
+  updateExchangeRate(CurrencyItem currencyItem, double newExchangeRate) async {
+    await (_db.update(_db.currencyItems)
+          ..where((tbl) => tbl.id.equals(currencyItem.id)))
+        .write(CurrencyItemsCompanion(
+      exchangeRate: Value(newExchangeRate),
+    ));
+
     notifyListeners();
   }
 }

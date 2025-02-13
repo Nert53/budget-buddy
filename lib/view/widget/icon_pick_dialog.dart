@@ -30,6 +30,8 @@ class _IconPickDialogState extends State<IconPickDialog> {
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+
     return AlertDialog(
       title: Text('Pick an icon'),
       actions: [
@@ -47,7 +49,8 @@ class _IconPickDialogState extends State<IconPickDialog> {
         ),
       ],
       content: SizedBox(
-        width: double.maxFinite,
+        width: screenWidth > mediumScreenWidth ? 400 : double.maxFinite,
+        height: screenWidth > mediumScreenWidth ? 400 : double.maxFinite,
         child: GridView.builder(
             shrinkWrap: true,
             gridDelegate:

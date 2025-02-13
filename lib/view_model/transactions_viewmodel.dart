@@ -38,9 +38,6 @@ class TransactionViewModel extends ChangeNotifier {
     isLoading = true;
     notifyListeners();
 
-    //! Only for testing purposes (to see the animation)
-    await Future.delayed(const Duration(milliseconds: 200));
-
     setDateValues();
     getTransactions();
     getAllCategories();
@@ -135,7 +132,7 @@ class TransactionViewModel extends ChangeNotifier {
       var currencyName =
           await selectedCurrency.getSingle().then((value) => value.name);
 
-      transactions.add(Transaction(
+      Transaction newTransaction = Transaction(
         id: t.id.toString(),
         amount: t.amount,
         date: t.date,
@@ -148,7 +145,11 @@ class TransactionViewModel extends ChangeNotifier {
         currencyId: t.currency,
         currencyName: currencyName,
         currencySymbol: currencySymbol,
-      ));
+      );
+
+      if (!transactions.any((element) => element.id == newTransaction.id)) {
+        transactions.add(newTransaction);
+      }
     }
 
     transactions.sort((a, b) => b.date.compareTo(a.date));
@@ -165,7 +166,7 @@ class TransactionViewModel extends ChangeNotifier {
       DateTime date,
       String categoryId,
       String currencyId) async {
-    double exchangeRate = await (_db.select(_db.currencyItems)
+    var currencyExchangeRate = await (_db.select(_db.currencyItems)
           ..where((c) => c.id.equals(currencyId)))
         .getSingle()
         .then((value) => value.exchangeRate);
@@ -180,7 +181,7 @@ class TransactionViewModel extends ChangeNotifier {
         date: Value(date),
         category: Value(categoryId),
         currency: Value(currencyId),
-        amountInCZK: Value(exchangeRate * amount),
+        amountInCZK: Value(amount * currencyExchangeRate),
       ),
     );
 
@@ -200,6 +201,7 @@ class TransactionViewModel extends ChangeNotifier {
   }
 
   getAllCategories() async {
+    categories.clear();
     categories = await _db.select(_db.categoryItems).get();
   }
 
@@ -209,6 +211,7 @@ class TransactionViewModel extends ChangeNotifier {
   }
 
   getAllCurrencies() async {
+    currencies.clear();
     currencies = await _db.select(_db.currencyItems).get();
   }
 

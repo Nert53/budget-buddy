@@ -332,7 +332,7 @@ class DashboardScreen extends StatelessWidget {
                                     children: [
                                       currentTransaction.note.isEmpty
                                           ? Text(
-                                              '---',
+                                              '(No note)',
                                               style: const TextStyle(
                                                   fontSize: 15,
                                                   color: Colors.grey),

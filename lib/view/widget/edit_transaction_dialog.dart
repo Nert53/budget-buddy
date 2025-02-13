@@ -354,6 +354,7 @@ class _EditTransactionState extends State<EditTransaction> {
                 ),
                 FilledButton(
                   onPressed: () {
+                    Navigator.of(context).pop();
                     viewModel.updateTransaction(
                       widget.transactionId,
                       double.parse(amountController.text),
@@ -363,7 +364,6 @@ class _EditTransactionState extends State<EditTransaction> {
                       widget.categoryId,
                       widget.currencyId,
                     );
-                    Navigator.of(context).pop();
                   },
                   child: const Text('Save'),
                 ),

@@ -1,38 +1,274 @@
+import 'package:drift/drift.dart';
 import 'package:flutter/material.dart';
 import 'package:personal_finance/data/database.dart';
+import 'package:personal_finance/model/category_spent_graph.dart';
 import 'package:personal_finance/model/graph.dart';
+import 'package:personal_finance/utils/functions.dart';
 
 class GraphViewModel extends ChangeNotifier {
   final AppDatabase _db;
+  bool isLoading = true;
+  List<CategorySpentGraph> topCategoriesGraphData = [];
+  List<MapEntry<int, double>> dailySpentInMonthGraphData = [];
+  List<CategorySpentGraph> incomeCategories = [];
+  List<CategorySpentGraph> outcomeCategories = [];
+  double averageDailySpending = 0;
+  double percentageForeignCurrencyTransactions = 0;
+  double savingFromIncome = 0;
 
-  List<Graph> allGraphs = [
-    Graph(id: 1, name: 'Top Categories', icon: Icons.sort, selected: false),
-    Graph(
-        id: 2,
-        name: 'Spendings in time',
-        icon: Icons.bar_chart,
-        selected: true),
-    Graph(
-        id: 3,
-        name: 'Account balance in time',
-        icon: Icons.show_chart,
-        selected: false),
-    Graph(
-        id: 4,
-        name: 'Interesting numbers',
-        icon: Icons.pin_outlined,
-        selected: false),
-    Graph(
-        id: 5,
-        name: 'Income type ratio',
-        icon: Icons.pie_chart_outline,
-        selected: true),
-    Graph(
-        id: 6,
-        name: 'Spending type ratio',
-        icon: Icons.donut_large_outlined,
-        selected: false),
-  ];
+  GraphViewModel(this._db) {
+    _db.watchAllTransactions().listen((event) {
+      getAllData();
+    });
+    _db.watchAllCategories().listen((event) {
+      getAllData();
+    });
+    _db.watchAllCurrencies().listen((event) {
+      getAllData();
+    });
 
-  GraphViewModel(this._db);
+    notifyListeners();
+  }
+
+  getAllData() {
+    getTopCategoriesGraphData();
+    getDailySpentInMotnhGraphData();
+    getSavingFromIncome();
+    getPercentageForeignCurrencyTransactions();
+    getAverageDailySpending();
+    getIncomeCategories();
+    getOutcomeCategories();
+    isLoading = false;
+  }
+
+  getTopCategoriesGraphData() async {
+    int currentMonth = DateTime.now().month;
+
+    final query = _db.selectOnly(_db.transactionItems)
+      ..addColumns([
+        _db.categoryItems.name, // Category name
+        _db.categoryItems.color, // Category color
+        _db.categoryItems.icon, // Category icon
+        _db.categoryItems.id, // Category ID
+        _db.transactionItems.isOutcome,
+        _db.transactionItems.amountInCZK
+            .sum() // Total amount spent for the category
+      ])
+      ..join([
+        innerJoin(_db.categoryItems,
+            _db.categoryItems.id.equalsExp(_db.transactionItems.category))
+      ])
+      ..where(_db.transactionItems.isOutcome.equals(true))
+      ..where(_db.transactionItems.date.month.equals(currentMonth))
+      ..groupBy([
+        _db.transactionItems.category,
+        _db.categoryItems.name,
+        _db.categoryItems.color,
+        _db.categoryItems.icon,
+        _db.categoryItems.id
+      ]);
+    var result = await query.get();
+
+    final List<CategorySpentGraph> categorySpendings = result.map((row) {
+      return CategorySpentGraph(
+        id: row.read<String>(_db.categoryItems.id) ?? '',
+        name: row.read<String>(_db.categoryItems.name) ?? '',
+        color: convertColorCodeToColor(
+            row.read<int>(_db.categoryItems.color) ?? 0),
+        icon: convertIconCodePointToIcon(
+            row.read<int>(_db.categoryItems.icon) ?? 0),
+        amount: row.read<double>(_db.transactionItems.amountInCZK.sum()) ?? 0,
+      );
+    }).toList();
+    categorySpendings.sort((a, b) => b.amount.compareTo(a.amount));
+    categorySpendings.take(5);
+
+    topCategoriesGraphData.clear();
+    for (var category in categorySpendings) {
+      topCategoriesGraphData.add(CategorySpentGraph(
+          color: category.color,
+          amount: category.amount,
+          name: category.name,
+          icon: category.icon,
+          id: category.id));
+    }
+    notifyListeners();
+  }
+
+  getDailySpentInMotnhGraphData() async {
+    final query = _db.selectOnly(_db.transactionItems)
+      ..addColumns(
+          [_db.transactionItems.date, _db.transactionItems.amountInCZK.sum()])
+      ..where(_db.transactionItems.isOutcome.equals(true))
+      ..where(_db.transactionItems.date.month.equals(DateTime.now().month))
+      ..groupBy([_db.transactionItems.date]);
+    var result = await query.get();
+
+    dailySpentInMonthGraphData.clear();
+    for (var row in result) {
+      dailySpentInMonthGraphData.add(MapEntry(
+          row.read<DateTime>(_db.transactionItems.date)!.day,
+          row.read<double>(_db.transactionItems.amountInCZK.sum()) ?? 0.0));
+    }
+
+    notifyListeners();
+  }
+
+  getAverageDailySpending() async {
+    final oneMonthAgo = DateTime.now().subtract(Duration(days: 30));
+
+    final allTransactions = _db.select(_db.transactionItems)
+      ..where((t) =>
+          t.date.isBiggerOrEqualValue(oneMonthAgo) & t.isOutcome.equals(true));
+
+    // only days with transactions are used to count the average
+    allTransactions.get().then((value) {
+      double totalAmount = 0;
+      List daysWithTransactions = [];
+      for (var transaction in value) {
+        totalAmount += transaction.amountInCZK;
+        if (!daysWithTransactions.contains(transaction.date.day)) {
+          daysWithTransactions.add(transaction.date.day);
+        }
+      }
+      averageDailySpending = totalAmount / daysWithTransactions.length;
+      notifyListeners();
+    });
+  }
+
+  getSavingFromIncome() async {
+    final oneMonthAgo = DateTime.now().subtract(Duration(days: 30));
+
+    final incomeTransactions = _db.select(_db.transactionItems)
+      ..where((t) =>
+          t.date.isBiggerOrEqualValue(oneMonthAgo) & t.isOutcome.equals(false));
+
+    final outcomeTransactions = _db.select(_db.transactionItems)
+      ..where((t) =>
+          t.date.isBiggerOrEqualValue(oneMonthAgo) & t.isOutcome.equals(true));
+
+    incomeTransactions.get().then((incomeTransactions) {
+      double totalIncome = 0;
+      for (var transaction in incomeTransactions) {
+        totalIncome += transaction.amountInCZK;
+      }
+
+      outcomeTransactions.get().then((outcomeTransactions) {
+        double totalOutcome = 0;
+        for (var transaction in outcomeTransactions) {
+          totalOutcome += transaction.amountInCZK;
+        }
+
+        savingFromIncome = (totalIncome - totalOutcome) / totalIncome * 100;
+        notifyListeners();
+      });
+    });
+  }
+
+  getPercentageForeignCurrencyTransactions() async {
+    final threeMonthsAgo = DateTime.now().subtract(Duration(days: 90));
+
+    String currencyCzkId = await (_db.select(_db.currencyItems)
+          ..where((currency) => currency.name.equals('Czech Koruna')))
+        .getSingle()
+        .then((currency) => currency.id);
+
+    final query = _db.select(_db.transactionItems)
+      ..where((t) =>
+          t.currency.equals(currencyCzkId).not() &
+          t.date.isBiggerOrEqualValue(threeMonthsAgo));
+    var foreignTransactions = await query.get();
+
+    final totalTransactionsQuery = _db.selectOnly(_db.transactionItems)
+      ..addColumns([_db.transactionItems.id])
+      ..where(_db.transactionItems.date.isBiggerOrEqualValue(threeMonthsAgo));
+    var allTransactions = await totalTransactionsQuery.get();
+
+    double percentage = 0;
+    if (allTransactions.isNotEmpty) {
+      percentage = (foreignTransactions.length / allTransactions.length) * 100;
+    }
+    percentageForeignCurrencyTransactions = percentage;
+    notifyListeners();
+  }
+
+  getIncomeCategories() {
+    final query = _db.selectOnly(_db.transactionItems)
+      ..addColumns([
+        _db.categoryItems.name, // Category name
+        _db.categoryItems.color, // Category color
+        _db.categoryItems.icon, // Category icon
+        _db.categoryItems.id, // Category ID
+        _db.transactionItems.isOutcome,
+        _db.transactionItems.amountInCZK
+            .sum() // Total amount spent for the category
+      ])
+      ..join([
+        innerJoin(_db.categoryItems,
+            _db.categoryItems.id.equalsExp(_db.transactionItems.category))
+      ])
+      ..where(_db.transactionItems.isOutcome.equals(false))
+      ..groupBy([
+        _db.transactionItems.category,
+        _db.categoryItems.name,
+        _db.categoryItems.color,
+        _db.categoryItems.icon,
+        _db.categoryItems.id
+      ]);
+
+    query.get().then((result) {
+      incomeCategories = result.map((row) {
+        return CategorySpentGraph(
+          id: row.read<String>(_db.categoryItems.id) ?? '',
+          name: row.read<String>(_db.categoryItems.name) ?? '',
+          color: convertColorCodeToColor(
+              row.read<int>(_db.categoryItems.color) ?? 0),
+          icon: convertIconCodePointToIcon(
+              row.read<int>(_db.categoryItems.icon) ?? 0),
+          amount: row.read<double>(_db.transactionItems.amountInCZK.sum()) ?? 0,
+        );
+      }).toList();
+      notifyListeners();
+    });
+  }
+
+  getOutcomeCategories() {
+    final query = _db.selectOnly(_db.transactionItems)
+      ..addColumns([
+        _db.categoryItems.name, // Category name
+        _db.categoryItems.color, // Category color
+        _db.categoryItems.icon, // Category icon
+        _db.categoryItems.id, // Category ID
+        _db.transactionItems.isOutcome,
+        _db.transactionItems.amountInCZK
+            .sum() // Total amount spent for the category
+      ])
+      ..join([
+        innerJoin(_db.categoryItems,
+            _db.categoryItems.id.equalsExp(_db.transactionItems.category))
+      ])
+      ..where(_db.transactionItems.isOutcome.equals(true))
+      ..groupBy([
+        _db.transactionItems.category,
+        _db.categoryItems.name,
+        _db.categoryItems.color,
+        _db.categoryItems.icon,
+        _db.categoryItems.id
+      ]);
+
+    query.get().then((result) {
+      outcomeCategories = result.map((row) {
+        return CategorySpentGraph(
+          id: row.read<String>(_db.categoryItems.id) ?? '',
+          name: row.read<String>(_db.categoryItems.name) ?? '',
+          color: convertColorCodeToColor(
+              row.read<int>(_db.categoryItems.color) ?? 0),
+          icon: convertIconCodePointToIcon(
+              row.read<int>(_db.categoryItems.icon) ?? 0),
+          amount: row.read<double>(_db.transactionItems.amountInCZK.sum()) ?? 0,
+        );
+      }).toList();
+      notifyListeners();
+    });
+  }
 }

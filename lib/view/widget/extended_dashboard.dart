@@ -38,7 +38,7 @@ class SpendingDetailExtension extends StatelessWidget {
                 ),
                 Expanded(
                     child: Center(
-                  child: Text('${todaySpent.toStringAsFixed(2)} CZK',
+                  child: Text('${todaySpent.toStringAsFixed(0)} CZK',
                       style: TextStyle(
                           color: Theme.of(context).colorScheme.onSurface,
                           fontSize: 24.0,
