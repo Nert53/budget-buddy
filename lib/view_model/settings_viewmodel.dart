@@ -42,4 +42,13 @@ class SettingsViewmodel extends ChangeNotifier {
 
     notifyListeners();
   }
+
+  addCurrency(String name, String symbol, double exchangeRate) async {
+    await _db.into(_db.currencyItems).insert(CurrencyItemsCompanion(
+        name: Value(name),
+        symbol: Value(symbol),
+        exchangeRate: Value(exchangeRate)));
+
+    notifyListeners();
+  }
 }

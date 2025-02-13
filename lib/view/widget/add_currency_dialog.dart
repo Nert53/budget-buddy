@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:personal_finance/constants.dart';
 import 'package:personal_finance/view_model/settings_viewmodel.dart';
 
@@ -57,6 +58,7 @@ class AddCurrencyDialogState extends State<AddCurrencyDialog> {
           ),
           TextField(
             controller: symbolController,
+            maxLength: 5,
             decoration: InputDecoration(
                 labelText: 'Currency symbol',
                 border: OutlineInputBorder(
@@ -68,6 +70,15 @@ class AddCurrencyDialogState extends State<AddCurrencyDialog> {
           TextField(
             controller: exchangeRateController,
             keyboardType: TextInputType.number,
+            inputFormatters: <TextInputFormatter>[
+              // allow only numbers and dot/comma and comma is replaced with dot
+              FilteringTextInputFormatter.allow(RegExp(r'(^\d*[.,]?\d*)')),
+              TextInputFormatter.withFunction(
+                (oldValue, newValue) => newValue.copyWith(
+                  text: newValue.text.replaceAll(',', '.'),
+                ),
+              ),
+            ],
             decoration: InputDecoration(
                 labelText: 'Exchange rate to CZK',
                 border: OutlineInputBorder(
@@ -84,6 +95,10 @@ class AddCurrencyDialogState extends State<AddCurrencyDialog> {
         ),
         FilledButton(
           onPressed: () {
+            widget.viewModel.addCurrency(
+                nameController.text,
+                symbolController.text,
+                double.parse(exchangeRateController.text));
             Navigator.pop(context);
           },
           child: Text('Add'),
