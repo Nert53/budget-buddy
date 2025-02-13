@@ -158,6 +158,12 @@ class TransactionViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  refreshTransactions() async {
+    await getAllData();
+
+    return Future<void>.delayed(Duration(seconds: 2));
+  }
+
   updateTransaction(
       String transactionId,
       double amount,

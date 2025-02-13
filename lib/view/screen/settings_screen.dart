@@ -5,6 +5,7 @@ import 'package:personal_finance/data/database.dart';
 import 'package:personal_finance/theme/seed_colors.dart';
 import 'package:personal_finance/theme/theme_provider.dart';
 import 'package:personal_finance/view/widget/add_currency_dialog.dart';
+import 'package:personal_finance/view/widget/edit_currency_dialog.dart';
 import 'package:personal_finance/view_model/settings_viewmodel.dart';
 import 'package:provider/provider.dart';
 
@@ -113,64 +114,10 @@ class SettingsScreen extends StatelessWidget {
                                         showDialog(
                                             context: context,
                                             builder: (context) {
-                                              TextEditingController controller =
-                                                  TextEditingController();
-                                              controller.text = currentCurrency
-                                                  .exchangeRate
-                                                  .toString();
-
-                                              return AlertDialog(
-                                                title: Text(
-                                                    'Change exchange rate'),
-                                                content: Row(
-                                                  children: [
-                                                    Expanded(
-                                                      child: TextField(
-                                                        controller: controller,
-                                                        keyboardType:
-                                                            TextInputType
-                                                                .number,
-                                                        decoration: InputDecoration(
-                                                            label: Text(
-                                                                '1 ${currentCurrency.name} (${currentCurrency.symbol}) = '),
-                                                            suffixText: 'CZK',
-                                                            border: OutlineInputBorder(
-                                                                borderRadius: BorderRadius
-                                                                    .all(Radius
-                                                                        .circular(
-                                                                            16)))),
-                                                      ),
-                                                    ),
-                                                    SizedBox(width: 8),
-                                                    IconButton.filled(
-                                                      onPressed: () {},
-                                                      icon: Icon(
-                                                          Icons.change_circle),
-                                                      tooltip:
-                                                          'Adjust exchange rate from internet.',
-                                                    ),
-                                                  ],
-                                                ),
-                                                actions: [
-                                                  TextButton(
-                                                    onPressed: () {
-                                                      Navigator.pop(context);
-                                                    },
-                                                    child: Text('Cancel'),
-                                                  ),
-                                                  FilledButton(
-                                                    onPressed: () {
-                                                      viewModel
-                                                          .updateExchangeRate(
-                                                              currentCurrency,
-                                                              double.parse(
-                                                                  controller
-                                                                      .text));
-                                                      Navigator.pop(context);
-                                                    },
-                                                    child: Text('Save'),
-                                                  ),
-                                                ],
+                                              return EditCurrencyDialog(
+                                                viewModel: viewModel,
+                                                currentCurrency:
+                                                    currentCurrency,
                                               );
                                             })
                                       }
