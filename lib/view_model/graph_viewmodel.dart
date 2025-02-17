@@ -2,7 +2,6 @@ import 'package:drift/drift.dart';
 import 'package:flutter/material.dart';
 import 'package:personal_finance/data/database.dart';
 import 'package:personal_finance/model/category_spent_graph.dart';
-import 'package:personal_finance/model/graph.dart';
 import 'package:personal_finance/utils/functions.dart';
 
 class GraphViewModel extends ChangeNotifier {

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
-import 'package:personal_finance/constants.dart';
 import 'package:personal_finance/utils/functions.dart';
+import 'package:personal_finance/view/colors_categories.dart';
 
 class ColorPickDialog extends StatefulWidget {
   final int initialColor;

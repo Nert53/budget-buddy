@@ -13,84 +13,8 @@ const tealColor = Color(0x007fb9ae);
 
 const maxNoteLength = 1000;
 
-// database
+// database name
 const databaseName = 'personal_finance_db';
-
-// category icons
-List<IconData> allCategoryIcons = [
-  Icons.shopping_cart_outlined,
-  Icons.restaurant_outlined,
-  Icons.local_gas_station_outlined,
-  Icons.home_outlined,
-  Icons.directions_car_outlined,
-  Icons.flight_outlined,
-  Icons.medication_outlined,
-  Icons.school_outlined,
-  Icons.phone_outlined,
-  Icons.computer_outlined,
-  Icons.coffee_outlined,
-  Icons.fitness_center_outlined,
-  Icons.movie_outlined,
-  Icons.videogame_asset_outlined,
-  Icons.theater_comedy_outlined,
-  Icons.music_note_outlined,
-  Icons.pets_outlined,
-  Icons.checkroom_outlined,
-  Icons.spa_outlined,
-  Icons.self_improvement_outlined,
-  Icons.train_outlined,
-  Icons.weekend_outlined,
-  Icons.wine_bar_outlined,
-  Icons.local_offer_outlined,
-  Icons.casino_outlined,
-  Icons.celebration_outlined,
-  Icons.bar_chart_outlined,
-  Icons.lightbulb_outlined,
-  Icons.cell_tower_outlined,
-  Icons.devices_other_rounded,
-  Icons.subscriptions_outlined,
-  Icons.luggage_outlined,
-  Icons.local_laundry_service_outlined,
-  Icons.handyman_outlined,
-  Icons.savings_outlined,
-  Icons.atm_outlined,
-  Icons.currency_bitcoin_outlined,
-  Icons.work_outline_rounded,
-  Icons.emoji_events_outlined,
-  Icons.real_estate_agent_outlined,
-  Icons.business_center_outlined,
-  Icons.redeem_outlined,
-  Icons.request_quote_outlined,
-  Icons.handshake_outlined,
-  Icons.more_horiz_outlined,
-];
-
-// category colors
-List<Color> allCategoryColors = [
-  Colors.red[800]!,
-  Colors.red,
-  Colors.pink,
-  Colors.purple,
-  Colors.deepPurple,
-  Colors.indigo,
-  Colors.blue,
-  Colors.lightBlue[200]!,
-  Colors.cyan,
-  Colors.green[800]!,
-  Colors.green,
-  Colors.lightGreen,
-  Colors.lime,
-  Colors.yellow,
-  Colors.amber,
-  Colors.orange,
-  Colors.deepOrange,
-  Colors.brown,
-  Colors.brown[800]!,
-  Colors.grey,
-  Colors.blueGrey,
-  Colors.blueGrey[800]!,
-  Colors.black,
-];
 
 List<Graph> allGraphs = [
     Graph(id: 1, name: 'Top Categories', icon: Icons.sort, selected: false),

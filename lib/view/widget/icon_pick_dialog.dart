@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:personal_finance/constants.dart';
 import 'package:personal_finance/utils/functions.dart';
+import 'package:personal_finance/view/icons_categories.dart';
 
 class IconPickDialog extends StatefulWidget {
   final int iconCode;

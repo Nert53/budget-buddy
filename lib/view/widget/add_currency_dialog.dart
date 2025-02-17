@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:personal_finance/constants.dart';
+import 'package:personal_finance/view/colors_categories.dart';
+import 'package:personal_finance/view/icons_categories.dart';
 import 'package:personal_finance/view_model/settings_viewmodel.dart';
 
 class AddCurrencyDialog extends StatefulWidget {

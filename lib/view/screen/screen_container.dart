@@ -14,8 +14,6 @@ class ScreenContainer extends StatelessWidget {
     final double screenWidth = MediaQuery.of(context).size.width;
     bool mediumScreen =
         screenWidth > mediumScreenWidth && screenWidth < largeScreenWidth;
-    bool largeScreen = screenWidth > largeScreenWidth;
-
     bool graphsActive = navigationShell.currentIndex == 2;
     bool settingsActive = navigationShell.currentIndex == 3;
 
@@ -29,12 +27,14 @@ class ScreenContainer extends StatelessWidget {
       ),
       body: Row(
         children: [
-          if (mediumScreen || largeScreen)
+          if (mediumScreen || (screenWidth > largeScreenWidth))
             NavigationRail(
               selectedIndex: navigationShell.currentIndex,
               elevation: 5,
-              labelType: largeScreen ? null : NavigationRailLabelType.all,
-              extended: largeScreen,
+              labelType: (screenWidth > largeScreenWidth)
+                  ? null
+                  : NavigationRailLabelType.all,
+              extended: (screenWidth > largeScreenWidth),
               selectedLabelTextStyle: TextStyle(
                 color: Theme.of(context).textTheme.labelMedium?.color,
                 fontWeight: FontWeight.bold,
@@ -42,10 +42,10 @@ class ScreenContainer extends StatelessWidget {
               leading: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 8.0),
                 child: SizedBox(
-                  width: largeScreen ? 256 - 32 : null,
+                  width: (screenWidth > largeScreenWidth) ? 256 - 32 : null,
                   child: FloatingActionButton.extended(
                     elevation: 3,
-                    label: largeScreen
+                    label: (screenWidth > largeScreenWidth)
                         ? const Text('Add Transaction')
                         : const Text('Add'),
                     backgroundColor: Theme.of(context).colorScheme.primary,
@@ -80,7 +80,7 @@ class ScreenContainer extends StatelessWidget {
           Flexible(child: navigationShell)
         ],
       ),
-      bottomNavigationBar: mediumScreen || largeScreen
+      bottomNavigationBar: mediumScreen || (screenWidth > largeScreenWidth)
           ? null
           : NavigationBar(
               destinations: destinations.map<NavigationDestination>((d) {
@@ -95,121 +95,28 @@ class ScreenContainer extends StatelessWidget {
                 navigationShell.goBranch(index);
               },
             ),
-      floatingActionButton:
-          mediumScreen || largeScreen || settingsActive || graphsActive
-              ? null
-              : FloatingActionButton(
-                  backgroundColor: Theme.of(context).colorScheme.primary,
-                  foregroundColor: Theme.of(context).colorScheme.onPrimary,
-                  onPressed: () {
-                    showDialog<void>(
-                      context: context,
-                      builder: (BuildContext context) {
-                        if (screenWidth < mediumScreenWidth) {
-                          return const AddWindowFullScreen();
-                        } else {
-                          return const AddWindow();
-                        }
-                      },
-                    );
-                  },
-                  child: const Icon(Icons.add),
-                ),
-    );
-  }
-}
-
-/* -----------------------------------------------------------------------------
-//! not in use
-
-class MainScreen extends StatefulWidget {
-  const MainScreen({super.key});
-
-  @override
-  State<MainScreen> createState() => _MainScreenState();
-}
-
-class _MainScreenState extends State<MainScreen> {
-  int _selectedIndex = 0;
-
-  void onDestinationSelected(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
-
-  final List<Widget> _screens = <Widget>[
-    const DashboardScreen(),
-    const TransactionScreen(),
-    const GraphScreen(),
-    SettingsScreen(),
-  ];
-
-  @override
-  Widget build(BuildContext context) {
-    final double screenWidth = MediaQuery.of(context).size.width;
-    bool wideScreen = screenWidth > mediumScreenWidth;
-
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          'Personal Finance',
-          style: TextStyle(color: Colors.white),
-        ),
-        backgroundColor: Theme.of(context).colorScheme.primary,
-      ),
-      body: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          if (wideScreen)
-            NavigationRail(
-              selectedIndex: _selectedIndex,
-              labelType: NavigationRailLabelType.all,
-              elevation: 5,
-              leading: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                child: FloatingActionButton.extended(
-                  elevation: 3,
-                  label: const Text('Add'),
-                  onPressed: () {
-                    showModalBottomSheet<void>(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return const AddModalWindow();
-                      },
-                    );
-                  },
-                  icon: const Icon(Icons.add),
-                ),
-              ),
-              destinations: destinations.map<NavigationRailDestination>((d) {
-                return NavigationRailDestination(
-                  icon: Icon(d.icon),
-                  label: Text(d.label),
-                  selectedIcon: Icon(d.selectedIcon),
-                );
-              }).toList(),
-              onDestinationSelected: onDestinationSelected,
-            ),
-          _screens[_selectedIndex]
-        ],
-      ),
-      bottomNavigationBar: wideScreen
+      floatingActionButton: mediumScreen ||
+              (screenWidth > largeScreenWidth) ||
+              settingsActive ||
+              graphsActive
           ? null
-          : NavigationBar(
-              selectedIndex: _selectedIndex,
-              onDestinationSelected: onDestinationSelected,
-              height: 80,
-              destinations: destinations.map<NavigationDestination>((d) {
-                return NavigationDestination(
-                  icon: Icon(d.icon),
-                  selectedIcon: Icon(d.selectedIcon),
-                  label: d.label,
+          : FloatingActionButton(
+              backgroundColor: Theme.of(context).colorScheme.primary,
+              foregroundColor: Theme.of(context).colorScheme.onPrimary,
+              onPressed: () {
+                showDialog<void>(
+                  context: context,
+                  builder: (BuildContext context) {
+                    if (screenWidth < mediumScreenWidth) {
+                      return const AddWindowFullScreen();
+                    } else {
+                      return const AddWindow();
+                    }
+                  },
                 );
-              }).toList(),
+              },
+              child: const Icon(Icons.add),
             ),
     );
   }
 }
-
-*/

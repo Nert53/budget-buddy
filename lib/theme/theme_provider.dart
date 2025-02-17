@@ -23,20 +23,6 @@ class ThemeProvider with ChangeNotifier {
     setColor(themeColor, themeColorName);
   }
 
-  /*
-  void setDarkMode(bool value) {
-    themeData = value ? secondThemeMode : mainThemeMode;
-    SharedPreferences.getInstance().then((prefs) {
-      prefs.setBool('isDarkMode', value);
-    });
-    notifyListeners();
-  }
-
-  bool isDarkMode() {
-    return themeData == secondThemeMode;
-  }
-  */
-
   void setColor(Color newColor, String newColorName) {
     ThemeData newThemeData = ThemeData(
       colorScheme: ColorScheme.fromSeed(seedColor: newColor),

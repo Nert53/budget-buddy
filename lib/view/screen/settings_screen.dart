@@ -194,21 +194,42 @@ class SettingsScreen extends StatelessWidget {
               child: ListTile(
                 leading: Icon(Icons.ios_share_outlined),
                 title: Text('Export Data'),
-                onTap: () {},
-              ),
-            ),
-            Card(
-              child: ListTile(
-                leading: Icon(Icons.publish_outlined),
-                title: Text('Import Data'),
-                onTap: () {},
+                onTap: () {
+                  showDialog(
+                    context: context,
+                    builder: (context) {
+                      return AlertDialog(
+                        title: Text('Export Transactions'),
+                        content: Text(
+                            'All transactions will be exported into .json file.'),
+                        actions: [
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            child: Text('Cancel'),
+                          ),
+                          FilledButton(
+                            onPressed: () {
+                              viewModel.exportData();
+                              Navigator.of(context).pop();
+                            },
+                            child: Text('Export'),
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                },
               ),
             ),
             Card(
               child: ListTile(
                 leading: Icon(Icons.info_outlined),
                 title: Text('About App'),
-                onTap: () {},
+                onTap: () {
+                  //TODO - add dialog about app and its developement
+                },
               ),
             ),
           ],

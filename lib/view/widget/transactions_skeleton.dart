@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class TransactionSkeleton extends StatelessWidget {
-  const TransactionSkeleton({super.key});
+class TransactionsSkeleton extends StatelessWidget {
+  const TransactionsSkeleton({super.key});
 
   @override
   Widget build(BuildContext context) {

@@ -7,10 +7,3 @@ ThemeData mainThemeMode = ThemeData(
   textTheme: GoogleFonts.poppinsTextTheme(),
   scaffoldBackgroundColor: const Color.fromARGB(255, 224, 224, 224),
 );
-
-ThemeData secondThemeMode = ThemeData(
-  colorScheme: ColorScheme.fromSeed(seedColor: const Color.fromARGB(255, 25, 141, 207)),
-  useMaterial3: true,
-  textTheme: GoogleFonts.poppinsTextTheme(),
-  scaffoldBackgroundColor: const Color.fromARGB(255, 224, 224, 224),
-);
