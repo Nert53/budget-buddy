@@ -23,19 +23,19 @@ class SettingsViewmodel extends ChangeNotifier {
     notifyListeners();
   }
 
-  getAllData() {
+  void getAllData() {
     isLoading = true;
     getCurrencies();
     isLoading = false;
   }
 
-  getCurrencies() async {
+  void getCurrencies() async {
     currencies = await _db.select(_db.currencyItems).get();
 
     notifyListeners();
   }
 
-  updateExchangeRate(CurrencyItem currencyItem, double newExchangeRate) async {
+  void updateExchangeRate(CurrencyItem currencyItem, double newExchangeRate) async {
     await (_db.update(_db.currencyItems)
           ..where((tbl) => tbl.id.equals(currencyItem.id)))
         .write(CurrencyItemsCompanion(
@@ -45,7 +45,7 @@ class SettingsViewmodel extends ChangeNotifier {
     notifyListeners();
   }
 
-  getExchangeRateFromInternet() async {
+  void getExchangeRateFromInternet() async {
     http.Response response = await http.get(Uri.parse(
         'https://www.cnb.cz/cs/financni-trhy/devizovy-trh/kurzy-devizoveho-trhu/kurzy-devizoveho-trhu/denni_kurz.txt'));
 
@@ -71,7 +71,7 @@ class SettingsViewmodel extends ChangeNotifier {
     }
   }
 
-  addCurrency(String name, String symbol, double exchangeRate) async {
+  void addCurrency(String name, String symbol, double exchangeRate) async {
     await _db.into(_db.currencyItems).insert(CurrencyItemsCompanion(
         name: Value(name),
         symbol: Value(symbol),
@@ -80,7 +80,7 @@ class SettingsViewmodel extends ChangeNotifier {
     notifyListeners();
   }
 
-  exportData() async {
+  void exportData() async {
     List<TransactionItem> allTransactions =
         await _db.select(_db.transactionItems).get();
   }

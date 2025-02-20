@@ -15,7 +15,7 @@ class EditCategoriesViewmodel extends ChangeNotifier {
     notifyListeners();
   }
 
-  getAllData() {
+  void getAllData() {
     isLoading = true;
     loadCategories();
     isLoading = false;

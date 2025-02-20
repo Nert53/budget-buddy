@@ -35,7 +35,7 @@ class DashboardViewmodel extends ChangeNotifier {
     notifyListeners();
   }
 
-  getAllData() {
+  void getAllData() {
     getAccountBalance();
     getLastNTransactions(numOfLastTransactions);
     getThisMonthSpent();
@@ -45,7 +45,7 @@ class DashboardViewmodel extends ChangeNotifier {
     isLoading = false;
   }
 
-  getAccountBalance() async {
+  void getAccountBalance() async {
     List<TransactionItem> allTransactions =
         await _db.select(_db.transactionItems).get();
     accountBalance = allTransactions.fold(
@@ -57,7 +57,7 @@ class DashboardViewmodel extends ChangeNotifier {
     notifyListeners();
   }
 
-  getLastNTransactions(int n) async {
+  void getLastNTransactions(int n) async {
     var transactions = await (_db.select(_db.transactionItems)
           ..orderBy([
             (t) => OrderingTerm(expression: t.date, mode: OrderingMode.desc)
@@ -97,7 +97,7 @@ class DashboardViewmodel extends ChangeNotifier {
     notifyListeners();
   }
 
-  getThisMonthSpent() {
+  void getThisMonthSpent() {
     final query = _db.select(_db.transactionItems)
       ..where((transaction) =>
           transaction.date.month.equals(currentMonth) &
@@ -113,7 +113,7 @@ class DashboardViewmodel extends ChangeNotifier {
     notifyListeners();
   }
 
-  getTodaySpent() {
+  void getTodaySpent() {
     final query = _db.select(_db.transactionItems)
       ..where((transaction) =>
           transaction.date.day.equals(currrentDate.day) &
@@ -130,7 +130,7 @@ class DashboardViewmodel extends ChangeNotifier {
     notifyListeners();
   }
 
-  getPredictedSpentThisMonth() async {
+  void getPredictedSpentThisMonth() async {
     final q = _db.select(_db.transactionItems)
       ..where((transaction) =>
           transaction.date.month.equals(currentMonth) &
@@ -149,7 +149,7 @@ class DashboardViewmodel extends ChangeNotifier {
     notifyListeners();
   }
 
-  getCategorySpentData() async {
+  void getCategorySpentData() async {
     final query = _db.selectOnly(_db.transactionItems)
       ..addColumns([
         _db.categoryItems.name, // Category name

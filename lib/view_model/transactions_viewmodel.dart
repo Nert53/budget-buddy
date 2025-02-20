@@ -34,7 +34,7 @@ class TransactionViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  getAllData() async {
+  void getAllData() async {
     isLoading = true;
     notifyListeners();
 
@@ -45,13 +45,13 @@ class TransactionViewModel extends ChangeNotifier {
     isLoading = false;
   }
 
-  refresh() {
+  void refresh() {
     setDateValues();
     getTransactions();
     notifyListeners();
   }
 
-  setDateValues() {
+  void setDateValues() {
     var upToDateDate = DateTime.now();
 
     if (upToDateDate.year == currentDate.year &&
@@ -84,13 +84,13 @@ class TransactionViewModel extends ChangeNotifier {
     }
   }
 
-  upToDate() {
+  void upToDate() {
     currentDate = DateTime.now();
     currentMonthString = convertMontNumToMonthName(currentDate.month);
     refresh();
   }
 
-  previousMonth() {
+  void previousMonth() {
     if (currentDate.month == 1) {
       currentDate = DateTime(currentDate.year - 1, 12);
     } else {
@@ -100,7 +100,7 @@ class TransactionViewModel extends ChangeNotifier {
     refresh();
   }
 
-  nextMonth() {
+  void nextMonth() {
     if (currentDate.month == 12) {
       currentDate = DateTime(currentDate.year + 1, 1);
     } else {
@@ -110,7 +110,7 @@ class TransactionViewModel extends ChangeNotifier {
     refresh();
   }
 
-  getTransactions() async {
+  void getTransactions() async {
     var transactionItems = await (_db.select(_db.transactionItems)
           ..where((t) => t.date.month.equals(currentDate.month))
           ..where((t) => t.date.year.equals(currentDate.year))
@@ -121,16 +121,9 @@ class TransactionViewModel extends ChangeNotifier {
 
     transactions.clear();
     for (var t in transactionItems) {
-      var category = await (_db.select(_db.categoryItems)
-            ..where((c) => c.id.equals(t.category)))
-          .getSingle();
+      CategoryItem category = await getCategoryById(t.category);
 
-      var selectedCurrency = _db.select(_db.currencyItems)
-        ..where((c) => c.id.equals(t.currency));
-      var currencySymbol =
-          await selectedCurrency.getSingle().then((value) => value.symbol);
-      var currencyName =
-          await selectedCurrency.getSingle().then((value) => value.name);
+      CurrencyItem selectedCurrency = await _db.getCurrencyById(t.currency);
 
       Transaction newTransaction = Transaction(
         id: t.id.toString(),
@@ -143,8 +136,8 @@ class TransactionViewModel extends ChangeNotifier {
         categoryIcon: convertIconCodePointToIcon(category.icon),
         categoryColor: Color(category.color),
         currencyId: t.currency,
-        currencyName: currencyName,
-        currencySymbol: currencySymbol,
+        currencyName: selectedCurrency.name,
+        currencySymbol: selectedCurrency.symbol,
       );
 
       if (!transactions.any((element) => element.id == newTransaction.id)) {
@@ -158,13 +151,13 @@ class TransactionViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  refreshTransactions() async {
-    await getAllData();
+  Future<void> refreshTransactions() async {
+    getAllData();
 
     return Future<void>.delayed(Duration(seconds: 2));
   }
 
-  updateTransaction(
+  void updateTransaction(
       String transactionId,
       double amount,
       String note,
@@ -194,34 +187,34 @@ class TransactionViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  deleteTransaction(TransactionItem transaction) async {
-    await _db.delete(_db.transactionItems).delete(transaction);
+  void deleteTransaction(TransactionItem transaction) async {
+    await _db.deleteTransactionItem(transaction);
     notifyListeners();
   }
 
-  deleteTransactionById(String id) async {
+  void deleteTransactionById(String id) async {
     await (_db.delete(_db.transactionItems)..where((t) => t.id.equals(id)))
         .go();
 
     notifyListeners();
   }
 
-  getAllCategories() async {
+  void getAllCategories() async {
     categories.clear();
-    categories = await _db.select(_db.categoryItems).get();
+    categories = await _db.getAllCategoryItems();
   }
 
-  getCategoryById(String id) async {
+  Future<CategoryItem> getCategoryById(String id) async {
     return await (_db.select(_db.categoryItems)..where((c) => c.id.equals(id)))
         .getSingle();
   }
 
-  getAllCurrencies() async {
+  void getAllCurrencies() async {
     currencies.clear();
-    currencies = await _db.select(_db.currencyItems).get();
+    currencies = await _db.getAllCurrencyItems();
   }
 
-  getCurrencyById(String id) async {
+  Future<CurrencyItem> getCurrencyById(String id) async {
     return await (_db.select(_db.currencyItems)..where((c) => c.id.equals(id)))
         .getSingle();
   }

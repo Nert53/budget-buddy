@@ -2,6 +2,7 @@ import 'package:drift/drift.dart';
 import 'package:drift_flutter/drift_flutter.dart';
 import 'package:personal_finance/constants.dart';
 import 'package:shortuid/shortuid.dart';
+
 part 'database.g.dart';
 
 class TransactionItems extends Table {
@@ -57,21 +58,27 @@ class AppDatabase extends _$AppDatabase {
     return select(currencyItems).watch();
   }
 
-  addItem(TransactionItem item) {
-    transaction(() async {
-      await into(transactionItems).insert(item);
-    });
+  // methods for operating with transactions
+  void addTransactionItem(TransactionItem item) async {
+    await into(transactionItems).insert(item);
   }
 
-  getAllCategories() {
-    return select(categoryItems).get();
+  Future<int> deleteTransactionItem(TransactionItem item) async {
+    return await delete(transactionItems).delete(item);
   }
 
-  void insertCategory(String name, int colorCode, int iconCode) {
-    transaction(() async {
-      await into(categoryItems).insert(CategoryItem(
-          id: ShortUid.create(), name: name, color: colorCode, icon: iconCode));
-    });
+  Future<List<TransactionItem>> getAllTransactionItems() async {
+    return await select(transactionItems).get();
+  }
+
+  // methods for operating with categories
+  Future<List<CategoryItem>> getAllCategoryItems() async {
+    return await select(categoryItems).get();
+  }
+
+  void insertCategory(String name, int colorCode, int iconCode) async {
+    await into(categoryItems).insert(CategoryItem(
+        id: ShortUid.create(), name: name, color: colorCode, icon: iconCode));
   }
 
   Future<bool> deleteCategoryHard(CategoryItem category) async {
@@ -103,6 +110,17 @@ class AppDatabase extends _$AppDatabase {
     }
   }
 
+  // methods for operating with currencies
+  Future<List<CurrencyItem>> getAllCurrencyItems() async {
+    return await select(currencyItems).get();
+  }
+
+  Future<CurrencyItem> getCurrencyById(String id) async {
+    return await (select(currencyItems)..where((c) => c.id.equals(id)))
+        .getSingle();
+  }
+
+  // initial data insert
   Future<Null> initialCategoriesInsert() async {
     return await transaction(() async {
       await into(categoryItems).insert(

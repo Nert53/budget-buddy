@@ -1017,9 +1017,9 @@ final class $$CategoryItemsTableReferences
                   db.categoryItems.id, db.transactionItems.category));
 
   $$TransactionItemsTableProcessedTableManager get transactionItemsRefs {
-    final manager =
-        $$TransactionItemsTableTableManager($_db, $_db.transactionItems)
-            .filter((f) => f.category.id($_item.id));
+    final manager = $$TransactionItemsTableTableManager(
+            $_db, $_db.transactionItems)
+        .filter((f) => f.category.id.sqlEquals($_itemColumn<String>('id')!));
 
     final cache =
         $_typedResult.readTableOrNull(_transactionItemsRefsTable($_db));
@@ -1202,7 +1202,8 @@ class $$CategoryItemsTableTableManager extends RootTableManager<
               getPrefetchedDataCallback: (items) async {
                 return [
                   if (transactionItemsRefs)
-                    await $_getPrefetchedData(
+                    await $_getPrefetchedData<CategoryItem, $CategoryItemsTable,
+                            TransactionItem>(
                         currentTable: table,
                         referencedTable: $$CategoryItemsTableReferences
                             ._transactionItemsRefsTable(db),
@@ -1261,9 +1262,9 @@ final class $$CurrencyItemsTableReferences
                   db.currencyItems.id, db.transactionItems.currency));
 
   $$TransactionItemsTableProcessedTableManager get transactionItemsRefs {
-    final manager =
-        $$TransactionItemsTableTableManager($_db, $_db.transactionItems)
-            .filter((f) => f.currency.id($_item.id));
+    final manager = $$TransactionItemsTableTableManager(
+            $_db, $_db.transactionItems)
+        .filter((f) => f.currency.id.sqlEquals($_itemColumn<String>('id')!));
 
     final cache =
         $_typedResult.readTableOrNull(_transactionItemsRefsTable($_db));
@@ -1447,7 +1448,8 @@ class $$CurrencyItemsTableTableManager extends RootTableManager<
               getPrefetchedDataCallback: (items) async {
                 return [
                   if (transactionItemsRefs)
-                    await $_getPrefetchedData(
+                    await $_getPrefetchedData<CurrencyItem, $CurrencyItemsTable,
+                            TransactionItem>(
                         currentTable: table,
                         referencedTable: $$CurrencyItemsTableReferences
                             ._transactionItemsRefsTable(db),
@@ -1512,8 +1514,10 @@ final class $$TransactionItemsTableReferences extends BaseReferences<
           db.transactionItems.category, db.categoryItems.id));
 
   $$CategoryItemsTableProcessedTableManager get category {
+    final $_column = $_itemColumn<String>('category')!;
+
     final manager = $$CategoryItemsTableTableManager($_db, $_db.categoryItems)
-        .filter((f) => f.id($_item.category!));
+        .filter((f) => f.id.sqlEquals($_column));
     final item = $_typedResult.readTableOrNull(_categoryTable($_db));
     if (item == null) return manager;
     return ProcessedTableManager(
@@ -1525,8 +1529,10 @@ final class $$TransactionItemsTableReferences extends BaseReferences<
           db.transactionItems.currency, db.currencyItems.id));
 
   $$CurrencyItemsTableProcessedTableManager get currency {
+    final $_column = $_itemColumn<String>('currency')!;
+
     final manager = $$CurrencyItemsTableTableManager($_db, $_db.currencyItems)
-        .filter((f) => f.id($_item.currency!));
+        .filter((f) => f.id.sqlEquals($_column));
     final item = $_typedResult.readTableOrNull(_currencyTable($_db));
     if (item == null) return manager;
     return ProcessedTableManager(

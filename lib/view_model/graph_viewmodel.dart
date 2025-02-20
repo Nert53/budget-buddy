@@ -29,7 +29,7 @@ class GraphViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  getAllData() {
+  void getAllData() {
     getTopCategoriesGraphData();
     getDailySpentInMotnhGraphData();
     getSavingFromIncome();
@@ -40,7 +40,7 @@ class GraphViewModel extends ChangeNotifier {
     isLoading = false;
   }
 
-  getTopCategoriesGraphData() async {
+  void getTopCategoriesGraphData() async {
     int currentMonth = DateTime.now().month;
 
     final query = _db.selectOnly(_db.transactionItems)
@@ -94,7 +94,7 @@ class GraphViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  getDailySpentInMotnhGraphData() async {
+  void getDailySpentInMotnhGraphData() async {
     final query = _db.selectOnly(_db.transactionItems)
       ..addColumns(
           [_db.transactionItems.date, _db.transactionItems.amountInCZK.sum()])
@@ -113,7 +113,7 @@ class GraphViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  getAverageDailySpending() async {
+  void getAverageDailySpending() async {
     final oneMonthAgo = DateTime.now().subtract(Duration(days: 30));
 
     final allTransactions = _db.select(_db.transactionItems)
@@ -135,7 +135,7 @@ class GraphViewModel extends ChangeNotifier {
     });
   }
 
-  getSavingFromIncome() async {
+  void getSavingFromIncome() async {
     final oneMonthAgo = DateTime.now().subtract(Duration(days: 30));
 
     final incomeTransactions = _db.select(_db.transactionItems)
@@ -164,7 +164,7 @@ class GraphViewModel extends ChangeNotifier {
     });
   }
 
-  getPercentageForeignCurrencyTransactions() async {
+  void getPercentageForeignCurrencyTransactions() async {
     final threeMonthsAgo = DateTime.now().subtract(Duration(days: 90));
 
     String currencyCzkId = await (_db.select(_db.currencyItems)
@@ -191,7 +191,7 @@ class GraphViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  getIncomeCategories() {
+  void getIncomeCategories() {
     final query = _db.selectOnly(_db.transactionItems)
       ..addColumns([
         _db.categoryItems.name, // Category name
@@ -231,7 +231,7 @@ class GraphViewModel extends ChangeNotifier {
     });
   }
 
-  getOutcomeCategories() {
+  void getOutcomeCategories() {
     final query = _db.selectOnly(_db.transactionItems)
       ..addColumns([
         _db.categoryItems.name, // Category name

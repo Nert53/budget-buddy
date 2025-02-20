@@ -81,7 +81,7 @@ class AddTransactionViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  getCategories() async {
+  void getCategories() async {
     categories.clear();
     List<CategoryItem> allCategories =
         await _db.select(_db.categoryItems).get().then((value) {
@@ -99,7 +99,7 @@ class AddTransactionViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  changeCurrentCategory(String categoryId) {
+  void changeCurrentCategory(String categoryId) {
     _db.select(_db.categoryItems).get().then((categories) {
       for (var c in categories) {
         if (c.id == categoryId) {
@@ -115,7 +115,7 @@ class AddTransactionViewModel extends ChangeNotifier {
     });
   }
 
-  getCurrencies() async {
+  void getCurrencies() async {
     currencies.clear();
     List<CurrencyItem> allCurrencies =
         await _db.select(_db.currencyItems).get().then((value) {
@@ -131,7 +131,7 @@ class AddTransactionViewModel extends ChangeNotifier {
     }
   }
 
-  changeCurrentCurrency(String currency) {
+  void changeCurrentCurrency(String currency) {
     for (var c in currencies) {
       if (c.id == currency) {
         selectedCurrency = c;
@@ -141,12 +141,12 @@ class AddTransactionViewModel extends ChangeNotifier {
     }
   }
 
-  changeTransactionType(TransactionType type) {
+  void changeTransactionType(TransactionType type) {
     selectedType = type;
     notifyListeners();
   }
 
-  clearFields() {
+  void clearFields() {
     amountController.clear();
     noteController.clear();
     dateController.text = DateFormat('dd.MM.yyyy').format(DateTime.now());
