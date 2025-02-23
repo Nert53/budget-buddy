@@ -6,7 +6,7 @@ import 'package:personal_finance/theme/theme_provider.dart';
 import 'package:personal_finance/view/screen/dashboard_screen.dart';
 import 'package:personal_finance/view/screen/edit_categories_screen.dart';
 import 'package:personal_finance/view/screen/graph_screen.dart';
-import 'package:personal_finance/view/screen/screen_container.dart';
+import 'package:personal_finance/view/screen_container.dart';
 import 'package:personal_finance/view/screen/settings_screen.dart';
 import 'package:personal_finance/view/screen/transactions_screen.dart';
 import 'package:personal_finance/view_model/add_transaction_viewmodel.dart';

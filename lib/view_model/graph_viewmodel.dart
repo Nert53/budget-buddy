@@ -86,7 +86,7 @@ class GraphViewModel extends ChangeNotifier {
     for (var category in categorySpendings) {
       topCategoriesGraphData.add(CategorySpentGraph(
           color: category.color,
-          amount: category.amount,
+          amount: category.amount.roundToDouble(),
           name: category.name,
           icon: category.icon,
           id: category.id));

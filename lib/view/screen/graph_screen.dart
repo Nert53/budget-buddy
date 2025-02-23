@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:personal_finance/constants.dart';
 import 'package:personal_finance/model/category_spent_graph.dart';
 import 'package:personal_finance/view/widget/graph_select_dialog.dart';
+import 'package:personal_finance/view/widget/graphs/interesting_number_card.dart';
 import 'package:personal_finance/view_model/graph_viewmodel.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
@@ -114,132 +115,42 @@ class GraphScreen extends StatelessWidget {
                       )),
                 ),
                 SizedBox(
-                    height: 340,
+                    height: largeScreen ? 340 : 480,
                     child: largeScreen
                         ? Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
                               Expanded(
-                                child: Card(
-                                  elevation: 4,
-                                  margin: EdgeInsets.symmetric(vertical: 12.0),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(15.0),
-                                  ),
-                                  child: Container(
-                                    height: 316,
-                                    padding: EdgeInsets.all(16.0),
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Tooltip(
-                                          message:
-                                              'Percentage is meauser from last 6 months.',
-                                          child: Text('Savings from income',
-                                              style: TextStyle(
-                                                  fontSize: 16.0,
-                                                  fontWeight:
-                                                      FontWeight.normal)),
-                                        ),
-                                        Expanded(
-                                          child: Center(
-                                            child: Text(
-                                              '${viewModel.savingFromIncome.toStringAsFixed(1)} %',
-                                              style: TextStyle(
-                                                fontSize: largeScreen ? 48 : 32,
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
+                                child: InterestingNumberCardHorizontal(
+                                    valueName: 'Saving from income',
+                                    largeScreen: largeScreen,
+                                    numberValue: viewModel.savingFromIncome
+                                        .toStringAsFixed(1),
+                                    numberSymbol: '%'),
                               ),
                               SizedBox(
                                 width: 16.0,
                               ),
                               Expanded(
-                                child: Card(
-                                  elevation: 4,
-                                  margin: EdgeInsets.symmetric(vertical: 12.0),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(15.0),
-                                  ),
-                                  child: Container(
-                                    height: 320,
-                                    padding: EdgeInsets.all(16.0),
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text('Average daily spending',
-                                            style: TextStyle(
-                                                fontSize: 16.0,
-                                                fontWeight: FontWeight.normal)),
-                                        Expanded(
-                                          child: Center(
-                                            child: Text(
-                                              '${viewModel.averageDailySpending.toStringAsFixed(1)} CZK',
-                                              textAlign: TextAlign.center,
-                                              style: TextStyle(
-                                                fontSize: largeScreen ? 48 : 32,
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
+                                child: InterestingNumberCardHorizontal(
+                                    valueName: 'Average daily spending',
+                                    largeScreen: largeScreen,
+                                    numberValue: viewModel.averageDailySpending
+                                        .toStringAsFixed(1),
+                                    numberSymbol: 'CZK'),
                               ),
                               SizedBox(
                                 width: 16.0,
                               ),
                               Expanded(
-                                child: Card(
-                                  elevation: 4,
-                                  margin: EdgeInsets.symmetric(vertical: 12.0),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(15.0),
-                                  ),
-                                  child: Container(
-                                    height: 320,
-                                    padding: EdgeInsets.all(16.0),
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Tooltip(
-                                          message: '',
-                                          child: Text(
-                                              'Transactions in foreign currencies',
-                                              style: TextStyle(
-                                                  fontSize: 16.0,
-                                                  fontWeight:
-                                                      FontWeight.normal)),
-                                        ),
-                                        Expanded(
-                                          child: Center(
-                                            child: Text(
-                                              '${viewModel.percentageForeignCurrencyTransactions.toStringAsFixed(0)} %',
-                                              style: TextStyle(
-                                                fontSize: largeScreen ? 48 : 32,
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
+                                child: InterestingNumberCardHorizontal(
+                                    valueName:
+                                        'Transactions in foreign currencies',
+                                    largeScreen: largeScreen,
+                                    numberValue: viewModel
+                                        .percentageForeignCurrencyTransactions
+                                        .toStringAsFixed(0),
+                                    numberSymbol: '%'),
                               ),
                             ],
                           )
@@ -248,123 +159,39 @@ class GraphScreen extends StatelessWidget {
                               SizedBox(
                                 height: 160,
                                 child: Expanded(
-                                  child: Card(
-                                    elevation: 4,
-                                    margin: EdgeInsets.symmetric(vertical: 6.0),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(15.0),
-                                    ),
-                                    child: Container(
-                                      height: 200,
-                                      padding: EdgeInsets.all(16.0),
-                                      child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Tooltip(
-                                            message:
-                                                'Percentage is meauser from last 6 months.',
-                                            child: Text('Savings from income',
-                                                style: TextStyle(
-                                                    fontSize: 16.0,
-                                                    fontWeight:
-                                                        FontWeight.normal)),
-                                          ),
-                                          Expanded(
-                                            child: Center(
-                                              child: Text(
-                                                '18.5 %',
-                                                style: TextStyle(
-                                                  fontSize:
-                                                      largeScreen ? 48 : 32,
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
+                                  child: InterestingNumberCardVertical(
+                                      valueName: 'Saving from income',
+                                      largeScreen: largeScreen,
+                                      numberValue: viewModel.savingFromIncome
+                                          .toStringAsFixed(1),
+                                      numberSymbol: '%'),
                                 ),
                               ),
-                              Expanded(
-                                child: Card(
-                                  elevation: 4,
-                                  margin: EdgeInsets.symmetric(vertical: 6.0),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(15.0),
-                                  ),
-                                  child: Container(
-                                    height: 320,
-                                    padding: EdgeInsets.all(16.0),
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text('Average daily spending',
-                                            style: TextStyle(
-                                                fontSize: 16.0,
-                                                fontWeight: FontWeight.normal)),
-                                        Expanded(
-                                          child: Center(
-                                            child: Text(
-                                              '${viewModel.averageDailySpending.toStringAsFixed(1)} CZK',
-                                              textAlign: TextAlign.center,
-                                              style: TextStyle(
-                                                fontSize: largeScreen ? 48 : 32,
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
+                              SizedBox(
+                                height: 160,
+                                child: Expanded(
+                                  child: InterestingNumberCardVertical(
+                                      valueName: 'Average daily spending',
+                                      largeScreen: largeScreen,
+                                      numberValue: viewModel
+                                          .averageDailySpending
+                                          .toStringAsFixed(1),
+                                      numberSymbol: 'CZK'),
                                 ),
                               ),
-                              Expanded(
-                                child: Card(
-                                  elevation: 4,
-                                  margin: EdgeInsets.symmetric(vertical: 6.0),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(15.0),
-                                  ),
-                                  child: Container(
-                                    height: 320,
-                                    padding: EdgeInsets.all(16.0),
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Tooltip(
-                                          message: '',
-                                          child: Text(
-                                              'Transactions in foreign currencies',
-                                              style: TextStyle(
-                                                  fontSize: 16.0,
-                                                  fontWeight:
-                                                      FontWeight.normal)),
-                                        ),
-                                        Expanded(
-                                          child: Center(
-                                            child: Text(
-                                              '${viewModel.percentageForeignCurrencyTransactions.toStringAsFixed(0)} %',
-                                              style: TextStyle(
-                                                fontSize: largeScreen ? 48 : 32,
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
+                              SizedBox(
+                                height: 160,
+                                child: Expanded(
+                                  child: InterestingNumberCardVertical(
+                                      valueName:
+                                          'Transactions in foreign currencies',
+                                      largeScreen: largeScreen,
+                                      numberValue: viewModel
+                                          .percentageForeignCurrencyTransactions
+                                          .toStringAsFixed(0),
+                                      numberSymbol: '%'),
                                 ),
-                              ),
+                              )
                             ],
                           )),
                 Expanded(
