@@ -35,17 +35,20 @@ class SettingsViewmodel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void updateExchangeRate(CurrencyItem currencyItem, double newExchangeRate) async {
+  void updateCurrency(CurrencyItem currencyItem, String newName,
+      String newSymbol, double newExchangeRate) async {
     await (_db.update(_db.currencyItems)
           ..where((tbl) => tbl.id.equals(currencyItem.id)))
         .write(CurrencyItemsCompanion(
+      name: Value(newName),
+      symbol: Value(newSymbol),
       exchangeRate: Value(newExchangeRate),
     ));
 
     notifyListeners();
   }
 
-  void getExchangeRateFromInternet() async {
+  Future<double> getExchangeRateFromInternet(String wantedCurrencyCode) async {
     http.Response response = await http.get(Uri.parse(
         'https://www.cnb.cz/cs/financni-trhy/devizovy-trh/kurzy-devizoveho-trhu/kurzy-devizoveho-trhu/denni_kurz.txt'));
 
@@ -57,17 +60,32 @@ class SettingsViewmodel extends ChangeNotifier {
       for (int i = 2; i < lines.length; i++) {
         // skip metadata
         List<String> parts = lines[i].split("|");
-        if (parts.length < 5) continue; // Skip empty or invalid lines
+        if (parts.length < 5) continue; // skip empty or invalid lines
 
+        int amount = int.parse(parts[2]);
         rates.add(ExchangeRate(
           country: parts[0],
           currency: parts[1],
           code: parts[3],
-          rate: double.parse(parts[4].replaceAll(",", ".")),
+          rate: double.parse(parts[4].replaceAll(",", ".")) / amount,
         ));
       }
+
+      double wantedRate;
+      try {
+        wantedRate = rates
+            .firstWhere(
+                (element) => element.code == wantedCurrencyCode.toUpperCase())
+            .rate;
+      } catch (e) {
+        // currency code not found
+        return 0.0;
+      }
+
+      return wantedRate;
     } else {
-      print('Failed to get exchange rate from internet');
+      // failed to get data from internet
+      return 0.0;
     }
   }
 
@@ -76,6 +94,12 @@ class SettingsViewmodel extends ChangeNotifier {
         name: Value(name),
         symbol: Value(symbol),
         exchangeRate: Value(exchangeRate)));
+
+    notifyListeners();
+  }
+
+  void deleteCurrency(CurrencyItem currencyItem) async {
+    int success = await _db.deleteCurrencyItem(currencyItem);
 
     notifyListeners();
   }

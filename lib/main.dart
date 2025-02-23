@@ -123,5 +123,3 @@ class PersonalFinanceApp extends StatelessWidget {
     );
   }
 }
-
-// const Color(0x007fb9ae)

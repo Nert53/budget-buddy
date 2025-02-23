@@ -59,6 +59,10 @@ class AddWindowFullScreen extends StatelessWidget {
                     flex: 5,
                     child: TextField(
                       controller: viewModel.amountController,
+                      onTapOutside: (_) {
+                        FocusScope.of(context)
+                            .unfocus(); // hide number keyboard by tapping outside it
+                      },
                       keyboardType:
                           const TextInputType.numberWithOptions(decimal: true),
                       inputFormatters: <TextInputFormatter>[

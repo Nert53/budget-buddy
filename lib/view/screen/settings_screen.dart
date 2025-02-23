@@ -1,4 +1,3 @@
-import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:personal_finance/data/database.dart';
@@ -73,6 +72,28 @@ class SettingsScreen extends StatelessWidget {
 
                         CurrencyItem currentCurrency =
                             viewModel.currencies[index];
+
+                        if (currentCurrency.name.toLowerCase() ==
+                            'czech koruna') {
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 8),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                    '${currentCurrency.name} (${currentCurrency.symbol})'),
+                                Text(
+                                  'Default currency.',
+                                  style: TextStyle(
+                                    color: Colors.grey,
+                                    fontStyle: FontStyle.italic,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        }
                         return Padding(
                           padding: const EdgeInsets.symmetric(
                               horizontal: 16, vertical: 8),
@@ -81,49 +102,25 @@ class SettingsScreen extends StatelessWidget {
                             children: [
                               Text(
                                   '${currentCurrency.name} (${currentCurrency.symbol})'),
-                              Row(children: [
-                                OutlinedButton(
-                                  child: Text(
-                                      currentCurrency.exchangeRate.toString()),
-                                  onPressed: () => {
-                                    if (currentCurrency.name.toLowerCase() ==
-                                        'czech koruna')
-                                      {
-                                        Flushbar(
-                                          icon: Icon(Icons.error_outline,
-                                              color: Theme.of(context)
-                                                  .colorScheme
-                                                  .surface),
-                                          message:
-                                              "You can't change exchange rate for Czech Koruna.",
-                                          shouldIconPulse: false,
-                                          messageColor: Theme.of(context)
-                                              .colorScheme
-                                              .surface,
-                                          backgroundColor: Theme.of(context)
-                                              .colorScheme
-                                              .error,
-                                          borderRadius:
-                                              BorderRadius.circular(16),
-                                          margin: const EdgeInsets.all(12),
-                                          duration: Duration(seconds: 4),
-                                        ).show(context)
-                                      }
-                                    else
-                                      {
-                                        showDialog(
-                                            context: context,
-                                            builder: (context) {
-                                              return EditCurrencyDialog(
-                                                viewModel: viewModel,
-                                                currentCurrency:
-                                                    currentCurrency,
-                                              );
-                                            })
-                                      }
-                                  },
+                              OutlinedButton(
+                                child: Text(
+                                  'Edit',
+                                  style: TextStyle(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .primary),
                                 ),
-                              ]),
+                                onPressed: () => {
+                                  showDialog(
+                                      context: context,
+                                      builder: (context) {
+                                        return EditCurrencyDialog(
+                                          viewModel: viewModel,
+                                          currentCurrency: currentCurrency,
+                                        );
+                                      })
+                                },
+                              ),
                             ],
                           ),
                         );
@@ -183,10 +180,11 @@ class SettingsScreen extends StatelessWidget {
               child: ListTile(
                 leading: Icon(
                   Icons.delete_forever_outlined,
-                  color: Colors.orange,
+                  color: Theme.of(context).colorScheme.error,
                 ),
                 title: Text('Delete All Transactions',
-                    style: TextStyle(color: Colors.orange)),
+                    style:
+                        TextStyle(color: Theme.of(context).colorScheme.error)),
                 onTap: () {},
               ),
             ),

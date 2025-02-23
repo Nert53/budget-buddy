@@ -120,6 +120,12 @@ class AppDatabase extends _$AppDatabase {
         .getSingle();
   }
 
+  Future<int> deleteCurrencyItem(CurrencyItem currency) async {
+    return await (delete(currencyItems)
+          ..where((tbl) => tbl.id.equals(currency.id)))
+        .go();
+  }
+
   // initial data insert
   Future<Null> initialCategoriesInsert() async {
     return await transaction(() async {
