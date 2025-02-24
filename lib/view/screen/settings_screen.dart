@@ -5,6 +5,7 @@ import 'package:personal_finance/theme/seed_colors.dart';
 import 'package:personal_finance/theme/theme_provider.dart';
 import 'package:personal_finance/view/widget/add_currency_dialog.dart';
 import 'package:personal_finance/view/widget/edit_currency_dialog.dart';
+import 'package:personal_finance/view/widget/export_transactions_dialog.dart';
 import 'package:personal_finance/view_model/settings_viewmodel.dart';
 import 'package:provider/provider.dart';
 
@@ -196,26 +197,7 @@ class SettingsScreen extends StatelessWidget {
                   showDialog(
                     context: context,
                     builder: (context) {
-                      return AlertDialog(
-                        title: Text('Export Transactions'),
-                        content: Text(
-                            'All transactions will be exported into .json file.'),
-                        actions: [
-                          TextButton(
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            },
-                            child: Text('Cancel'),
-                          ),
-                          FilledButton(
-                            onPressed: () {
-                              viewModel.exportData();
-                              Navigator.of(context).pop();
-                            },
-                            child: Text('Export'),
-                          ),
-                        ],
-                      );
+                      return ExportTransactionsDialog(viewModel: viewModel);
                     },
                   );
                 },
@@ -226,7 +208,14 @@ class SettingsScreen extends StatelessWidget {
                 leading: Icon(Icons.info_outlined),
                 title: Text('About App'),
                 onTap: () {
-                  //TODO - add dialog about app and its developement
+                  showAboutDialog(
+                      context: context,
+                      applicationVersion: '1.0',
+                      applicationName: 'Buget Buddy',
+                      children: [
+                        Text(
+                            'This is a simple personal finance app. Made on Palacky University as a bachelor thesis by Vojtech Netrh.'),
+                      ]);
                 },
               ),
             ),
