@@ -37,7 +37,9 @@ class EditCategoriesViewmodel extends ChangeNotifier {
     getAllData();
   }
 
-  void updateCategory(CategoryItem category) async {
+  Future<bool> updateCategory(CategoryItem newCategory) async {
+    Future<bool> success = _db.updateCategory(newCategory);
     getAllData();
+    return success;
   }
 }

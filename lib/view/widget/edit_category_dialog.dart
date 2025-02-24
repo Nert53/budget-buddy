@@ -1,3 +1,6 @@
+// allows to use value of color for saving with no error
+// ignore_for_file: deprecated_member_use
+
 import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:personal_finance/data/database.dart';
@@ -92,7 +95,21 @@ class _EditCategoryDialogSmallState extends State<EditCategoryDialogSmall> {
               icon: convertIconToIconCodePoint(selectedCategoryIcon),
               color: int.parse(stringColorCode, radix: 16),
             );
-            widget.viewModel.updateCategory(updatedCategory);
+            widget.viewModel.updateCategory(updatedCategory).then((isUpdated) {
+              if (!isUpdated && context.mounted) {
+                Flushbar(
+                  icon: Icon(Icons.error_outline,
+                      color: Theme.of(context).colorScheme.surface),
+                  message: 'Failed to update category. Please try again.',
+                  shouldIconPulse: false,
+                  messageColor: Theme.of(context).colorScheme.surface,
+                  backgroundColor: Theme.of(context).colorScheme.error,
+                  borderRadius: BorderRadius.circular(16),
+                  margin: const EdgeInsets.all(12),
+                  duration: Duration(seconds: 4),
+                ).show(context);
+              }
+            });
             Navigator.of(context).pop();
           },
           child: Text(
