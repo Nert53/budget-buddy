@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:personal_finance/constants.dart';
 import 'package:personal_finance/view_model/graph_viewmodel.dart';
 import 'dart:math';
 
@@ -17,37 +16,31 @@ class _GraphSelectDialogState extends State<GraphSelectDialog> {
     super.initState();
   }
 
-  void setSelectedGraph(int index, bool value) {
+  void setSelectedGraph(int graphId, String graphName, bool value) {
     setState(() {
-      allGraphs[index].selected = value;
+      widget.viewModel.reselectGraph(graphId, graphName, value);
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text('Add new graph'),
+      title: Text('Manage graphs'),
       actions: [
         TextButton(
           onPressed: () {
             Navigator.of(context).pop();
           },
-          child: Text('Cancel'),
-        ),
-        FilledButton(
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-          child: Text('Save'),
+          child: Text('Exit manager'),
         ),
       ],
       content: SizedBox(
         width: min(400, MediaQuery.of(context).size.width),
         child: ListView.builder(
             shrinkWrap: true,
-            itemCount: allGraphs.length,
+            itemCount: widget.viewModel.allGraphs.length,
             itemBuilder: (context, index) {
-              var currentGraph = allGraphs[index];
+              var currentGraph = widget.viewModel.allGraphs[index];
 
               return ListTile(
                 title: Text(
@@ -57,7 +50,7 @@ class _GraphSelectDialogState extends State<GraphSelectDialog> {
                 leading: Checkbox(
                     value: currentGraph.selected,
                     onChanged: (value) {
-                      setSelectedGraph(index, value!);
+                      setSelectedGraph(currentGraph.id, currentGraph.name, value!);
                     }),
                 trailing: Icon(currentGraph.icon,
                     color: currentGraph.selected

@@ -2,11 +2,39 @@ import 'package:drift/drift.dart';
 import 'package:flutter/material.dart';
 import 'package:personal_finance/data/database.dart';
 import 'package:personal_finance/model/category_spent_graph.dart';
+import 'package:personal_finance/model/graph.dart';
 import 'package:personal_finance/utils/functions.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class GraphViewModel extends ChangeNotifier {
   final AppDatabase _db;
   bool isLoading = true;
+  List<Graph> allGraphs = [
+    Graph(
+        id: 1,
+        name: 'top-categories-graph',
+        namePretty: 'Top Categories',
+        icon: Icons.sort,
+        selected: true),
+    Graph(
+        id: 2,
+        name: 'spent-month-graph',
+        namePretty: 'Spent during month',
+        icon: Icons.bar_chart,
+        selected: true),
+    Graph(
+        id: 3,
+        name: 'numbers-graph',
+        namePretty: 'Interesting numbers',
+        icon: Icons.pin_outlined,
+        selected: true),
+    Graph(
+        id: 4,
+        name: 'catgory-ratio-graph',
+        namePretty: 'Income/Outcome category ratio',
+        icon: Icons.pie_chart_outline,
+        selected: true),
+  ];
   List<CategorySpentGraph> topCategoriesGraphData = [];
   List<MapEntry<int, double>> dailySpentInMonthGraphData = [];
   List<CategorySpentGraph> incomeCategories = [];
@@ -38,6 +66,23 @@ class GraphViewModel extends ChangeNotifier {
     getIncomeCategories();
     getOutcomeCategories();
     isLoading = false;
+  }
+
+  void reselectGraph(int graphId, String graphName, bool newValue) async {
+    allGraphs.firstWhere((element) => element.id == graphId).selected =
+        newValue;
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setBool(graphName, newValue);
+
+    getAllData();
+    notifyListeners();
+  }
+
+  void loadVisibleGraphs() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    for (var graph in allGraphs) {
+      graph.selected = prefs.getBool(graph.name) ?? false;
+    }
   }
 
   void getTopCategoriesGraphData() async {
