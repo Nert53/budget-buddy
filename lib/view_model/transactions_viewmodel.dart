@@ -12,10 +12,15 @@ class TransactionViewModel extends ChangeNotifier {
   List<CategoryItem> categories = [];
   List<CurrencyItem> currencies = [];
 
+  Map<String, bool> categoriesFilter = {};
+  Map<String, bool> currenciesFilter = {};
+  Map<String, bool> typesFilter = {};
+
   DateTime currentDate = DateTime.now();
   String currentMonthString = convertMontNumToMonthName(DateTime.now().month);
   bool currentDisplayedOlder = false;
   bool currentDisplayedNewer = false;
+  int filterCount = 0;
 
   TransactionViewModel(this._db) {
     _db.watchAllTransactions().listen((event) {
@@ -30,6 +35,7 @@ class TransactionViewModel extends ChangeNotifier {
       getAllData();
     });
 
+    getFilterSettings();
     setDateValues();
     notifyListeners();
   }
@@ -217,5 +223,47 @@ class TransactionViewModel extends ChangeNotifier {
   Future<CurrencyItem> getCurrencyById(String id) async {
     return await (_db.select(_db.currencyItems)..where((c) => c.id.equals(id)))
         .getSingle();
+  }
+
+  void getFilterSettings() {
+    getCategoriesFilters();
+    getCurrenciesFilters();
+    getTypesFilters();
+    getAmountFilters();
+    filterCount = 0;
+  }
+
+  void getCategoriesFilters() {
+    categoriesFilter = {};
+    for (var c in categories) {
+      categoriesFilter[c.id] = false;
+    }
+  }
+
+  void getCurrenciesFilters() {
+    currenciesFilter = {};
+    for (var c in currencies) {
+      currenciesFilter[c.id] = false;
+    }
+  }
+
+  void getTypesFilters() {
+    typesFilter = {
+      'income': false,
+      'outcome': false,
+    };
+  }
+
+  void getAmountFilters() {
+    
+  }
+
+  void updateFilterCount(bool value) {
+    if (value) {
+      filterCount++;
+    } else {
+      filterCount--;
+    }
+    notifyListeners();
   }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 IconData convertIconCodePointToIcon(int iconCodePoint) {
   return IconData(iconCodePoint, fontFamily: 'MaterialIcons');
@@ -64,8 +65,6 @@ Color convertThemeColorNameToColor(String themeColorName) {
   }
 }
 
-
-
 extension DateTimeExtension on DateTime {
   int daysInMonth() {
     switch (month) {
@@ -98,3 +97,9 @@ extension DateTimeExtension on DateTime {
     }
   }
 }
+
+String amountPretty(double amount) {
+  final formatter = NumberFormat("#,##0.0", "en_US");
+  return formatter.format(amount).replaceAll(",", " ");
+}
+

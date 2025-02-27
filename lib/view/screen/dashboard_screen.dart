@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:personal_finance/constants.dart';
 import 'package:personal_finance/model/category_spent_graph.dart';
 import 'package:personal_finance/model/transaction.dart';
+import 'package:personal_finance/utils/functions.dart';
 import 'package:personal_finance/view/widget/extended_dashboard.dart';
 import 'package:personal_finance/view_model/dashboard_viewmodel.dart';
 import 'package:provider/provider.dart';
@@ -95,8 +96,10 @@ class DashboardScreen extends StatelessWidget {
                                   ),
                                   series: <CircularSeries>[
                                       // Renders doughnut chart
-                                      DoughnutSeries<CategorySpentGraph, String>(
-                                          dataSource: viewModel.categoryGraphData,
+                                      DoughnutSeries<CategorySpentGraph,
+                                              String>(
+                                          dataSource:
+                                              viewModel.categoryGraphData,
                                           pointColorMapper:
                                               (CategorySpentGraph data, _) =>
                                                   data.color,
@@ -158,7 +161,8 @@ class DashboardScreen extends StatelessWidget {
                                   child: ListView.builder(
                                 itemCount: viewModel.categoryGraphData.length,
                                 itemBuilder: (BuildContext context, int index) {
-                                  var category = viewModel.categoryGraphData[index];
+                                  var category =
+                                      viewModel.categoryGraphData[index];
 
                                   return Row(
                                     children: [
@@ -346,11 +350,44 @@ class DashboardScreen extends StatelessWidget {
                                                     fontSize: 15,
                                                     color: Colors.grey),
                                               )
-                                            : Text(currentTransaction.note,
-                                                style: const TextStyle(
-                                                    fontSize: 16.0,
-                                                    fontWeight:
-                                                        FontWeight.bold)),
+                                            : currentTransaction.note.length >
+                                                    20
+                                                ? RichText(
+                                                    text: TextSpan(
+                                                      children: [
+                                                        TextSpan(
+                                                          text:
+                                                              currentTransaction
+                                                                  .note
+                                                                  .substring(
+                                                                      0, 20),
+                                                          style: TextStyle(
+                                                              color: Theme.of(
+                                                                      context)
+                                                                  .textTheme
+                                                                  .bodyMedium
+                                                                  ?.color,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold),
+                                                        ),
+                                                        TextSpan(
+                                                          text: "...more",
+                                                          style: TextStyle(
+                                                            color: Colors
+                                                                .grey[700],
+                                                          ),
+                                                        )
+                                                      ],
+                                                    ),
+                                                  )
+                                                : Text(
+                                                    currentTransaction.note,
+                                                    style: TextStyle(
+                                                        fontSize: 14,
+                                                        fontWeight:
+                                                            FontWeight.bold),
+                                                  ),
                                         Text(
                                           '${dateFormat.format(currentTransaction.date)} | ${timeFormat.format(currentTransaction.date)}',
                                           style: TextStyle(
@@ -381,7 +418,7 @@ class DashboardScreen extends StatelessWidget {
                                                   color: Colors.green[700],
                                                 ),
                                           Text(
-                                            '${currentTransaction.amount} ${currentTransaction.currencySymbol}',
+                                            '${amountPretty(currentTransaction.amount)} ${currentTransaction.currencySymbol}',
                                             style: TextStyle(
                                                 color:
                                                     currentTransaction.isOutcome

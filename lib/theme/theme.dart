@@ -6,4 +6,5 @@ ThemeData mainThemeMode = ThemeData(
   useMaterial3: true,
   textTheme: GoogleFonts.poppinsTextTheme(),
   scaffoldBackgroundColor: const Color.fromARGB(255, 224, 224, 224),
+  sliderTheme: SliderThemeData(showValueIndicator: ShowValueIndicator.never),
 );

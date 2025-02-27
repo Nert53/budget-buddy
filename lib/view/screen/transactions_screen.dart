@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:personal_finance/constants.dart';
 import 'package:personal_finance/model/transaction.dart';
+import 'package:personal_finance/utils/functions.dart';
 import 'package:personal_finance/view/widget/edit_transaction_dialog.dart';
 import 'package:personal_finance/view/widget/transactions_skeleton.dart';
 import 'package:personal_finance/view_model/transactions_viewmodel.dart';
@@ -16,6 +19,7 @@ class TransactionScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     DateFormat dateFormat = DateFormat('dd.MM.yyyy');
     DateFormat timeFormat = DateFormat('HH:mm');
+    bool largeScreen = MediaQuery.of(context).size.width > largeScreenWidth;
 
     return Consumer<TransactionViewModel>(builder: (context, viewModel, child) {
       return Column(
@@ -25,49 +29,54 @@ class TransactionScreen extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Container(
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(32),
-                      border: Border.all(
-                          color: Theme.of(context).primaryColor, width: 2)),
-                  child: IconButton(
-                    icon: const Icon(
-                      Icons.arrow_back_ios_new_outlined,
-                    ),
-                    onPressed: () {
-                      viewModel.previousMonth();
-                    },
+                IconButton.filled(
+                  icon: const Icon(
+                    Icons.arrow_back_ios_new_outlined,
                   ),
+                  onPressed: () {
+                    viewModel.previousMonth();
+                  },
                 ),
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     viewModel.currentDisplayedNewer
-                        ? IconButton.filled(
+                        ? IconButton.filledTonal(
                             onPressed: () => {
                                   viewModel.upToDate(),
                                 },
+                            style: ButtonStyle(
+                                backgroundColor: WidgetStateProperty.all(
+                                    Theme.of(context)
+                                        .colorScheme
+                                        .tertiaryContainer)),
                             icon:
                                 Icon(Icons.keyboard_double_arrow_left_outlined))
                         : const SizedBox(width: 16),
                     SizedBox(
-                      width: 8,
+                      width: 4,
                     ),
-                    GestureDetector(
-                      onTap: viewModel.getAllData,
+                    TextButton(
+                      onPressed: () {},
+                      style: ButtonStyle(
+                        backgroundColor: WidgetStateProperty.all(
+                            Theme.of(context).colorScheme.secondaryContainer),
+                      ),
                       child: Text(
                         '${viewModel.currentMonthString} ${viewModel.currentDate.year}',
-                        style: const TextStyle(
-                          fontSize: 20,
-                        ),
+                        style: TextStyle(
+                            fontSize: 20,
+                            color: Theme.of(context)
+                                .textTheme
+                                .headlineMedium!
+                                .color),
                       ),
                     ),
                     SizedBox(
-                      width: 8,
+                      width: 4,
                     ),
                     viewModel.currentDisplayedOlder
-                        ? IconButton.filled(
+                        ? IconButton.filledTonal(
                             onPressed: () => {
                                   viewModel.upToDate(),
                                 },
@@ -76,20 +85,43 @@ class TransactionScreen extends StatelessWidget {
                         : const SizedBox(width: 16),
                   ],
                 ),
-                Container(
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(32),
-                      border: Border.all(
-                          color: Theme.of(context).primaryColor, width: 2)),
-                  child: IconButton(
-                    icon: const Icon(
-                      Icons.arrow_forward_ios_outlined,
-                    ),
-                    onPressed: () {
-                      viewModel.nextMonth();
-                    },
+                IconButton.filled(
+                  icon: const Icon(
+                    Icons.arrow_forward_ios_outlined,
+                    size: 24,
                   ),
+                  onPressed: () {
+                    viewModel.nextMonth();
+                  },
+                ),
+              ],
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 18.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text('${viewModel.transactions.length} transactions'),
+                Badge.count(
+                  count: viewModel.filterCount,
+                  isLabelVisible: viewModel.filterCount > 0,
+                  alignment: Alignment.lerp(
+                      Alignment.topCenter, Alignment.topRight, 0.85),
+                  child: FilledButton.tonalIcon(
+                      onPressed: () {
+                        context.push('/filter-transactions', extra: {
+                          'viewModel': viewModel,
+                        });
+                      },
+                      style: ButtonStyle(
+                          backgroundColor: WidgetStateProperty.all(
+                              Theme.of(context).colorScheme.primary),
+                          foregroundColor: WidgetStateProperty.all(
+                              Theme.of(context).colorScheme.onPrimary)),
+                      icon: Icon(Icons.filter_alt_outlined,
+                          color: Theme.of(context).colorScheme.onPrimary),
+                      label: Text('Filter')),
                 ),
               ],
             ),
@@ -166,11 +198,37 @@ class TransactionScreen extends StatelessWidget {
                                           style: const TextStyle(
                                               fontSize: 15, color: Colors.grey),
                                         )
-                                      : Text(
-                                          currentTransaction.note,
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold),
-                                        ),
+                                      : currentTransaction.note.length > 20
+                                          ? RichText(
+                                              text: TextSpan(
+                                                children: [
+                                                  TextSpan(
+                                                    text: currentTransaction
+                                                        .note
+                                                        .substring(0, 20),
+                                                    style: TextStyle(
+                                                        color: Theme.of(context)
+                                                            .textTheme
+                                                            .bodyMedium
+                                                            ?.color,
+                                                        fontWeight:
+                                                            FontWeight.bold),
+                                                  ),
+                                                  TextSpan(
+                                                    text: "...more",
+                                                    style: TextStyle(
+                                                      color: Colors.grey[700],
+                                                    ),
+                                                  )
+                                                ],
+                                              ),
+                                            )
+                                          : Text(
+                                              currentTransaction.note,
+                                              style: TextStyle(
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.bold),
+                                            ),
                                   Text(
                                     '${dateFormat.format(currentTransaction.date)} | ${timeFormat.format(currentTransaction.date)}',
                                     style: TextStyle(
@@ -195,7 +253,7 @@ class TransactionScreen extends StatelessWidget {
                                             color: Colors.green[700],
                                           ),
                                     Text(
-                                      '${viewModel.transactions[index].amount} ${viewModel.transactions[index].currencySymbol}',
+                                      '${amountPretty(viewModel.transactions[index].amount)} ${viewModel.transactions[index].currencySymbol}',
                                       style: TextStyle(
                                           color: currentTransaction.isOutcome
                                               ? Colors.red

@@ -5,6 +5,7 @@ import 'package:personal_finance/data/database.dart';
 import 'package:personal_finance/theme/theme_provider.dart';
 import 'package:personal_finance/view/screen/dashboard_screen.dart';
 import 'package:personal_finance/view/screen/edit_categories_screen.dart';
+import 'package:personal_finance/view/screen/filter_transactions_screen.dart';
 import 'package:personal_finance/view/screen/graph_screen.dart';
 import 'package:personal_finance/view/screen_container.dart';
 import 'package:personal_finance/view/screen/settings_screen.dart';
@@ -91,6 +92,12 @@ final _router = GoRouter(
           builder: (BuildContext context, GoRouterState state) {
             return EditCategoriesScreen();
           }),
+      GoRoute(
+        path: '/filter-transactions',
+        builder: (context, state) {
+          return const FilterTransactionsScreen();
+        },
+      ),
       GoRoute(
         path: '/database',
         builder: (BuildContext context, GoRouterState state) {
