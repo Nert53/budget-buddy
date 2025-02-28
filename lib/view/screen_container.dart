@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:personal_finance/constants.dart';
 import 'package:personal_finance/view/nav_destinations.dart';
 import 'package:personal_finance/view/widget/add_transaction_dialog.dart';
+import 'package:provider/provider.dart';
 
 class ScreenContainer extends StatelessWidget {
   const ScreenContainer({super.key, required this.navigationShell});

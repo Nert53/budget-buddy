@@ -33,35 +33,19 @@ class _FilterTransactionsScreenState extends State<FilterTransactionsScreen> {
               context.pop();
             },
           ),
-          backgroundColor: Theme.of(context).colorScheme.primary,
-          foregroundColor: Theme.of(context).colorScheme.onPrimary,
-        ),
-        floatingActionButton: FloatingActionButton.extended(
-          onPressed: () {
-            viewModel.getAllData();
-            context.pop();
-          },
-          backgroundColor: Theme.of(context).colorScheme.primary,
-          foregroundColor: Theme.of(context).colorScheme.onPrimary,
-          label: Text('Apply'),
-          icon: Icon(Icons.check),
-        ),
-        floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
-        bottomNavigationBar: BottomAppBar(
-          height: 56,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              IconButton(
+          actions: [
+            Tooltip(
+              message: 'Reset all filters.',
+              child: IconButton(
+                icon: Icon(Icons.filter_alt_off_outlined),
                 onPressed: () {
                   // todo
                 },
-                icon: Tooltip(
-                    message: 'Reset all filters.',
-                    child: Icon(Icons.filter_alt_off_outlined)),
               ),
-            ],
-          ),
+            ),
+          ],
+          backgroundColor: Theme.of(context).colorScheme.primary,
+          foregroundColor: Theme.of(context).colorScheme.onPrimary,
         ),
         body: viewModel.isLoading
             ? Center(
@@ -89,20 +73,21 @@ class _FilterTransactionsScreenState extends State<FilterTransactionsScreen> {
                         )),
                     Wrap(
                       spacing: 4,
-                      runSpacing: 4,
                       children: viewModel.categories
                           .map((category) => FilterChip(
                                 label: Text(
                                   category.name,
                                 ),
-                                avatar: viewModel.categoriesFilter[category.id]!
-                                    ? null
-                                    : Icon(
-                                        convertIconCodePointToIcon(
-                                            category.icon),
-                                        color: convertColorCodeToColor(
-                                            category.color),
-                                      ),
+                                avatar:
+                                    viewModel.categoriesFilter[category.id] ??
+                                            true
+                                        ? null
+                                        : Icon(
+                                            convertIconCodePointToIcon(
+                                                category.icon),
+                                            color: convertColorCodeToColor(
+                                                category.color),
+                                          ),
                                 selected:
                                     viewModel.categoriesFilter[category.id] ??
                                         false,
@@ -124,13 +109,14 @@ class _FilterTransactionsScreenState extends State<FilterTransactionsScreen> {
                         )),
                     Wrap(
                       spacing: 4,
-                      runSpacing: 4,
                       children: viewModel.currencies
                           .map((currency) => FilterChip(
-                                avatar: viewModel.currenciesFilter[currency.id]!
-                                    ? null
-                                    : Text(currency.symbol,
-                                        style: TextStyle(fontSize: 9)),
+                                avatar:
+                                    viewModel.currenciesFilter[currency.id] ??
+                                            true
+                                        ? null
+                                        : Text(currency.symbol,
+                                            style: TextStyle(fontSize: 9)),
                                 label: Text(currency.name),
                                 selected:
                                     viewModel.currenciesFilter[currency.id] ??
@@ -251,13 +237,6 @@ class _FilterTransactionsScreenState extends State<FilterTransactionsScreen> {
                       ),
                     ),
                     Divider(),
-                    Text(
-                      '*Filters need to be applied to see the changes.',
-                      style: TextStyle(
-                          fontSize:
-                              Theme.of(context).textTheme.labelSmall!.fontSize,
-                          color: Theme.of(context).colorScheme.tertiary),
-                    ),
                   ],
                 ),
               ),

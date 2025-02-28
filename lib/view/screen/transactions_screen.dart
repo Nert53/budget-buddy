@@ -5,6 +5,7 @@ import 'package:personal_finance/constants.dart';
 import 'package:personal_finance/model/transaction.dart';
 import 'package:personal_finance/utils/functions.dart';
 import 'package:personal_finance/view/widget/edit_transaction_dialog.dart';
+import 'package:personal_finance/view/widget/filter_date_sheet.dart';
 import 'package:personal_finance/view/widget/transactions_skeleton.dart';
 import 'package:personal_finance/view_model/transactions_viewmodel.dart';
 import 'package:provider/provider.dart';
@@ -56,12 +57,14 @@ class TransactionScreen extends StatelessWidget {
                     SizedBox(
                       width: 4,
                     ),
-                    TextButton(
-                      onPressed: () {},
-                      style: ButtonStyle(
-                        backgroundColor: WidgetStateProperty.all(
-                            Theme.of(context).colorScheme.secondaryContainer),
-                      ),
+                    FilledButton.tonal(
+                      onPressed: () {
+                        showModalBottomSheet(
+                            context: context,
+                            builder: (context) {
+                              return FilterDateSheet(viewModel: viewModel,);
+                            });
+                      },
                       child: Text(
                         '${viewModel.currentMonthString} ${viewModel.currentDate.year}',
                         style: TextStyle(
@@ -126,6 +129,7 @@ class TransactionScreen extends StatelessWidget {
               ],
             ),
           ),
+          SizedBox(height: 8),
           if (viewModel.isLoading)
             Expanded(child: Skeletonizer(child: TransactionsSkeleton()))
           else if (viewModel.transactions.isEmpty)

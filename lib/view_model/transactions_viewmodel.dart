@@ -1,6 +1,7 @@
 import 'package:drift/drift.dart';
 import 'package:flutter/material.dart';
 import 'package:personal_finance/data/database.dart';
+import 'package:personal_finance/model/filter_period.dart';
 import 'package:personal_finance/model/transaction.dart';
 import 'package:personal_finance/utils/functions.dart';
 
@@ -15,6 +16,28 @@ class TransactionViewModel extends ChangeNotifier {
   Map<String, bool> categoriesFilter = {};
   Map<String, bool> currenciesFilter = {};
   Map<String, bool> typesFilter = {};
+
+  List<FilterPeriod> periodChoice = [
+    FilterPeriod(
+      name: 'All Time',
+      selected: true,
+      icon: Icons.all_inclusive.codePoint.toString(),
+    ),
+    FilterPeriod(
+      name: 'Year',
+      selected: false,
+      icon: 'assets/icons/icon_365.svg',
+    ),
+    FilterPeriod(
+        name: 'Month', selected: false, icon: 'assets/icons/icon_30.svg'),
+    FilterPeriod(
+        name: 'Week', selected: false, icon: 'assets/icons/icon_7.svg'),
+    FilterPeriod(name: 'Day', selected: false, icon: 'assets/icons/icon_1.svg'),
+    /*FilterPeriod(
+        name: 'Custom',
+        selected: false,
+        icon: Icons.date_range.codePoint.toString()),*/
+  ];
 
   DateTime currentDate = DateTime.now();
   String currentMonthString = convertMontNumToMonthName(DateTime.now().month);
@@ -254,9 +277,7 @@ class TransactionViewModel extends ChangeNotifier {
     };
   }
 
-  void getAmountFilters() {
-    
-  }
+  void getAmountFilters() {}
 
   void updateFilterCount(bool value) {
     if (value) {
