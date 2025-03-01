@@ -229,7 +229,8 @@ class AddWindowFullScreen extends StatelessWidget {
                       context: context,
                       initialDate: DateTime.now(),
                       firstDate: DateTime(2000),
-                      lastDate: DateTime(2100));
+                      lastDate: DateTime(2100),
+                      locale: const Locale('cs'));
                   if (date != null) {
                     viewModel.dateController.text =
                         DateFormat('dd.MM.yyyy').format(date).toString();
@@ -505,7 +506,8 @@ class AddWindow extends StatelessWidget {
                             context: context,
                             initialDate: DateTime.now(),
                             firstDate: DateTime(2000),
-                            lastDate: DateTime(2100));
+                            lastDate: DateTime(2100),
+                            locale: const Locale('cs'));
                         if (date != null) {
                           viewModel.dateController.text =
                               DateFormat('dd.MM.yyyy').format(date).toString();

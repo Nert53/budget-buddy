@@ -4,7 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:personal_finance/model/transaction.dart';
 import 'package:personal_finance/utils/functions.dart';
 import 'package:personal_finance/view/widget/dialogs/edit_transaction_dialog.dart';
-import 'package:personal_finance/view/widget/filter_date_sheet.dart';
+import 'package:personal_finance/view/widget/select_time_period.dart';
 import 'package:personal_finance/view/widget/transactions_skeleton.dart';
 import 'package:personal_finance/view_model/transactions_viewmodel.dart';
 import 'package:provider/provider.dart';
@@ -21,6 +21,12 @@ class TransactionScreen extends StatelessWidget {
     DateFormat timeFormat = DateFormat('HH:mm');
 
     return Consumer<TransactionViewModel>(builder: (context, viewModel, child) {
+      DateFormat periodFormat = viewModel.currentPeriod.toLowerCase() == 'day'
+          ? DateFormat('dd. MM. yyyy')
+          : viewModel.currentPeriod.toLowerCase() == 'month'
+              ? DateFormat('MM - yyyy')
+              : DateFormat('yyyy');
+
       return Column(
         children: [
           Padding(
@@ -28,14 +34,16 @@ class TransactionScreen extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                IconButton.filled(
-                  icon: const Icon(
-                    Icons.arrow_back_ios_new_outlined,
-                  ),
-                  onPressed: () {
-                    viewModel.previousMonth();
-                  },
-                ),
+                viewModel.currentPeriod.toLowerCase() == 'all time'
+                    ? const SizedBox()
+                    : IconButton.filled(
+                        icon: const Icon(
+                          Icons.arrow_back_ios_new_outlined,
+                        ),
+                        onPressed: () {
+                          viewModel.previousTimePeriod();
+                        },
+                      ),
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
@@ -56,19 +64,40 @@ class TransactionScreen extends StatelessWidget {
                             context: context,
                             builder: (context) {
                               return FilterDateSheet(
-                                viewModel: viewModel,
-                              );
+                                  currentSelectedPeriod: viewModel.periodChoice
+                                      .firstWhere((element) =>
+                                          element.selected == true));
                             });
                       },
-                      child: Text(
-                        '${viewModel.currentMonthString} ${viewModel.currentDate.year}',
-                        style: TextStyle(
-                            fontSize: 20,
-                            color: Theme.of(context)
-                                .textTheme
-                                .headlineMedium!
-                                .color),
-                      ),
+                      child: viewModel.currentPeriod.toLowerCase() == 'all time'
+                          ? Text(
+                              'All time',
+                              style: TextStyle(
+                                  fontSize: 20,
+                                  color: Theme.of(context)
+                                      .textTheme
+                                      .headlineMedium!
+                                      .color),
+                            )
+                          : viewModel.currentPeriod.toLowerCase() == 'week'
+                              ? Text(
+                                  'Week ${viewModel.currentDate.weekday}',
+                                  style: TextStyle(
+                                      fontSize: 20,
+                                      color: Theme.of(context)
+                                          .textTheme
+                                          .headlineMedium!
+                                          .color),
+                                )
+                              : Text(
+                                  periodFormat.format(viewModel.currentDate),
+                                  style: TextStyle(
+                                      fontSize: 20,
+                                      color: Theme.of(context)
+                                          .textTheme
+                                          .headlineMedium!
+                                          .color),
+                                ),
                     ),
                     SizedBox(
                       width: 4,
@@ -83,15 +112,17 @@ class TransactionScreen extends StatelessWidget {
                         : const SizedBox(width: 16),
                   ],
                 ),
-                IconButton.filled(
-                  icon: const Icon(
-                    Icons.arrow_forward_ios_outlined,
-                    size: 24,
-                  ),
-                  onPressed: () {
-                    viewModel.nextMonth();
-                  },
-                ),
+                viewModel.currentPeriod.toLowerCase() == 'all time'
+                    ? const SizedBox()
+                    : IconButton.filled(
+                        icon: const Icon(
+                          Icons.arrow_forward_ios_outlined,
+                          size: 24,
+                        ),
+                        onPressed: () {
+                          viewModel.nextTimePeriod();
+                        },
+                      ),
               ],
             ),
           ),
@@ -101,6 +132,7 @@ class TransactionScreen extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text('${viewModel.transactions.length} transactions'),
+                Text(viewModel.currentPeriod),
                 Badge.count(
                   count: viewModel.categoryFilterCount +
                       viewModel.currencyFilterCount +

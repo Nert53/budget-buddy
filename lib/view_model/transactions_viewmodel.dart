@@ -1,7 +1,7 @@
 import 'package:drift/drift.dart';
 import 'package:flutter/material.dart';
 import 'package:personal_finance/data/database.dart';
-import 'package:personal_finance/model/filter_period.dart';
+import 'package:personal_finance/model/time_period.dart';
 import 'package:personal_finance/model/transaction.dart';
 import 'package:personal_finance/utils/functions.dart';
 
@@ -17,23 +17,21 @@ class TransactionViewModel extends ChangeNotifier {
   Map<String, bool> currenciesFilter = {};
   Map<String, bool> typesFilter = {};
 
-  List<FilterPeriod> periodChoice = [
-    FilterPeriod(
+  List<TimePeriod> periodChoice = [
+    TimePeriod(
       name: 'All Time',
-      selected: true,
+      selected: false,
       icon: Icons.all_inclusive.codePoint.toString(),
     ),
-    FilterPeriod(
+    TimePeriod(
       name: 'Year',
       selected: false,
       icon: 'assets/icons/icon_365.svg',
     ),
-    FilterPeriod(
-        name: 'Month', selected: false, icon: 'assets/icons/icon_30.svg'),
-    FilterPeriod(
-        name: 'Week', selected: false, icon: 'assets/icons/icon_7.svg'),
-    FilterPeriod(name: 'Day', selected: false, icon: 'assets/icons/icon_1.svg'),
-    FilterPeriod(
+    TimePeriod(name: 'Month', selected: true, icon: 'assets/icons/icon_30.svg'),
+    TimePeriod(name: 'Week', selected: false, icon: 'assets/icons/icon_7.svg'),
+    TimePeriod(name: 'Day', selected: false, icon: 'assets/icons/icon_1.svg'),
+    TimePeriod(
         name: 'Custom',
         selected: false,
         icon: Icons.date_range.codePoint.toString()),
@@ -41,13 +39,13 @@ class TransactionViewModel extends ChangeNotifier {
 
   DateTime currentDate = DateTime.now();
   String currentMonthString = convertMontNumToMonthName(DateTime.now().month);
+  String currentPeriod = 'Month';
   bool currentDisplayedOlder = false;
   bool currentDisplayedNewer = false;
   int categoryFilterCount = 0;
   int currencyFilterCount = 0;
   int typeFilterCount = 0;
   bool amountFilterActive = false;
-
   double amountMin = 0.0;
   double amountLow = 0.0;
   double amountMax = 0.0;
@@ -134,22 +132,50 @@ class TransactionViewModel extends ChangeNotifier {
     refresh();
   }
 
-  void previousMonth() {
-    if (currentDate.month == 1) {
-      currentDate = DateTime(currentDate.year - 1, 12);
-    } else {
-      currentDate = DateTime(currentDate.year, currentDate.month - 1);
+  void updateSelectedPeriod(String selectedPeriodName) {
+    currentPeriod = selectedPeriodName;
+    for (var period in periodChoice) {
+      period.selected = period.name == selectedPeriodName;
     }
+
+    refresh();
+    notifyListeners();
+  }
+
+  void previousTimePeriod() {
+    if (currentPeriod == 'Year') {
+      currentDate = DateTime(currentDate.year - 1);
+    } else if (currentPeriod == 'Month') {
+      if (currentDate.month == 1) {
+        currentDate = DateTime(currentDate.year - 1, 12);
+      } else {
+        currentDate = DateTime(currentDate.year, currentDate.month - 1);
+      }
+    } else if (currentPeriod == 'Week') {
+      currentDate = currentDate.subtract(Duration(days: 7));
+    } else if (currentPeriod == 'Day') {
+      currentDate = currentDate.subtract(Duration(days: 1));
+    }
+
     currentMonthString = convertMontNumToMonthName(currentDate.month);
     refresh();
   }
 
-  void nextMonth() {
-    if (currentDate.month == 12) {
-      currentDate = DateTime(currentDate.year + 1, 1);
-    } else {
-      currentDate = DateTime(currentDate.year, currentDate.month + 1);
+  void nextTimePeriod() {
+    if (currentPeriod == 'Year') {
+      currentDate = DateTime(currentDate.year + 1);
+    } else if (currentPeriod == 'Month') {
+      if (currentDate.month == 12) {
+        currentDate = DateTime(currentDate.year + 1, 1);
+      } else {
+        currentDate = DateTime(currentDate.year, currentDate.month + 1);
+      }
+    } else if (currentPeriod == 'Week') {
+      currentDate = currentDate.add(Duration(days: 7));
+    } else if (currentPeriod == 'Day') {
+      currentDate = currentDate.add(Duration(days: 1));
     }
+
     currentMonthString = convertMontNumToMonthName(currentDate.month);
     refresh();
   }
@@ -157,8 +183,24 @@ class TransactionViewModel extends ChangeNotifier {
   void getTransactions() async {
     List<TransactionItem> transactionItems =
         await (_db.select(_db.transactionItems)
-              ..where((t) => t.date.month.equals(currentDate.month))
-              ..where((t) => t.date.year.equals(currentDate.year))
+              ..where((t) {
+                if (currentPeriod == 'Day') {
+                  return t.date.day.equals(currentDate.day) &
+                      t.date.month.equals(currentDate.month) &
+                      t.date.year.equals(currentDate.year);
+                } else if (currentPeriod == 'Month') {
+                  return t.date.month.equals(currentDate.month) &
+                      t.date.year.equals(currentDate.year);
+                } else if (currentPeriod == 'Week') {
+                  return t.date.isSmallerOrEqualValue(
+                          currentDate.add(Duration(days: 7))) &
+                      t.date.isBiggerOrEqualValue(currentDate);
+                } else if (currentPeriod == 'Year') {
+                  return t.date.year.equals(currentDate.year);
+                } else {
+                  return Constant(true); // For 'All Time' and 'Custom' periods
+                }
+              })
               ..orderBy([
                 (t) => OrderingTerm(expression: t.date, mode: OrderingMode.desc)
               ])) // Sort by date in descending order
