@@ -46,11 +46,6 @@ class TransactionScreen extends StatelessWidget {
                             onPressed: () => {
                                   viewModel.upToDate(),
                                 },
-                            style: ButtonStyle(
-                                backgroundColor: WidgetStateProperty.all(
-                                    Theme.of(context)
-                                        .colorScheme
-                                        .tertiaryContainer)),
                             icon:
                                 Icon(Icons.keyboard_double_arrow_left_outlined))
                         : const SizedBox(width: 16),
@@ -62,7 +57,9 @@ class TransactionScreen extends StatelessWidget {
                         showModalBottomSheet(
                             context: context,
                             builder: (context) {
-                              return FilterDateSheet(viewModel: viewModel,);
+                              return FilterDateSheet(
+                                viewModel: viewModel,
+                              );
                             });
                       },
                       child: Text(
@@ -107,15 +104,19 @@ class TransactionScreen extends StatelessWidget {
               children: [
                 Text('${viewModel.transactions.length} transactions'),
                 Badge.count(
-                  count: viewModel.filterCount,
-                  isLabelVisible: viewModel.filterCount > 0,
+                  count: viewModel.categoryFilterCount +
+                      viewModel.currencyFilterCount +
+                      viewModel.typeFilterCount,
+                  isLabelVisible: (viewModel.categoryFilterCount +
+                              viewModel.currencyFilterCount +
+                              viewModel.typeFilterCount) >
+                          0 ||
+                      viewModel.amountFilterActive,
                   alignment: Alignment.lerp(
                       Alignment.topCenter, Alignment.topRight, 0.85),
                   child: FilledButton.tonalIcon(
                       onPressed: () {
-                        context.push('/filter-transactions', extra: {
-                          'viewModel': viewModel,
-                        });
+                        context.push('/filter-transactions');
                       },
                       style: ButtonStyle(
                           backgroundColor: WidgetStateProperty.all(

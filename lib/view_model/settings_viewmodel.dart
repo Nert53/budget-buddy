@@ -31,7 +31,6 @@ class SettingsViewmodel extends ChangeNotifier {
 
   void getCurrencies() async {
     currencies = await _db.select(_db.currencyItems).get();
-
     notifyListeners();
   }
 

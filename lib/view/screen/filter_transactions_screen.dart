@@ -14,9 +14,6 @@ class FilterTransactionsScreen extends StatefulWidget {
 }
 
 class _FilterTransactionsScreenState extends State<FilterTransactionsScreen> {
-  double _lowAmount = 0;
-  double _highAmount = 2500;
-
   @override
   Widget build(BuildContext context) {
     final double screenWidth = MediaQuery.of(context).size.width;
@@ -39,7 +36,10 @@ class _FilterTransactionsScreenState extends State<FilterTransactionsScreen> {
               child: IconButton(
                 icon: Icon(Icons.filter_alt_off_outlined),
                 onPressed: () {
-                  // todo
+                  setState(() {
+                    // todo
+                    viewModel.resetFilters();
+                  });
                 },
               ),
             ),
@@ -63,181 +63,246 @@ class _FilterTransactionsScreenState extends State<FilterTransactionsScreen> {
                     ? EdgeInsets.symmetric(
                         vertical: 12, horizontal: (screenWidth - 940) / 2)
                     : const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('Categories',
-                        style: TextStyle(
-                          fontSize:
-                              Theme.of(context).textTheme.titleLarge!.fontSize,
-                        )),
-                    Wrap(
-                      spacing: 4,
-                      children: viewModel.categories
-                          .map((category) => FilterChip(
-                                label: Text(
-                                  category.name,
-                                ),
-                                avatar:
-                                    viewModel.categoriesFilter[category.id] ??
-                                            true
-                                        ? null
-                                        : Icon(
-                                            convertIconCodePointToIcon(
-                                                category.icon),
-                                            color: convertColorCodeToColor(
-                                                category.color),
-                                          ),
-                                selected:
-                                    viewModel.categoriesFilter[category.id] ??
-                                        false,
-                                onSelected: (bool selected) {
-                                  setState(() {
-                                    viewModel.categoriesFilter[category.id] =
-                                        selected;
-                                    viewModel.updateFilterCount(selected);
-                                  });
-                                },
-                              ))
-                          .toList(),
-                    ),
-                    Divider(),
-                    Text('Currencies',
-                        style: TextStyle(
-                          fontSize:
-                              Theme.of(context).textTheme.titleLarge!.fontSize,
-                        )),
-                    Wrap(
-                      spacing: 4,
-                      children: viewModel.currencies
-                          .map((currency) => FilterChip(
-                                avatar:
-                                    viewModel.currenciesFilter[currency.id] ??
-                                            true
-                                        ? null
-                                        : Text(currency.symbol,
-                                            style: TextStyle(fontSize: 9)),
-                                label: Text(currency.name),
-                                selected:
-                                    viewModel.currenciesFilter[currency.id] ??
-                                        false,
-                                onSelected: (bool selected) {
-                                  setState(() {
-                                    viewModel.currenciesFilter[currency.id] =
-                                        selected;
-                                    viewModel.updateFilterCount(selected);
-                                  });
-                                },
-                              ))
-                          .toList(),
-                    ),
-                    Divider(),
-                    Text('Type',
-                        style: TextStyle(
-                            fontSize: Theme.of(context)
-                                .textTheme
-                                .titleLarge!
-                                .fontSize)),
-                    Wrap(
-                      spacing: 4,
-                      children: [
-                        FilterChip(
-                          avatar: viewModel.typesFilter['income']!
-                              ? null
-                              : Icon(Icons.arrow_drop_up, color: Colors.green),
-                          label: Text(
-                            'Income',
-                          ),
-                          selected: viewModel.typesFilter['income'] ?? false,
-                          onSelected: (bool selected) {
-                            setState(() {
-                              viewModel.typesFilter['income'] = selected;
-                              viewModel.updateFilterCount(selected);
-                            });
-                          },
-                        ),
-                        FilterChip(
-                          avatar: viewModel.typesFilter['outcome']!
-                              ? null
-                              : Icon(Icons.arrow_drop_down, color: Colors.red),
-                          label: Text(
-                            'Outcome',
-                          ),
-                          selected: viewModel.typesFilter['outcome'] ?? false,
-                          onSelected: (bool selected) {
-                            setState(() {
-                              viewModel.typesFilter['outcome'] = selected;
-                              viewModel.updateFilterCount(selected);
-                            });
-                          },
-                        ),
-                      ],
-                    ),
-                    Divider(),
-                    Text('Amount range',
-                        style: TextStyle(
-                            fontSize: Theme.of(context)
-                                .textTheme
-                                .titleLarge!
-                                .fontSize)),
-                    RangeSlider(
-                        values: RangeValues(_lowAmount, _highAmount),
-                        labels: RangeLabels('400', '1500'),
-                        min: 0,
-                        max: 2500,
-                        inactiveColor: Colors.white,
-                        onChanged: (value) {
-                          setState(() {
-                            _lowAmount = value.start;
-                            _highAmount = value.end;
-                          });
-                        }),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('Sort by',
+                          style: TextStyle(
+                              fontSize: Theme.of(context)
+                                  .textTheme
+                                  .titleLarge!
+                                  .fontSize)),
+                      SizedBox(width: 8),
+                      Wrap(
+                        spacing: 4,
                         children: [
-                          DecoratedBox(
-                              decoration: BoxDecoration(
-                                  color: Theme.of(context)
-                                      .colorScheme
-                                      .secondaryContainer,
-                                  borderRadius: BorderRadius.circular(12),
-                                  shape: BoxShape.rectangle),
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 8, vertical: 4),
-                                child:
-                                    Text('${_lowAmount.toStringAsFixed(1)} CZK',
-                                        style: TextStyle(
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .onSecondaryContainer,
-                                        )),
-                              )),
-                          DecoratedBox(
-                              decoration: BoxDecoration(
-                                  color: Theme.of(context)
-                                      .colorScheme
-                                      .secondaryContainer,
-                                  borderRadius: BorderRadius.circular(12),
-                                  shape: BoxShape.rectangle),
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 8, vertical: 4),
-                                child: Text(
-                                    '${_highAmount.toStringAsFixed(1)} CZK',
-                                    style: TextStyle(
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .onSecondaryContainer,
-                                    )),
-                              )),
+                          FilterChip(
+                            avatar: viewModel.typesFilter['income']!
+                                ? null
+                                : Icon(Icons.history),
+                            label: Text(
+                              'Oldest',
+                            ),
+                            selected: viewModel.typesFilter['income'] ?? false,
+                            onSelected: (bool selected) {
+                              setState(() {
+                                viewModel.typesFilter['income'] = selected;
+                                viewModel.updateFilterCount(selected, 3);
+                              });
+                            },
+                          ),
+                          FilterChip(
+                            avatar: viewModel.typesFilter['outcome']!
+                                ? null
+                                : Icon(Icons.new_releases_outlined),
+                            label: Text(
+                              'Newest',
+                            ),
+                            selected: viewModel.typesFilter['outcome'] ?? false,
+                            onSelected: (bool selected) {
+                              setState(() {
+                                viewModel.typesFilter['outcome'] = selected;
+                                viewModel.updateFilterCount(selected, 3);
+                              });
+                            },
+                          ),
                         ],
                       ),
-                    ),
-                    Divider(),
-                  ],
+                      Divider(),
+                      Text('Categories',
+                          style: TextStyle(
+                            fontSize: Theme.of(context)
+                                .textTheme
+                                .titleLarge!
+                                .fontSize,
+                          )),
+                      Wrap(
+                        spacing: 4,
+                        children: viewModel.categories
+                            .map((category) => FilterChip(
+                                  label: Text(
+                                    category.name,
+                                  ),
+                                  avatar: viewModel.categoriesFilter
+                                              .containsKey(category.id) &&
+                                          viewModel
+                                              .categoriesFilter[category.id]!
+                                      ? null
+                                      : Icon(
+                                          convertIconCodePointToIcon(
+                                              category.icon),
+                                          color: convertColorCodeToColor(
+                                              category.color),
+                                        ),
+                                  selected:
+                                      viewModel.categoriesFilter[category.id] ??
+                                          false,
+                                  onSelected: (bool selected) {
+                                    setState(() {
+                                      viewModel.categoriesFilter[category.id] =
+                                          selected;
+                                      viewModel.updateFilterCount(selected, 1);
+                                    });
+                                  },
+                                ))
+                            .toList(),
+                      ),
+                      Divider(),
+                      Text('Currencies',
+                          style: TextStyle(
+                            fontSize: Theme.of(context)
+                                .textTheme
+                                .titleLarge!
+                                .fontSize,
+                          )),
+                      Wrap(
+                        spacing: 4,
+                        children: viewModel.currencies
+                            .map((currency) => FilterChip(
+                                  avatar: viewModel.currenciesFilter
+                                              .containsKey(currency.id) &&
+                                          viewModel
+                                              .currenciesFilter[currency.id]!
+                                      ? null
+                                      : Text(currency.symbol,
+                                          style: TextStyle(fontSize: 9)),
+                                  label: Text(currency.name),
+                                  selected:
+                                      viewModel.currenciesFilter[currency.id] ??
+                                          false,
+                                  onSelected: (bool selected) {
+                                    setState(() {
+                                      viewModel.currenciesFilter[currency.id] =
+                                          selected;
+                                      viewModel.updateFilterCount(selected, 2);
+                                    });
+                                  },
+                                ))
+                            .toList(),
+                      ),
+                      Divider(),
+                      Text('Type',
+                          style: TextStyle(
+                              fontSize: Theme.of(context)
+                                  .textTheme
+                                  .titleLarge!
+                                  .fontSize)),
+                      Wrap(
+                        spacing: 4,
+                        children: [
+                          FilterChip(
+                            avatar: viewModel.typesFilter['income']!
+                                ? null
+                                : Icon(Icons.arrow_drop_up,
+                                    color: Colors.green),
+                            label: Text(
+                              'Income',
+                            ),
+                            selected: viewModel.typesFilter['income'] ?? false,
+                            onSelected: (bool selected) {
+                              setState(() {
+                                viewModel.typesFilter['income'] = selected;
+                                viewModel.updateFilterCount(selected, 3);
+                              });
+                            },
+                          ),
+                          FilterChip(
+                            avatar: viewModel.typesFilter['outcome']!
+                                ? null
+                                : Icon(Icons.arrow_drop_down,
+                                    color: Colors.red),
+                            label: Text(
+                              'Outcome',
+                            ),
+                            selected: viewModel.typesFilter['outcome'] ?? false,
+                            onSelected: (bool selected) {
+                              setState(() {
+                                viewModel.typesFilter['outcome'] = selected;
+                                viewModel.updateFilterCount(selected, 3);
+                              });
+                            },
+                          ),
+                        ],
+                      ),
+                      Divider(),
+                      Text('Amount range',
+                          style: TextStyle(
+                              fontSize: Theme.of(context)
+                                  .textTheme
+                                  .titleLarge!
+                                  .fontSize)),
+                      RangeSlider(
+                          values: RangeValues(
+                              viewModel.amountLow, viewModel.amountHigh),
+                          min: viewModel.amountMin,
+                          max: viewModel.amountMax,
+                          inactiveColor: Colors.white,
+                          onChanged: (value) {
+                            setState(() {
+                              viewModel.amountLow = value.start;
+                              viewModel.amountHigh = value.end;
+                              if (viewModel.amountLow != viewModel.amountMin ||
+                                  viewModel.amountHigh != viewModel.amountMax) {
+                                viewModel.amountFilterActive = true;
+                              } else {
+                                viewModel.amountFilterActive = false;
+                              }
+                            });
+                          }),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            DecoratedBox(
+                                decoration: BoxDecoration(
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .secondaryContainer,
+                                    borderRadius: BorderRadius.circular(12),
+                                    shape: BoxShape.rectangle),
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 8, vertical: 4),
+                                  child: Text(
+                                      '${viewModel.amountLow.toStringAsFixed(1)} CZK',
+                                      style: TextStyle(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .onSecondaryContainer,
+                                      )),
+                                )),
+                            DecoratedBox(
+                                decoration: BoxDecoration(
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .secondaryContainer,
+                                    borderRadius: BorderRadius.circular(12),
+                                    shape: BoxShape.rectangle),
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 8, vertical: 4),
+                                  child: Text(
+                                      '${viewModel.amountHigh.toStringAsFixed(1)} CZK',
+                                      style: TextStyle(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .onSecondaryContainer,
+                                      )),
+                                )),
+                          ],
+                        ),
+                      ),
+                      Divider(),
+                      FilledButton(
+                          onPressed: () {
+                            viewModel.getAllData();
+                            context.pop();
+                          },
+                          child: Text('Apply filters')),
+                    ],
+                  ),
                 ),
               ),
       );

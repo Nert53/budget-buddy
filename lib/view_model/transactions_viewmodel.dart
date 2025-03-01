@@ -33,17 +33,25 @@ class TransactionViewModel extends ChangeNotifier {
     FilterPeriod(
         name: 'Week', selected: false, icon: 'assets/icons/icon_7.svg'),
     FilterPeriod(name: 'Day', selected: false, icon: 'assets/icons/icon_1.svg'),
-    /*FilterPeriod(
+    FilterPeriod(
         name: 'Custom',
         selected: false,
-        icon: Icons.date_range.codePoint.toString()),*/
+        icon: Icons.date_range.codePoint.toString()),
   ];
 
   DateTime currentDate = DateTime.now();
   String currentMonthString = convertMontNumToMonthName(DateTime.now().month);
   bool currentDisplayedOlder = false;
   bool currentDisplayedNewer = false;
-  int filterCount = 0;
+  int categoryFilterCount = 0;
+  int currencyFilterCount = 0;
+  int typeFilterCount = 0;
+  bool amountFilterActive = false;
+
+  double amountMin = 0.0;
+  double amountLow = 0.0;
+  double amountMax = 0.0;
+  double amountHigh = 0.0;
 
   TransactionViewModel(this._db) {
     _db.watchAllTransactions().listen((event) {
@@ -140,18 +148,42 @@ class TransactionViewModel extends ChangeNotifier {
   }
 
   void getTransactions() async {
-    var transactionItems = await (_db.select(_db.transactionItems)
-          ..where((t) => t.date.month.equals(currentDate.month))
-          ..where((t) => t.date.year.equals(currentDate.year))
-          ..orderBy([
-            (t) => OrderingTerm(expression: t.date, mode: OrderingMode.desc)
-          ])) // Sort by date in descending order
-        .get();
+    List<TransactionItem> transactionItems =
+        await (_db.select(_db.transactionItems)
+              ..where((t) => t.date.month.equals(currentDate.month))
+              ..where((t) => t.date.year.equals(currentDate.year))
+              ..orderBy([
+                (t) => OrderingTerm(expression: t.date, mode: OrderingMode.desc)
+              ])) // Sort by date in descending order
+            .get();
+    List<TransactionItem> transactionItemsEdit = List.from(transactionItems);
+
+    if ((categoryFilterCount + currencyFilterCount + typeFilterCount) == 0 &&
+        !amountFilterActive) {
+      // no filter used, display all transactions
+    } else {
+      for (var tItem in transactionItems) {
+        // filter used, display only filtered ones
+        bool matchesCategory =
+            categoryFilterCount > 0 && categoriesFilter[tItem.category] == true;
+        bool matchesCurrency =
+            currencyFilterCount > 0 && currenciesFilter[tItem.currency] == true;
+        bool matchesType = typeFilterCount > 0 &&
+                (typesFilter['income'] == true && !tItem.isOutcome) ||
+            (typesFilter['outcome'] == true && tItem.isOutcome);
+        bool matchesAmount = amountFilterActive &&
+            (tItem.amount >= amountLow && tItem.amount <= amountHigh);
+
+        if ([matchesCategory, matchesCurrency, matchesType, matchesAmount]
+            .every((element) => element == false)) {
+          transactionItemsEdit.remove(tItem);
+        }
+      }
+    }
 
     transactions.clear();
-    for (var t in transactionItems) {
+    for (var t in transactionItemsEdit) {
       CategoryItem category = await getCategoryById(t.category);
-
       CurrencyItem selectedCurrency = await _db.getCurrencyById(t.currency);
 
       Transaction newTransaction = Transaction(
@@ -253,20 +285,37 @@ class TransactionViewModel extends ChangeNotifier {
     getCurrenciesFilters();
     getTypesFilters();
     getAmountFilters();
-    filterCount = 0;
+    notifyListeners();
+  }
+
+  void resetFilters() {
+    categoryFilterCount = 0;
+    currencyFilterCount = 0;
+    typeFilterCount = 0;
+    amountFilterActive = false;
+
+    notifyListeners();
   }
 
   void getCategoriesFilters() {
-    categoriesFilter = {};
+    var oldFilter = Map.from(categoriesFilter);
+    categoriesFilter.clear();
     for (var c in categories) {
-      categoriesFilter[c.id] = false;
+      if (oldFilter.containsKey(c.id)) {
+        categoriesFilter.addEntries(
+            [MapEntry<String, bool>(c.id, oldFilter[c.id] ?? false)]);
+      }
     }
   }
 
   void getCurrenciesFilters() {
-    currenciesFilter = {};
+    var oldFilter = Map.from(currenciesFilter);
+    currenciesFilter.clear();
     for (var c in currencies) {
-      currenciesFilter[c.id] = false;
+      if (oldFilter.containsKey(c.id)) {
+        currenciesFilter.addEntries(
+            [MapEntry<String, bool>(c.id, oldFilter[c.id] ?? false)]);
+      }
     }
   }
 
@@ -277,13 +326,29 @@ class TransactionViewModel extends ChangeNotifier {
     };
   }
 
-  void getAmountFilters() {}
+  void getAmountFilters() {
+    amountMax = transactions.isNotEmpty
+        ? transactions.map((t) => t.amount).reduce((a, b) => a > b ? a : b)
+        : 0.0;
+    amountHigh = amountMax;
+  }
 
-  void updateFilterCount(bool value) {
-    if (value) {
-      filterCount++;
-    } else {
-      filterCount--;
+  void updateFilterCount(bool value, int caseNumber) {
+    switch (caseNumber) {
+      case 1:
+        value ? categoryFilterCount++ : categoryFilterCount--;
+        break;
+      case 2:
+        value ? currencyFilterCount++ : currencyFilterCount--;
+        break;
+      case 3:
+        value ? typeFilterCount++ : typeFilterCount--;
+        break;
+      case 4:
+        amountFilterActive = value;
+        break;
+      default:
+        break;
     }
     notifyListeners();
   }

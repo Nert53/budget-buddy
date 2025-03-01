@@ -75,8 +75,8 @@ class _FilterDateSheetState extends State<FilterDateSheet> {
                                         size: 28,
                                       ),
                                 label: SizedBox(
-                                    height: 46,
-                                    width: 80,
+                                    height: 52,
+                                    width: 90,
                                     child: Center(child: Text(period.name))),
                                 showCheckmark: false,
                                 selected: period.selected,
