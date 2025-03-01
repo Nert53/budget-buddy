@@ -22,15 +22,18 @@ class TransactionScreen extends StatelessWidget {
 
     return Consumer<TransactionViewModel>(builder: (context, viewModel, child) {
       DateFormat periodFormat = viewModel.currentPeriod.toLowerCase() == 'day'
-          ? DateFormat('dd. MM. yyyy')
-          : viewModel.currentPeriod.toLowerCase() == 'month'
-              ? DateFormat('MM - yyyy')
-              : DateFormat('yyyy');
+          ? DateFormat('dd.MM.yyyy')
+          : DateFormat('yyyy');
+
+      DateTime startOfWeek = viewModel.currentDate
+          .subtract(Duration(days: viewModel.currentDate.weekday));
+      DateTime endOfWeek = viewModel.currentDate
+          .add(Duration(days: 7 - viewModel.currentDate.weekday - 1));
 
       return Column(
         children: [
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -47,17 +50,6 @@ class TransactionScreen extends StatelessWidget {
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    viewModel.currentDisplayedNewer
-                        ? IconButton.filledTonal(
-                            onPressed: () => {
-                                  viewModel.upToDate(),
-                                },
-                            icon:
-                                Icon(Icons.keyboard_double_arrow_left_outlined))
-                        : const SizedBox(width: 16),
-                    SizedBox(
-                      width: 4,
-                    ),
                     FilledButton.tonal(
                       onPressed: () {
                         showModalBottomSheet(
@@ -81,7 +73,7 @@ class TransactionScreen extends StatelessWidget {
                             )
                           : viewModel.currentPeriod.toLowerCase() == 'week'
                               ? Text(
-                                  'Week ${viewModel.currentDate.weekday}',
+                                  '${DateFormat('dd. MM.').format(startOfWeek)} - ${DateFormat('dd. MM. yyyy').format(endOfWeek)}',
                                   style: TextStyle(
                                       fontSize: 20,
                                       color: Theme.of(context)
@@ -89,27 +81,27 @@ class TransactionScreen extends StatelessWidget {
                                           .headlineMedium!
                                           .color),
                                 )
-                              : Text(
-                                  periodFormat.format(viewModel.currentDate),
-                                  style: TextStyle(
-                                      fontSize: 20,
-                                      color: Theme.of(context)
-                                          .textTheme
-                                          .headlineMedium!
-                                          .color),
-                                ),
+                              : viewModel.currentPeriod.toLowerCase() == 'month'
+                                  ? Text(
+                                      '${convertMontNumToMonthName(viewModel.currentDate.month)}  ${periodFormat.format(viewModel.currentDate)}',
+                                      style: TextStyle(
+                                          fontSize: 20,
+                                          color: Theme.of(context)
+                                              .textTheme
+                                              .headlineMedium!
+                                              .color),
+                                    )
+                                  : Text(
+                                      periodFormat
+                                          .format(viewModel.currentDate),
+                                      style: TextStyle(
+                                          fontSize: 20,
+                                          color: Theme.of(context)
+                                              .textTheme
+                                              .headlineMedium!
+                                              .color),
+                                    ),
                     ),
-                    SizedBox(
-                      width: 4,
-                    ),
-                    viewModel.currentDisplayedOlder
-                        ? IconButton.filledTonal(
-                            onPressed: () => {
-                                  viewModel.upToDate(),
-                                },
-                            icon: Icon(
-                                Icons.keyboard_double_arrow_right_outlined))
-                        : const SizedBox(width: 16),
                   ],
                 ),
                 viewModel.currentPeriod.toLowerCase() == 'all time'
@@ -132,7 +124,6 @@ class TransactionScreen extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text('${viewModel.transactions.length} transactions'),
-                Text(viewModel.currentPeriod),
                 Badge.count(
                   count: viewModel.categoryFilterCount +
                       viewModel.currencyFilterCount +

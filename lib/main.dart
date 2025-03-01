@@ -126,11 +126,6 @@ class PersonalFinanceApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Budget Buddy',
       theme: Provider.of<ThemeProvider>(context).themeData,
-      localizationsDelegates: const [
-        DefaultMaterialLocalizations.delegate,
-        DefaultWidgetsLocalizations.delegate,
-      ],
-      supportedLocales: const [Locale('en'), Locale('cs')],
       routerConfig: _router,
     );
   }

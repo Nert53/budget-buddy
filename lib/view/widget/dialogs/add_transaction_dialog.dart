@@ -226,11 +226,11 @@ class AddWindowFullScreen extends StatelessWidget {
                 readOnly: true,
                 onTap: () async {
                   DateTime? date = await showDatePicker(
-                      context: context,
-                      initialDate: DateTime.now(),
-                      firstDate: DateTime(2000),
-                      lastDate: DateTime(2100),
-                      locale: const Locale('cs'));
+                    context: context,
+                    initialDate: DateTime.now(),
+                    firstDate: DateTime(2000),
+                    lastDate: DateTime(2100),
+                  );
                   if (date != null) {
                     viewModel.dateController.text =
                         DateFormat('dd.MM.yyyy').format(date).toString();
@@ -503,11 +503,11 @@ class AddWindow extends StatelessWidget {
                       readOnly: true,
                       onTap: () async {
                         DateTime? date = await showDatePicker(
-                            context: context,
-                            initialDate: DateTime.now(),
-                            firstDate: DateTime(2000),
-                            lastDate: DateTime(2100),
-                            locale: const Locale('cs'));
+                          context: context,
+                          initialDate: DateTime.now(),
+                          firstDate: DateTime(2000),
+                          lastDate: DateTime(2100),
+                        );
                         if (date != null) {
                           viewModel.dateController.text =
                               DateFormat('dd.MM.yyyy').format(date).toString();

@@ -31,14 +31,9 @@ class TransactionViewModel extends ChangeNotifier {
     TimePeriod(name: 'Month', selected: true, icon: 'assets/icons/icon_30.svg'),
     TimePeriod(name: 'Week', selected: false, icon: 'assets/icons/icon_7.svg'),
     TimePeriod(name: 'Day', selected: false, icon: 'assets/icons/icon_1.svg'),
-    TimePeriod(
-        name: 'Custom',
-        selected: false,
-        icon: Icons.date_range.codePoint.toString()),
   ];
 
   DateTime currentDate = DateTime.now();
-  String currentMonthString = convertMontNumToMonthName(DateTime.now().month);
   String currentPeriod = 'Month';
   bool currentDisplayedOlder = false;
   bool currentDisplayedNewer = false;
@@ -128,7 +123,6 @@ class TransactionViewModel extends ChangeNotifier {
 
   void upToDate() {
     currentDate = DateTime.now();
-    currentMonthString = convertMontNumToMonthName(currentDate.month);
     refresh();
   }
 
@@ -156,8 +150,6 @@ class TransactionViewModel extends ChangeNotifier {
     } else if (currentPeriod == 'Day') {
       currentDate = currentDate.subtract(Duration(days: 1));
     }
-
-    currentMonthString = convertMontNumToMonthName(currentDate.month);
     refresh();
   }
 
@@ -175,8 +167,6 @@ class TransactionViewModel extends ChangeNotifier {
     } else if (currentPeriod == 'Day') {
       currentDate = currentDate.add(Duration(days: 1));
     }
-
-    currentMonthString = convertMontNumToMonthName(currentDate.month);
     refresh();
   }
 
@@ -192,13 +182,15 @@ class TransactionViewModel extends ChangeNotifier {
                   return t.date.month.equals(currentDate.month) &
                       t.date.year.equals(currentDate.year);
                 } else if (currentPeriod == 'Week') {
+                  int weekday = currentDate.weekday;
                   return t.date.isSmallerOrEqualValue(
-                          currentDate.add(Duration(days: 7))) &
-                      t.date.isBiggerOrEqualValue(currentDate);
+                          currentDate.add(Duration(days: 7 - weekday))) &
+                      t.date.isBiggerOrEqualValue(
+                          currentDate.subtract(Duration(days: weekday)));
                 } else if (currentPeriod == 'Year') {
                   return t.date.year.equals(currentDate.year);
                 } else {
-                  return Constant(true); // For 'All Time' and 'Custom' periods
+                  return Constant(true); // for 'all Time' and 'custom' period
                 }
               })
               ..orderBy([
