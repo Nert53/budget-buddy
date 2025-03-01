@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:personal_finance/constants.dart';
 import 'package:personal_finance/utils/functions.dart';
-import 'package:personal_finance/view/widget/add_category_dialog.dart';
-import 'package:personal_finance/view/widget/edit_category_dialog.dart';
+import 'package:personal_finance/view/widget/dialogs/add_category_dialog.dart';
+import 'package:personal_finance/view/widget/dialogs/edit_category_dialog.dart';
 import 'package:personal_finance/view_model/edit_categories_viewmodel.dart';
 import 'package:provider/provider.dart';
 

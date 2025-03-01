@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:personal_finance/constants.dart';
 import 'package:personal_finance/model/category_spent_graph.dart';
-import 'package:personal_finance/view/widget/select_graph_dialog.dart';
-import 'package:personal_finance/view/widget/graphs/interesting_number_card.dart';
+import 'package:personal_finance/view/widget/dialogs/select_graph_dialog.dart';
+import 'package:personal_finance/view/widget/graph/interesting_number_card.dart';
 import 'package:personal_finance/view_model/graph_viewmodel.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';

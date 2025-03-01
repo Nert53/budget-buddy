@@ -5,8 +5,8 @@ import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:personal_finance/data/database.dart';
 import 'package:personal_finance/utils/functions.dart';
-import 'package:personal_finance/view/widget/pick_color_dialog.dart';
-import 'package:personal_finance/view/widget/pick_icon_dialog.dart';
+import 'package:personal_finance/view/widget/dialogs/pick_color_dialog.dart';
+import 'package:personal_finance/view/widget/dialogs/pick_icon_dialog.dart';
 import 'package:personal_finance/view_model/edit_categories_viewmodel.dart';
 
 class EditCategoryDialogSmall extends StatefulWidget {

@@ -3,9 +3,9 @@ import 'package:go_router/go_router.dart';
 import 'package:personal_finance/data/database.dart';
 import 'package:personal_finance/theme/seed_colors.dart';
 import 'package:personal_finance/theme/theme_provider.dart';
-import 'package:personal_finance/view/widget/add_currency_dialog.dart';
-import 'package:personal_finance/view/widget/edit_currency_dialog.dart';
-import 'package:personal_finance/view/widget/export_transactions_dialog.dart';
+import 'package:personal_finance/view/widget/dialogs/add_currency_dialog.dart';
+import 'package:personal_finance/view/widget/dialogs/edit_currency_dialog.dart';
+import 'package:personal_finance/view/widget/dialogs/export_transactions_dialog.dart';
 import 'package:personal_finance/view_model/settings_viewmodel.dart';
 import 'package:provider/provider.dart';
 
