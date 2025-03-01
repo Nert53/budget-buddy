@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
-import 'package:personal_finance/constants.dart';
 import 'package:personal_finance/model/transaction.dart';
 import 'package:personal_finance/utils/functions.dart';
 import 'package:personal_finance/view/widget/edit_transaction_dialog.dart';
@@ -20,7 +19,6 @@ class TransactionScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     DateFormat dateFormat = DateFormat('dd.MM.yyyy');
     DateFormat timeFormat = DateFormat('HH:mm');
-    bool largeScreen = MediaQuery.of(context).size.width > largeScreenWidth;
 
     return Consumer<TransactionViewModel>(builder: (context, viewModel, child) {
       return Column(
@@ -143,13 +141,17 @@ class TransactionScreen extends StatelessWidget {
                       radius: 32,
                       backgroundColor: Colors.white,
                       child: Icon(
-                        Icons.search_off,
+                        viewModel.getFilterCount() > 0
+                            ? Icons.filter_alt_off_outlined
+                            : Icons.search_off,
                         size: 36,
                         color: Theme.of(context).textTheme.bodyMedium?.color,
                       ),
                     ),
                     SizedBox(height: 16),
-                    Text('No transactions found in this month.'),
+                    viewModel.getFilterCount() > 0
+                        ? Text('No transactions meet the current filters.')
+                        : Text('No transactions found in this period.'),
                   ],
                 ),
               ),

@@ -88,6 +88,13 @@ class TransactionViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  int getFilterCount() {
+    return categoryFilterCount +
+        currencyFilterCount +
+        typeFilterCount +
+        (amountFilterActive ? 1 : 0);
+  }
+
   void setDateValues() {
     var upToDateDate = DateTime.now();
 
