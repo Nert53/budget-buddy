@@ -40,7 +40,7 @@ class _FilterDateSheetState extends State<FilterDateSheet> {
                         icon: Icon(Icons.history,
                             color: Theme.of(context).colorScheme.tertiary),
                         label: Text(
-                          'Back to current',
+                          'Go to current',
                           style: TextStyle(
                               color: Theme.of(context).colorScheme.tertiary),
                         ),

@@ -44,13 +44,14 @@ class _GraphSelectDialogState extends State<GraphSelectDialog> {
 
               return ListTile(
                 title: Text(
-                  currentGraph.name,
+                  currentGraph.namePretty,
                   style: TextStyle(fontSize: 14),
                 ),
                 leading: Checkbox(
                     value: currentGraph.selected,
                     onChanged: (value) {
-                      setSelectedGraph(currentGraph.id, currentGraph.name, value!);
+                      setSelectedGraph(
+                          currentGraph.id, currentGraph.name, value!);
                     }),
                 trailing: Icon(currentGraph.icon,
                     color: currentGraph.selected

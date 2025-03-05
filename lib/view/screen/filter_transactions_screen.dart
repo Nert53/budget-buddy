@@ -77,33 +77,72 @@ class _FilterTransactionsScreenState extends State<FilterTransactionsScreen> {
                       Wrap(
                         spacing: 4,
                         children: [
-                          FilterChip(
-                            avatar: viewModel.typesFilter['income']!
-                                ? null
-                                : Icon(Icons.history),
+                          ChoiceChip(
                             label: Text(
                               'Oldest',
                             ),
-                            selected: viewModel.typesFilter['income'] ?? false,
+                            selected: viewModel.sortOrder == SortOrder.oldest,
                             onSelected: (bool selected) {
                               setState(() {
-                                viewModel.typesFilter['income'] = selected;
-                                viewModel.updateFilterCount(selected, 3);
+                                viewModel.sortOrder = SortOrder.oldest;
                               });
                             },
                           ),
-                          FilterChip(
-                            avatar: viewModel.typesFilter['outcome']!
-                                ? null
-                                : Icon(Icons.new_releases_outlined),
+                          ChoiceChip(
                             label: Text(
                               'Newest',
                             ),
-                            selected: viewModel.typesFilter['outcome'] ?? false,
+                            selected: viewModel.sortOrder == SortOrder.newest,
                             onSelected: (bool selected) {
                               setState(() {
-                                viewModel.typesFilter['outcome'] = selected;
-                                viewModel.updateFilterCount(selected, 3);
+                                viewModel.sortOrder = SortOrder.newest;
+                              });
+                            },
+                          ),
+                          ChoiceChip(
+                            label: Text(
+                              'A - Z',
+                            ),
+                            selected:
+                                viewModel.sortOrder == SortOrder.alphabetical,
+                            onSelected: (bool selected) {
+                              setState(() {
+                                viewModel.sortOrder = SortOrder.alphabetical;
+                              });
+                            },
+                          ),
+                          ChoiceChip(
+                            label: Text(
+                              'Z - A',
+                            ),
+                            selected: viewModel.sortOrder ==
+                                SortOrder.reverseAlphabetical,
+                            onSelected: (bool selected) {
+                              setState(() {
+                                viewModel.sortOrder =
+                                    SortOrder.reverseAlphabetical;
+                              });
+                            },
+                          ),
+                          ChoiceChip(
+                            label: Text(
+                              'Lowest',
+                            ),
+                            selected: viewModel.sortOrder == SortOrder.lowest,
+                            onSelected: (bool selected) {
+                              setState(() {
+                                viewModel.sortOrder = SortOrder.lowest;
+                              });
+                            },
+                          ),
+                          ChoiceChip(
+                            label: Text(
+                              'Highest',
+                            ),
+                            selected: viewModel.sortOrder == SortOrder.highest,
+                            onSelected: (bool selected) {
+                              setState(() {
+                                viewModel.sortOrder = SortOrder.highest;
                               });
                             },
                           ),

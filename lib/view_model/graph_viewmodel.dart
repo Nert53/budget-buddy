@@ -9,6 +9,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 class GraphViewModel extends ChangeNotifier {
   final AppDatabase _db;
   bool isLoading = true;
+  DateTimeRange selectedDateRange = DateTimeRange(
+      start: DateTime.now().subtract(Duration(days: 30)), end: DateTime.now());
   List<Graph> allGraphs = [
     Graph(
         id: 1,
@@ -31,7 +33,7 @@ class GraphViewModel extends ChangeNotifier {
     Graph(
         id: 4,
         name: 'catgory-ratio-graph',
-        namePretty: 'Income/Outcome category ratio',
+        namePretty: 'Category ratio',
         icon: Icons.pie_chart_outline,
         selected: true),
   ];
@@ -85,9 +87,13 @@ class GraphViewModel extends ChangeNotifier {
     }
   }
 
-  void getTopCategoriesGraphData() async {
-    int currentMonth = DateTime.now().month;
+  void changeSelectedDateRange(DateTimeRange newDateRange) {
+    selectedDateRange = newDateRange;
+    getAllData();
+    notifyListeners();
+  }
 
+  void getTopCategoriesGraphData() async {
     final query = _db.selectOnly(_db.transactionItems)
       ..addColumns([
         _db.categoryItems.name, // Category name
@@ -103,7 +109,10 @@ class GraphViewModel extends ChangeNotifier {
             _db.categoryItems.id.equalsExp(_db.transactionItems.category))
       ])
       ..where(_db.transactionItems.isOutcome.equals(true))
-      ..where(_db.transactionItems.date.month.equals(currentMonth))
+      ..where(_db.transactionItems.date
+          .isBiggerOrEqualValue(selectedDateRange.start))
+      ..where(_db.transactionItems.date
+          .isSmallerOrEqualValue(selectedDateRange.end))
       ..groupBy([
         _db.transactionItems.category,
         _db.categoryItems.name,
@@ -144,7 +153,10 @@ class GraphViewModel extends ChangeNotifier {
       ..addColumns(
           [_db.transactionItems.date, _db.transactionItems.amountInCZK.sum()])
       ..where(_db.transactionItems.isOutcome.equals(true))
-      ..where(_db.transactionItems.date.month.equals(DateTime.now().month))
+      ..where(_db.transactionItems.date
+          .isBiggerOrEqualValue(selectedDateRange.start))
+      ..where(_db.transactionItems.date
+          .isSmallerOrEqualValue(selectedDateRange.end))
       ..groupBy([_db.transactionItems.date]);
     var result = await query.get();
 
@@ -159,11 +171,11 @@ class GraphViewModel extends ChangeNotifier {
   }
 
   void getAverageDailySpending() async {
-    final oneMonthAgo = DateTime.now().subtract(Duration(days: 30));
-
     final allTransactions = _db.select(_db.transactionItems)
       ..where((t) =>
-          t.date.isBiggerOrEqualValue(oneMonthAgo) & t.isOutcome.equals(true));
+          t.date.isBiggerOrEqualValue(selectedDateRange.start) &
+          t.date.isSmallerOrEqualValue(selectedDateRange.end) &
+          t.isOutcome.equals(true));
 
     // only days with transactions are used to count the average
     allTransactions.get().then((value) {
@@ -181,15 +193,17 @@ class GraphViewModel extends ChangeNotifier {
   }
 
   void getSavingFromIncome() async {
-    final oneMonthAgo = DateTime.now().subtract(Duration(days: 30));
-
     final incomeTransactions = _db.select(_db.transactionItems)
       ..where((t) =>
-          t.date.isBiggerOrEqualValue(oneMonthAgo) & t.isOutcome.equals(false));
+          t.date.isBiggerOrEqualValue(selectedDateRange.start) &
+          t.date.isSmallerOrEqualValue(selectedDateRange.end) &
+          t.isOutcome.equals(false));
 
     final outcomeTransactions = _db.select(_db.transactionItems)
       ..where((t) =>
-          t.date.isBiggerOrEqualValue(oneMonthAgo) & t.isOutcome.equals(true));
+          t.date.isBiggerOrEqualValue(selectedDateRange.start) &
+          t.date.isSmallerOrEqualValue(selectedDateRange.end) &
+          t.isOutcome.equals(true));
 
     incomeTransactions.get().then((incomeTransactions) {
       double totalIncome = 0;
@@ -210,8 +224,6 @@ class GraphViewModel extends ChangeNotifier {
   }
 
   void getPercentageForeignCurrencyTransactions() async {
-    final threeMonthsAgo = DateTime.now().subtract(Duration(days: 90));
-
     String currencyCzkId = await (_db.select(_db.currencyItems)
           ..where((currency) => currency.name.equals('Czech Koruna')))
         .getSingle()
@@ -220,12 +232,16 @@ class GraphViewModel extends ChangeNotifier {
     final query = _db.select(_db.transactionItems)
       ..where((t) =>
           t.currency.equals(currencyCzkId).not() &
-          t.date.isBiggerOrEqualValue(threeMonthsAgo));
+          t.date.isBiggerOrEqualValue(selectedDateRange.start) &
+          t.date.isSmallerOrEqualValue(selectedDateRange.end));
     var foreignTransactions = await query.get();
 
     final totalTransactionsQuery = _db.selectOnly(_db.transactionItems)
       ..addColumns([_db.transactionItems.id])
-      ..where(_db.transactionItems.date.isBiggerOrEqualValue(threeMonthsAgo));
+      ..where(_db.transactionItems.date
+          .isBiggerOrEqualValue(selectedDateRange.start))
+      ..where(_db.transactionItems.date
+          .isSmallerOrEqualValue(selectedDateRange.end));
     var allTransactions = await totalTransactionsQuery.get();
 
     double percentage = 0;
@@ -252,6 +268,10 @@ class GraphViewModel extends ChangeNotifier {
             _db.categoryItems.id.equalsExp(_db.transactionItems.category))
       ])
       ..where(_db.transactionItems.isOutcome.equals(false))
+      ..where(_db.transactionItems.date
+          .isBiggerOrEqualValue(selectedDateRange.start))
+      ..where(_db.transactionItems.date
+          .isSmallerOrEqualValue(selectedDateRange.end))
       ..groupBy([
         _db.transactionItems.category,
         _db.categoryItems.name,
@@ -292,6 +312,10 @@ class GraphViewModel extends ChangeNotifier {
             _db.categoryItems.id.equalsExp(_db.transactionItems.category))
       ])
       ..where(_db.transactionItems.isOutcome.equals(true))
+      ..where(_db.transactionItems.date
+          .isBiggerOrEqualValue(selectedDateRange.start))
+      ..where(_db.transactionItems.date
+          .isSmallerOrEqualValue(selectedDateRange.end))
       ..groupBy([
         _db.transactionItems.category,
         _db.categoryItems.name,

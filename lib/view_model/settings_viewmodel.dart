@@ -98,7 +98,12 @@ class SettingsViewmodel extends ChangeNotifier {
   }
 
   void deleteCurrency(CurrencyItem currencyItem) async {
-    int success = await _db.deleteCurrencyItem(currencyItem);
+    await _db.transaction(() async {
+      await _db.deleteCurrencyItem(currencyItem);
+      await (_db.delete(_db.transactionItems)
+            ..where((t) => t.currency.equals(currencyItem.id)))
+          .go();
+    });
 
     notifyListeners();
   }

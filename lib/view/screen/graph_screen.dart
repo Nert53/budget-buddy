@@ -1,3 +1,4 @@
+import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:personal_finance/constants.dart';
 import 'package:personal_finance/model/category_spent_graph.dart';
@@ -26,9 +27,52 @@ class GraphScreen extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 12.0),
         child: Column(
           mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.end,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            SizedBox(height: 8.0),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              spacing: 6,
+              children: [
+                Text(
+                  'Date range: ',
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+                FilledButton.tonal(
+                    onPressed: () {
+                      showDateRangePicker(
+                        context: context,
+                        firstDate: DateTime(1970),
+                        lastDate: DateTime(2042),
+                        helpText: 'Select date range',
+                        confirmText: 'Save',
+                        switchToInputEntryModeIcon:
+                            Icon(Icons.keyboard_alt_outlined),
+                        builder: (BuildContext context, Widget? child) {
+                          return Dialog(
+                            child: child,
+                          );
+                        },
+                      ).then((pickedDateRange) {
+                        if (pickedDateRange != null) {
+                          viewModel.changeSelectedDateRange(pickedDateRange);
+                        } else {
+                          if (context.mounted) {
+                            Flushbar(
+                              message: 'No date range selected',
+                              duration: Duration(seconds: 3),
+                            ).show(context);
+                          }
+                        }
+                      });
+                    },
+                    child: Text(
+                      viewModel.selectedDateRange.toString(),
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    )),
+              ],
+            ),
+            Divider(),
             Flexible(
                 child: ListView(
               children: [

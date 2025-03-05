@@ -5,6 +5,8 @@ import 'package:personal_finance/model/time_period.dart';
 import 'package:personal_finance/model/transaction.dart';
 import 'package:personal_finance/utils/functions.dart';
 
+enum SortOrder { oldest, newest, alphabetical, reverseAlphabetical, lowest, highest }
+
 class TransactionViewModel extends ChangeNotifier {
   bool isLoading = true;
   final AppDatabase _db;
@@ -45,6 +47,7 @@ class TransactionViewModel extends ChangeNotifier {
   double amountLow = 0.0;
   double amountMax = 0.0;
   double amountHigh = 0.0;
+  SortOrder sortOrder = SortOrder.newest;
 
   TransactionViewModel(this._db) {
     _db.watchAllTransactions().listen((event) {
@@ -335,6 +338,16 @@ class TransactionViewModel extends ChangeNotifier {
     typeFilterCount = 0;
     amountFilterActive = false;
 
+    categoriesFilter.clear();
+    currenciesFilter.clear();
+    typesFilter = {
+      'income': false,
+      'outcome': false,
+    };
+    amountLow = 0.0;
+    amountHigh = amountMax;
+
+    getAllData();
     notifyListeners();
   }
 
