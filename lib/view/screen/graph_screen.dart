@@ -1,9 +1,11 @@
 import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:personal_finance/constants.dart';
 import 'package:personal_finance/model/category_spent_graph.dart';
 import 'package:personal_finance/view/widget/dialogs/select_graph_dialog.dart';
 import 'package:personal_finance/view/widget/graph/interesting_number_card.dart';
+import 'package:personal_finance/view/widget/nothing_to_display.dart';
 import 'package:personal_finance/view_model/graph_viewmodel.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
@@ -15,6 +17,8 @@ class GraphScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     bool mediumScreen = MediaQuery.of(context).size.width > mediumScreenWidth;
     bool largeScreen = MediaQuery.of(context).size.width > largeScreenWidth;
+
+    final DateFormat dateRangeFormat = DateFormat('dd.MM.yyyy');
 
     return Consumer<GraphViewModel>(builder: (context, viewModel, child) {
       if (viewModel.isLoading) {
@@ -67,7 +71,7 @@ class GraphScreen extends StatelessWidget {
                       });
                     },
                     child: Text(
-                      viewModel.selectedDateRange.toString(),
+                      '${dateRangeFormat.format(viewModel.selectedDateRange.start)} - ${dateRangeFormat.format(viewModel.selectedDateRange.end)}',
                       style: TextStyle(fontWeight: FontWeight.bold),
                     )),
               ],
@@ -86,9 +90,17 @@ class GraphScreen extends StatelessWidget {
                         child: SizedBox(
                             height: 340,
                             child: viewModel.topCategoriesGraphData.isEmpty
-                                ? Center(
-                                    child: Text(
-                                        'No data to display (Categories with most spendings)'),
+                                ? Column(
+                                    children: [
+                                      SizedBox(height: 16.0),
+                                      Text(
+                                        'Categories with most spendings',
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .titleLarge,
+                                      ),
+                                      NothingToDisplay(),
+                                    ],
                                   )
                                 : SfCartesianChart(
                                     title: ChartTitle(
@@ -134,37 +146,52 @@ class GraphScreen extends StatelessWidget {
                         ),
                         child: SizedBox(
                             height: 340,
-                            child: SfCartesianChart(
-                              plotAreaBorderWidth: 0,
-                              title: ChartTitle(
-                                text: 'Spent during month',
-                              ),
-                              primaryXAxis: NumericAxis(
-                                edgeLabelPlacement: EdgeLabelPlacement.shift,
-                                minimum: 1,
-                                maximum: 31,
-                                interval: mediumScreen ? 1 : 3,
-                                majorGridLines: MajorGridLines(width: 0),
-                              ),
-                              primaryYAxis: const NumericAxis(
-                                labelFormat: '{value}',
-                                axisLine: AxisLine(width: 0),
-                                majorTickLines:
-                                    MajorTickLines(color: Colors.transparent),
-                              ),
-                              series: <LineSeries<MapEntry<int, double>, int>>[
-                                LineSeries<MapEntry<int, double>, int>(
-                                  dataSource:
-                                      viewModel.dailySpentInMonthGraphData,
-                                  xValueMapper: (data, _) => data.key,
-                                  yValueMapper: (data, _) => data.value,
-                                  name: 'Spent',
-                                  markerSettings: MarkerSettings(
-                                    isVisible: true,
-                                  ),
-                                ),
-                              ],
-                            )),
+                            child: viewModel.dailySpentInMonthGraphData.isEmpty
+                                ? Column(
+                                    children: [
+                                      SizedBox(height: 16.0),
+                                      Text(
+                                        'Spent during month',
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .titleLarge,
+                                      ),
+                                      NothingToDisplay(),
+                                    ],
+                                  )
+                                : SfCartesianChart(
+                                    plotAreaBorderWidth: 0,
+                                    title: ChartTitle(
+                                      text: 'Spent during month',
+                                    ),
+                                    primaryXAxis: NumericAxis(
+                                      edgeLabelPlacement:
+                                          EdgeLabelPlacement.shift,
+                                      minimum: 1,
+                                      maximum: 31,
+                                      interval: mediumScreen ? 1 : 3,
+                                      majorGridLines: MajorGridLines(width: 0),
+                                    ),
+                                    primaryYAxis: const NumericAxis(
+                                      labelFormat: '{value}',
+                                      axisLine: AxisLine(width: 0),
+                                      majorTickLines: MajorTickLines(
+                                          color: Colors.transparent),
+                                    ),
+                                    series: <LineSeries<MapEntry<int, double>,
+                                        int>>[
+                                      LineSeries<MapEntry<int, double>, int>(
+                                        dataSource: viewModel
+                                            .dailySpentInMonthGraphData,
+                                        xValueMapper: (data, _) => data.key,
+                                        yValueMapper: (data, _) => data.value,
+                                        name: 'Spent',
+                                        markerSettings: MarkerSettings(
+                                          isVisible: true,
+                                        ),
+                                      ),
+                                    ],
+                                  )),
                       )
                     : SizedBox(),
                 viewModel.allGraphs[2].selected
@@ -272,34 +299,51 @@ class GraphScreen extends StatelessWidget {
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(15.0),
                               ),
-                              child: SfCircularChart(
-                                title: ChartTitle(text: 'Income types'),
-                                legend: Legend(
-                                  isVisible: largeScreen,
-                                  overflowMode: LegendItemOverflowMode.wrap,
-                                ),
-                                series: <PieSeries>[
-                                  PieSeries<CategorySpentGraph, String>(
-                                      dataSource: viewModel.incomeCategories,
-                                      pointColorMapper:
-                                          (CategorySpentGraph data, _) =>
-                                              data.color,
-                                      dataLabelMapper:
-                                          (CategorySpentGraph data, index) =>
-                                              data.name,
-                                      dataLabelSettings: DataLabelSettings(
-                                          labelPosition:
-                                              ChartDataLabelPosition.inside,
-                                          useSeriesColor: true,
-                                          isVisible: true),
-                                      xValueMapper:
-                                          (CategorySpentGraph data, _) =>
-                                              data.name,
-                                      yValueMapper:
-                                          (CategorySpentGraph data, _) =>
-                                              data.amount)
-                                ],
-                              ),
+                              child: viewModel.incomeCategories.isEmpty
+                                  ? Column(
+                                      children: [
+                                        Text(
+                                          'Income types',
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .titleLarge,
+                                        ),
+                                        NothingToDisplay(),
+                                      ],
+                                    )
+                                  : SfCircularChart(
+                                      title: ChartTitle(text: 'Income types'),
+                                      legend: Legend(
+                                        isVisible: largeScreen,
+                                        overflowMode:
+                                            LegendItemOverflowMode.wrap,
+                                      ),
+                                      series: <PieSeries>[
+                                        PieSeries<CategorySpentGraph, String>(
+                                            dataSource: viewModel
+                                                .incomeCategories,
+                                            pointColorMapper:
+                                                (CategorySpentGraph data, _) =>
+                                                    data.color,
+                                            dataLabelMapper: (CategorySpentGraph
+                                                        data,
+                                                    index) =>
+                                                data.name,
+                                            dataLabelSettings:
+                                                DataLabelSettings(
+                                                    labelPosition:
+                                                        ChartDataLabelPosition
+                                                            .inside,
+                                                    useSeriesColor: true,
+                                                    isVisible: true),
+                                            xValueMapper:
+                                                (CategorySpentGraph data, _) =>
+                                                    data.name,
+                                            yValueMapper:
+                                                (CategorySpentGraph data, _) =>
+                                                    data.amount)
+                                      ],
+                                    ),
                             ),
                             Card(
                               elevation: 4,
@@ -307,34 +351,51 @@ class GraphScreen extends StatelessWidget {
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(15.0),
                               ),
-                              child: SfCircularChart(
-                                title: ChartTitle(text: 'Outcome types'),
-                                legend: Legend(
-                                  isVisible: largeScreen,
-                                  overflowMode: LegendItemOverflowMode.wrap,
-                                ),
-                                series: <PieSeries>[
-                                  PieSeries<CategorySpentGraph, String>(
-                                      dataSource: viewModel.outcomeCategories,
-                                      pointColorMapper:
-                                          (CategorySpentGraph data, _) =>
-                                              data.color,
-                                      dataLabelMapper:
-                                          (CategorySpentGraph data, index) =>
-                                              data.name,
-                                      dataLabelSettings: DataLabelSettings(
-                                          labelPosition:
-                                              ChartDataLabelPosition.inside,
-                                          useSeriesColor: true,
-                                          isVisible: true),
-                                      xValueMapper:
-                                          (CategorySpentGraph data, _) =>
-                                              data.name,
-                                      yValueMapper:
-                                          (CategorySpentGraph data, _) =>
-                                              data.amount)
-                                ],
-                              ),
+                              child: viewModel.outcomeCategories.isEmpty
+                                  ? Column(
+                                      children: [
+                                        Text(
+                                          'Outcome types',
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .titleLarge,
+                                        ),
+                                        NothingToDisplay(),
+                                      ],
+                                    )
+                                  : SfCircularChart(
+                                      title: ChartTitle(text: 'Outcome types'),
+                                      legend: Legend(
+                                        isVisible: largeScreen,
+                                        overflowMode:
+                                            LegendItemOverflowMode.wrap,
+                                      ),
+                                      series: <PieSeries>[
+                                        PieSeries<CategorySpentGraph, String>(
+                                            dataSource: viewModel
+                                                .outcomeCategories,
+                                            pointColorMapper:
+                                                (CategorySpentGraph data, _) =>
+                                                    data.color,
+                                            dataLabelMapper: (CategorySpentGraph
+                                                        data,
+                                                    index) =>
+                                                data.name,
+                                            dataLabelSettings:
+                                                DataLabelSettings(
+                                                    labelPosition:
+                                                        ChartDataLabelPosition
+                                                            .inside,
+                                                    useSeriesColor: true,
+                                                    isVisible: true),
+                                            xValueMapper:
+                                                (CategorySpentGraph data, _) =>
+                                                    data.name,
+                                            yValueMapper:
+                                                (CategorySpentGraph data, _) =>
+                                                    data.amount)
+                                      ],
+                                    ),
                             ),
                           ],
                         )
@@ -342,7 +403,7 @@ class GraphScreen extends StatelessWidget {
                 ),
                 Column(
                   children: [
-                    SizedBox(height: 16.0),
+                    SizedBox(height: 8.0),
                     FilledButton.icon(
                       onPressed: () {
                         showDialog(
@@ -353,10 +414,10 @@ class GraphScreen extends StatelessWidget {
                       },
                       label: Text('Manage graphs'),
                       icon: Icon(
-                        Icons.add,
+                        Icons.edit,
                       ),
                     ),
-                    SizedBox(height: 16.0),
+                    SizedBox(height: 12.0),
                   ],
                 ),
               ],
