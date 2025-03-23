@@ -5,7 +5,14 @@ import 'package:personal_finance/model/time_period.dart';
 import 'package:personal_finance/model/transaction.dart';
 import 'package:personal_finance/utils/functions.dart';
 
-enum SortOrder { oldest, newest, alphabetical, reverseAlphabetical, lowest, highest }
+enum SortOrder {
+  oldest,
+  newest,
+  alphabetical,
+  reverseAlphabetical,
+  lowest,
+  highest
+}
 
 class TransactionViewModel extends ChangeNotifier {
   bool isLoading = true;
@@ -195,10 +202,7 @@ class TransactionViewModel extends ChangeNotifier {
                 } else {
                   return Constant(true); // for 'all Time' and 'custom' period
                 }
-              })
-              ..orderBy([
-                (t) => OrderingTerm(expression: t.date, mode: OrderingMode.desc)
-              ])) // Sort by date in descending order
+              })) // Sort by date in descending order
             .get();
     List<TransactionItem> transactionItemsEdit = List.from(transactionItems);
 
@@ -250,7 +254,27 @@ class TransactionViewModel extends ChangeNotifier {
       }
     }
 
-    transactions.sort((a, b) => b.date.compareTo(a.date));
+    switch (sortOrder) {
+      case SortOrder.oldest:
+        transactions.sort((a, b) => a.date.compareTo(b.date));
+        break;
+      case SortOrder.newest:
+        transactions.sort((a, b) => b.date.compareTo(a.date));
+        break;
+      case SortOrder.alphabetical:
+        transactions.sort((a, b) => a.note.compareTo(b.note));
+        break;
+      case SortOrder.reverseAlphabetical:
+        transactions.sort((a, b) => b.note.compareTo(a.note));
+        break;
+      case SortOrder.lowest:
+        transactions.sort((a, b) => a.amount.compareTo(b.amount));
+        break;
+      case SortOrder.highest:
+        transactions.sort((a, b) => b.amount.compareTo(a.amount));
+        break;
+    }
+
     isLoading = false;
 
     notifyListeners();

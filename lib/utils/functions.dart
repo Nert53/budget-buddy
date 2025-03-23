@@ -1,4 +1,7 @@
+
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 
 IconData convertIconCodePointToIcon(int iconCodePoint) {
@@ -103,3 +106,17 @@ String amountPretty(double amount) {
   return formatter.format(amount).replaceAll(",", " ");
 }
 
+Future<bool> isConnectedToInternet() async {
+  var connectivityResult = await Connectivity().checkConnectivity();
+
+  if (connectivityResult.contains(ConnectivityResult.none)) {
+    return false;
+  }
+
+  final result = await http.get(Uri.parse('https://one.one.one.one/'));
+  if (result.statusCode == 200) {
+    return true;
+  } else {
+    return false;
+  }
+}

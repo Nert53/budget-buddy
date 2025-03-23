@@ -334,12 +334,15 @@ class _FilterTransactionsScreenState extends State<FilterTransactionsScreen> {
                         ),
                       ),
                       Divider(),
-                      FilledButton(
-                          onPressed: () {
-                            viewModel.getAllData();
-                            context.pop();
-                          },
-                          child: Text('Apply filters')),
+                      Center(
+                        child: FilledButton(
+                            onPressed: () {
+                              viewModel.getAllData();
+                              context.pop();
+                            },
+                            child: Text('Apply filters')),
+                      ),
+                      SizedBox(height: 16),
                     ],
                   ),
                 ),

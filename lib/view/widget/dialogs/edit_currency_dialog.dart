@@ -2,6 +2,7 @@ import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:personal_finance/data/database.dart';
+import 'package:personal_finance/utils/functions.dart';
 import 'package:personal_finance/view_model/settings_viewmodel.dart';
 
 class EditCurrencyDialog extends StatefulWidget {
@@ -108,6 +109,24 @@ class _EditCurrencyDialogState extends State<EditCurrencyDialog> {
             SizedBox(width: 8),
             IconButton.filled(
               onPressed: () async {
+                var isConnected = await isConnectedToInternet();
+
+                if (!isConnected) {
+                  Flushbar(
+                    icon: Icon(Icons.signal_wifi_off_rounded,
+                        color: Theme.of(context).colorScheme.surface),
+                    message:
+                        "Device is not connected to the internet. Please check the connection.",
+                    shouldIconPulse: false,
+                    messageColor: Theme.of(context).colorScheme.surface,
+                    backgroundColor: Theme.of(context).colorScheme.error,
+                    borderRadius: BorderRadius.circular(16),
+                    margin: const EdgeInsets.all(12),
+                    duration: Duration(seconds: 4),
+                  ).show(context);
+                  return;
+                }
+
                 var newRate = await widget.viewModel
                     .getExchangeRateFromInternet(widget.currentCurrency.symbol);
 
