@@ -141,7 +141,7 @@ class _EditCurrencyDialogState extends State<EditCurrencyDialog> {
                     backgroundColor: Colors.amber[700]!,
                     borderRadius: BorderRadius.circular(16),
                     margin: const EdgeInsets.all(12),
-                    duration: Duration(seconds: 3),
+                    duration: Duration(seconds: 4),
                   ).show(context);
                   return;
                 }

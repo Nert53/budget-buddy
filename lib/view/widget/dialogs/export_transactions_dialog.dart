@@ -1,3 +1,4 @@
+import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:personal_finance/view_model/settings_viewmodel.dart';
 
@@ -25,7 +26,7 @@ class _ExportTransactionsDialogState extends State<ExportTransactionsDialog> {
             title: const Text('.json'),
             contentPadding: EdgeInsets.zero,
             leading: Radio(
-              value: 'csv',
+              value: 'json',
               groupValue: _selectedFormat,
               onChanged: (String? value) {
                 setState(() {
@@ -38,7 +39,7 @@ class _ExportTransactionsDialogState extends State<ExportTransactionsDialog> {
             title: const Text('.csv'),
             contentPadding: EdgeInsets.zero,
             leading: Radio(
-              value: 'json',
+              value: 'csv',
               groupValue: _selectedFormat,
               onChanged: (String? value) {
                 setState(() {
@@ -57,9 +58,28 @@ class _ExportTransactionsDialogState extends State<ExportTransactionsDialog> {
           child: Text('Cancel'),
         ),
         FilledButton(
-          onPressed: () {
-            widget.viewModel.exportData();
-            Navigator.of(context).pop();
+          onPressed: () async {
+            bool succesExport =
+                await widget.viewModel.exportData(_selectedFormat);
+            if (context.mounted) {
+              Navigator.of(context).pop();
+              Flushbar(
+                icon: succesExport
+                    ? Icon(Icons.check_circle_outline_rounded)
+                    : Icon(Icons.error_outline_rounded),
+                message: succesExport
+                    ? 'Transactions exported successfully.'
+                    : 'Failed to export transactions.',
+                shouldIconPulse: false,
+                messageColor: succesExport ? Colors.white : Colors.black,
+                backgroundColor: succesExport
+                    ? Colors.green
+                    : Theme.of(context).colorScheme.error,
+                borderRadius: BorderRadius.circular(16),
+                margin: const EdgeInsets.all(12),
+                duration: Duration(seconds: 4),
+              ).show(context);
+            }
           },
           child: Text('Export'),
         ),

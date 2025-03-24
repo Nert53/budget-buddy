@@ -1,5 +1,3 @@
-// model for displaying transactions in transaction_screen
-
 import 'package:flutter/material.dart';
 
 class Transaction {

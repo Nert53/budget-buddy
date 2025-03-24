@@ -1,8 +1,14 @@
+import 'dart:convert';
+import 'dart:io';
 import 'package:drift/drift.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:personal_finance/data/database.dart';
 import 'package:personal_finance/model/exchange_rate.dart';
+import 'package:personal_finance/model/transaction.dart';
 
 class SettingsViewmodel extends ChangeNotifier {
   bool isLoading = true;
@@ -108,8 +114,91 @@ class SettingsViewmodel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void exportData() async {
-    List<TransactionItem> allTransactions =
-        await _db.select(_db.transactionItems).get();
+  Future<bool> exportDataJson() async {
+    return true;
+  }
+
+  Future<bool> exportData(String selectedFormat) async {
+    String? selectedDirectory = await FilePicker.platform.getDirectoryPath();
+    if (selectedDirectory == null) return false;
+
+    if (selectedFormat != 'json' && selectedFormat != 'csv') return false;
+
+    final transactions = await _db.select(_db.transactionItems).get();
+    final categories = await _db.select(_db.categoryItems).get();
+    final currencies = await _db.select(_db.currencyItems).get();
+
+    List<Transaction> transactionsToExport = [];
+
+    for (final t in transactions) {
+      final category = categories.firstWhere(
+          (element) => element.id == t.category,
+          orElse: () => CategoryItem(
+              id: '0',
+              name: 'Unknown',
+              icon: Icons.error.codePoint,
+              color: Colors.grey.value));
+
+      final currency = currencies.firstWhere(
+          (element) => element.id == t.currency,
+          orElse: () => CurrencyItem(
+              id: '0', name: 'Unknown', symbol: '??', exchangeRate: 1.0));
+
+      transactionsToExport.add(Transaction(
+        id: t.id,
+        amount: t.amount,
+        date: t.date,
+        note: t.note,
+        isOutcome: t.isOutcome,
+        categoryId: category.id,
+        categoryName: category.name,
+        categoryIcon: IconData(category.icon),
+        categoryColor: Color(category.color),
+        currencyId: currency.id,
+        currencyName: currency.name,
+        currencySymbol: currency.symbol,
+      ));
+    } 
+
+    String currentDate = DateFormat('yy-MM-dd').format(DateTime.now());
+    File file = File('$selectedDirectory/budget-buddy-export-$currentDate.$selectedFormat');
+    if (selectedFormat == 'json') {
+      saveJsonFile(transactionsToExport, file);
+    } else if (selectedFormat == 'csv') {
+      saveCsvFile(transactionsToExport, file);
+    }
+
+    return true;
+  }
+
+  void saveJsonFile(List<Transaction> transactionsToExport, File file) async {
+    List<Map<String, dynamic>> jsonData = transactionsToExport.map((t) {
+      return {
+        'id': t.id,
+        'amount': t.amount,
+        'date': t.date.toIso8601String(),
+        'note': t.note,
+        'isOutcome': t.isOutcome,
+        'categoryId': t.categoryId,
+        'categoryName': t.categoryName,
+        'categoryIcon': t.categoryIcon.codePoint,
+        'categoryColor': t.categoryColor.value,
+        'currencyId': t.currencyId,
+        'currencyName': t.currencyName,
+        'currencySymbol': t.currencySymbol,
+      };
+    }).toList();
+
+    await file.writeAsString(jsonEncode(jsonData));
+  }
+
+  void saveCsvFile(List<Transaction> transactionsToExport, File file) {
+    String header =
+        'id,amount,date,note,isOutcome,categoryId,categoryName,categoryIcon,categoryColor,currencyId,currencyName,currencySymbol\n';
+    for (final t in transactionsToExport) {
+      header +=
+          '${t.id},${t.amount},${t.date.toIso8601String()},${t.note},${t.isOutcome},${t.categoryId},${t.categoryName},${t.categoryIcon.codePoint},${t.categoryColor.value},${t.currencyId},${t.currencyName},${t.currencySymbol}\n';
+    }
+    file.writeAsStringSync(header);
   }
 }
