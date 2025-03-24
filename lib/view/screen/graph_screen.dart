@@ -18,7 +18,7 @@ class GraphScreen extends StatelessWidget {
     bool mediumScreen = MediaQuery.of(context).size.width > mediumScreenWidth;
     bool largeScreen = MediaQuery.of(context).size.width > largeScreenWidth;
 
-    final DateFormat dateRangeFormat = DateFormat('dd.MM.yyyy');
+    final DateFormat dateRangeFormat = DateFormat('dd. MM. yyyy');
 
     return Consumer<GraphViewModel>(builder: (context, viewModel, child) {
       if (viewModel.isLoading) {
@@ -302,6 +302,7 @@ class GraphScreen extends StatelessWidget {
                               child: viewModel.incomeCategories.isEmpty
                                   ? Column(
                                       children: [
+                                        SizedBox(height: 16.0),
                                         Text(
                                           'Income types',
                                           style: Theme.of(context)
@@ -354,6 +355,7 @@ class GraphScreen extends StatelessWidget {
                               child: viewModel.outcomeCategories.isEmpty
                                   ? Column(
                                       children: [
+                                        SizedBox(height: 16.0),
                                         Text(
                                           'Outcome types',
                                           style: Theme.of(context)

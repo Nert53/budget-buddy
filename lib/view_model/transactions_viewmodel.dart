@@ -40,6 +40,10 @@ class TransactionViewModel extends ChangeNotifier {
     TimePeriod(name: 'Month', selected: true, icon: 'assets/icons/icon_30.svg'),
     TimePeriod(name: 'Week', selected: false, icon: 'assets/icons/icon_7.svg'),
     TimePeriod(name: 'Day', selected: false, icon: 'assets/icons/icon_1.svg'),
+    TimePeriod(
+        name: 'Range',
+        selected: false,
+        icon: Icons.date_range.codePoint.toString()),
   ];
 
   DateTime currentDate = DateTime.now();

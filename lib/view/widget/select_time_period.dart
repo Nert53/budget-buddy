@@ -120,6 +120,11 @@ class _FilterDateSheetState extends State<FilterDateSheet> {
                                 selected: period.name == selectedPeriodName,
                                 onSelected: (bool selected) {
                                   setState(() {
+                                    if (period.name.toLowerCase() == "range") {
+                                      
+                                      return;
+                                    }
+
                                     selectedPeriodName = period.name;
                                   });
                                 },
