@@ -1,0 +1,2 @@
+C:/data-personal/school/upol/bakalarska_prace/personal_finance/android/app/.cxx/RelWithDebInfo/4j2w416g/x86/CMakeFiles/edit_cache.dir
+C:/data-personal/school/upol/bakalarska_prace/personal_finance/android/app/.cxx/RelWithDebInfo/4j2w416g/x86/CMakeFiles/rebuild_cache.dir

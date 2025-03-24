@@ -26,7 +26,7 @@ if (flutterVersionName == null) {
 android {
     namespace = "com.example.personal_finance"
     compileSdk = flutter.compileSdkVersion
-    ndkVersion = flutter.ndkVersion
+    ndkVersion = '28.0.13004108'
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_21
