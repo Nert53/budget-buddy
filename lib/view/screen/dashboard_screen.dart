@@ -81,7 +81,13 @@ class DashboardScreen extends StatelessWidget {
                                       ),
                                     ),
                                     SizedBox(height: 16.0),
-                                    Text('No data to display in graph.'),
+                                    Text(
+                                      'No data to display in graph.',
+                                      style: TextStyle(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .surfaceContainer),
+                                    ),
                                   ],
                                 ))
                               : SfCircularChart(

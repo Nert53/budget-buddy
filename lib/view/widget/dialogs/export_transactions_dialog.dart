@@ -65,13 +65,21 @@ class _ExportTransactionsDialogState extends State<ExportTransactionsDialog> {
               Navigator.of(context).pop();
               Flushbar(
                 icon: succesExport
-                    ? Icon(Icons.check_circle_outline_rounded)
-                    : Icon(Icons.error_outline_rounded),
+                    ? Icon(
+                        Icons.check_circle_outline_rounded,
+                        color: Colors.white,
+                      )
+                    : Icon(
+                        Icons.error_outline_rounded,
+                        color: Theme.of(context).colorScheme.onError,
+                      ),
                 message: succesExport
                     ? 'Transactions exported successfully.'
                     : 'Failed to export transactions.',
                 shouldIconPulse: false,
-                messageColor: succesExport ? Colors.white : Colors.black,
+                messageColor: succesExport
+                    ? Colors.white
+                    : Theme.of(context).colorScheme.onError,
                 backgroundColor: succesExport
                     ? Colors.green
                     : Theme.of(context).colorScheme.error,

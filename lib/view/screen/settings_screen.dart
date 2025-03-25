@@ -151,6 +151,12 @@ class SettingsScreen extends StatelessWidget {
                           ),
                         ),
                         title: Text(NamedColor.values[index].name),
+                        trailing: context
+                                    .read<ThemeProvider>()
+                                    .themeData.colorScheme.primary.toString() ==
+                                NamedColor.values[index].name
+                            ? Icon(Icons.check)
+                            : null,
                         onTap: () {
                           context.read<ThemeProvider>().setColor(
                               NamedColor.values[index].color,

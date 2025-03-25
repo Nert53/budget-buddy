@@ -1,0 +1,2 @@
+C:/data-personal/school/upol/bakalarska_prace/personal_finance/android/app/.cxx/Debug/564m4k4a/armeabi-v7a/CMakeFiles/edit_cache.dir
+C:/data-personal/school/upol/bakalarska_prace/personal_finance/android/app/.cxx/Debug/564m4k4a/armeabi-v7a/CMakeFiles/rebuild_cache.dir

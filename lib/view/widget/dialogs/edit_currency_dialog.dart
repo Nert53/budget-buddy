@@ -112,18 +112,20 @@ class _EditCurrencyDialogState extends State<EditCurrencyDialog> {
                 var isConnected = await isConnectedToInternet();
 
                 if (!isConnected) {
-                  Flushbar(
-                    icon: Icon(Icons.signal_wifi_off_rounded,
-                        color: Theme.of(context).colorScheme.surface),
-                    message:
-                        "Device is not connected to the internet. Please check the connection.",
-                    shouldIconPulse: false,
-                    messageColor: Theme.of(context).colorScheme.surface,
-                    backgroundColor: Theme.of(context).colorScheme.error,
-                    borderRadius: BorderRadius.circular(16),
-                    margin: const EdgeInsets.all(12),
-                    duration: Duration(seconds: 4),
-                  ).show(context);
+                  if (context.mounted) {
+                    Flushbar(
+                      icon: Icon(Icons.signal_wifi_off_rounded,
+                          color: Theme.of(context).colorScheme.surface),
+                      message:
+                          "Device is not connected to the internet. Please check the connection.",
+                      shouldIconPulse: false,
+                      messageColor: Theme.of(context).colorScheme.surface,
+                      backgroundColor: Theme.of(context).colorScheme.error,
+                      borderRadius: BorderRadius.circular(16),
+                      margin: const EdgeInsets.all(12),
+                      duration: Duration(seconds: 4),
+                    ).show(context);
+                  }
                   return;
                 }
 
@@ -131,22 +133,37 @@ class _EditCurrencyDialogState extends State<EditCurrencyDialog> {
                     .getExchangeRateFromInternet(widget.currentCurrency.symbol);
 
                 if (newRate == 0.0) {
-                  Flushbar(
-                    icon: Icon(Icons.warning_amber_rounded,
-                        color: Theme.of(context).colorScheme.surface),
-                    message:
-                        "Currency is not supported by CNB or the code entered is not correct.",
-                    shouldIconPulse: false,
-                    messageColor: Theme.of(context).colorScheme.surface,
-                    backgroundColor: Colors.amber[700]!,
-                    borderRadius: BorderRadius.circular(16),
-                    margin: const EdgeInsets.all(12),
-                    duration: Duration(seconds: 4),
-                  ).show(context);
+                  if (context.mounted) {
+                    Flushbar(
+                      icon: Icon(Icons.warning_amber_rounded,
+                          color: Theme.of(context).colorScheme.surface),
+                      message:
+                          "Currency is not supported by CNB or the code entered is not correct.",
+                      shouldIconPulse: false,
+                      messageColor: Theme.of(context).colorScheme.surface,
+                      backgroundColor: Colors.amber[700]!,
+                      borderRadius: BorderRadius.circular(16),
+                      margin: const EdgeInsets.all(12),
+                      duration: Duration(seconds: 4),
+                    ).show(context);
+                  }
                   return;
                 }
 
                 exchangeRateController.text = newRate.toStringAsFixed(3);
+                if (context.mounted) {
+                  Flushbar(
+                    icon: Icon(Icons.check_circle_outline_rounded,
+                        color: Theme.of(context).colorScheme.surface),
+                    message: "Exchange rate updated.",
+                    shouldIconPulse: false,
+                    messageColor: Theme.of(context).colorScheme.surface,
+                    backgroundColor: Colors.green[700]!,
+                    borderRadius: BorderRadius.circular(16),
+                    margin: const EdgeInsets.all(12),
+                    duration: Duration(seconds: 3),
+                  ).show(context);
+                }
               },
               icon: Icon(Icons.change_circle),
               tooltip: 'Adjust exchange rate from Czech National Bank.',

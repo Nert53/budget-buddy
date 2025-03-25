@@ -10,12 +10,16 @@ class NothingToDisplay extends StatelessWidget {
             child: Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Text('No data to display', style: TextStyle(color: Colors.blueGrey)),
+        Text('No data to display', style: TextStyle(color: Theme.of(context)
+                                          .colorScheme
+                                          .surfaceContainer)),
         SizedBox(width: 8.0),
         Icon(
           Icons.sentiment_dissatisfied,
-          color: Colors.blueGrey,
-        ),
+          color: Theme.of(context)
+                                          .colorScheme
+                                          .surfaceContainer,
+        )
       ],
     )));
   }
