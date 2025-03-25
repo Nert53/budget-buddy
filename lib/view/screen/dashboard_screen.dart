@@ -78,6 +78,9 @@ class DashboardScreen extends StatelessWidget {
                                       child: Icon(
                                         Icons.sentiment_dissatisfied,
                                         size: 32,
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .tertiary,
                                       ),
                                     ),
                                     SizedBox(height: 16.0),
@@ -86,7 +89,7 @@ class DashboardScreen extends StatelessWidget {
                                       style: TextStyle(
                                           color: Theme.of(context)
                                               .colorScheme
-                                              .surfaceContainer),
+                                              .tertiary),
                                     ),
                                   ],
                                 ))

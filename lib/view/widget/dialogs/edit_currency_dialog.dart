@@ -32,8 +32,14 @@ class _EditCurrencyDialogState extends State<EditCurrencyDialog> {
           Expanded(child: Text('Edit currency')),
           IconButton(
             onPressed: () => {
-              widget.viewModel.deleteCurrency(widget.currentCurrency),
-              Navigator.pop(context),
+              showDialog(
+                  context: context,
+                  builder: (_) => AlertDialog(
+                        content: Text(
+                            'Are you sure you want to delete this currency?'),
+                      )),
+              //widget.viewModel.deleteCurrency(widget.currentCurrency),
+              //Navigator.pop(context),
             },
             icon: Tooltip(
               message: 'Delete currency and all transactions with it.',

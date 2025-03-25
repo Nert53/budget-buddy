@@ -77,7 +77,7 @@ class GraphScreen extends StatelessWidget {
               ],
             ),
             Divider(),
-            Flexible(
+            Expanded(
                 child: ListView(
               children: [
                 viewModel.allGraphs[0].selected
@@ -195,89 +195,90 @@ class GraphScreen extends StatelessWidget {
                       )
                     : SizedBox(),
                 viewModel.allGraphs[2].selected
-                    ? SizedBox(
-                        height: mediumScreen ? 340 : 480,
-                        child: mediumScreen
-                            ? Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
-                                children: [
-                                  Expanded(
-                                    child: InterestingNumberCardHorizontal(
-                                        valueName: 'Saving from income',
-                                        largeScreen: mediumScreen,
-                                        numberValue: viewModel.savingFromIncome
-                                            .toStringAsFixed(0),
-                                        numberSymbol: '%'),
-                                  ),
-                                  SizedBox(
-                                    width: 16.0,
-                                  ),
-                                  Expanded(
-                                    child: InterestingNumberCardHorizontal(
-                                        valueName: 'Average daily spending',
-                                        largeScreen: mediumScreen,
-                                        numberValue: viewModel
-                                            .averageDailySpending
-                                            .toStringAsFixed(0),
-                                        numberSymbol: 'CZK'),
-                                  ),
-                                  SizedBox(
-                                    width: 16.0,
-                                  ),
-                                  Expanded(
-                                    child: InterestingNumberCardHorizontal(
-                                        valueName:
-                                            'Transactions in foreign currencies',
-                                        largeScreen: mediumScreen,
-                                        numberValue: viewModel
-                                            .percentageForeignCurrencyTransactions
-                                            .toStringAsFixed(0),
-                                        numberSymbol: '%'),
-                                  ),
-                                ],
+                    ? mediumScreen
+                        ? Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              Expanded(
+                                child: InterestingNumberCardHorizontal(
+                                    valueName: 'Saved from income',
+                                    largeScreen: mediumScreen,
+                                    noData: viewModel.savingFromIncome.isNaN,
+                                    numberValue: viewModel.savingFromIncome
+                                        .toStringAsFixed(0),
+                                    numberSymbol: '%'),
+                              ),
+                              SizedBox(
+                                width: 12.0,
+                              ),
+                              Expanded(
+                                child: InterestingNumberCardHorizontal(
+                                    valueName: 'Average daily spent',
+                                    largeScreen: mediumScreen,
+                                    noData:
+                                        viewModel.averageDailySpending.isNaN,
+                                    numberValue: viewModel.averageDailySpending
+                                        .toStringAsFixed(0),
+                                    numberSymbol: 'CZK'),
+                              ),
+                              SizedBox(
+                                width: 12.0,
+                              ),
+                              Expanded(
+                                child: InterestingNumberCardHorizontal(
+                                    valueName:
+                                        'Transactions in foreign currencies',
+                                    largeScreen: mediumScreen,
+                                    numberValue: viewModel
+                                        .percentageForeignCurrencyTransactions
+                                        .toStringAsFixed(0),
+                                    numberSymbol: '%'),
+                              ),
+                            ],
+                          )
+                        : Column(
+                            children: [
+                              SizedBox(
+                                height: 160,
+                                child: Expanded(
+                                  child: InterestingNumberCardVertical(
+                                      valueName: 'Saved from income',
+                                      largeScreen: mediumScreen,
+                                      noData: viewModel.savingFromIncome.isNaN,
+                                      numberValue: viewModel.savingFromIncome
+                                          .toStringAsFixed(0),
+                                      numberSymbol: '%'),
+                                ),
+                              ),
+                              SizedBox(
+                                height: 160,
+                                child: Expanded(
+                                  child: InterestingNumberCardVertical(
+                                      valueName: 'Average daily spent',
+                                      largeScreen: mediumScreen,
+                                      noData:
+                                          viewModel.averageDailySpending.isNaN,
+                                      numberValue: viewModel
+                                          .averageDailySpending
+                                          .toStringAsFixed(0),
+                                      numberSymbol: 'CZK'),
+                                ),
+                              ),
+                              SizedBox(
+                                height: 160,
+                                child: Expanded(
+                                  child: InterestingNumberCardVertical(
+                                      valueName:
+                                          'Transactions in foreign currencies',
+                                      largeScreen: mediumScreen,
+                                      numberValue: viewModel
+                                          .percentageForeignCurrencyTransactions
+                                          .toStringAsFixed(0),
+                                      numberSymbol: '%'),
+                                ),
                               )
-                            : Column(
-                                children: [
-                                  SizedBox(
-                                    height: 160,
-                                    child: Expanded(
-                                      child: InterestingNumberCardVertical(
-                                          valueName: 'Saving from income',
-                                          largeScreen: mediumScreen,
-                                          numberValue: viewModel
-                                              .savingFromIncome
-                                              .toStringAsFixed(0),
-                                          numberSymbol: '%'),
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    height: 160,
-                                    child: Expanded(
-                                      child: InterestingNumberCardVertical(
-                                          valueName: 'Average daily spending',
-                                          largeScreen: mediumScreen,
-                                          numberValue: viewModel
-                                              .averageDailySpending
-                                              .toStringAsFixed(0),
-                                          numberSymbol: 'CZK'),
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    height: 160,
-                                    child: Expanded(
-                                      child: InterestingNumberCardVertical(
-                                          valueName:
-                                              'Transactions in foreign currencies',
-                                          largeScreen: mediumScreen,
-                                          numberValue: viewModel
-                                              .percentageForeignCurrencyTransactions
-                                              .toStringAsFixed(0),
-                                          numberSymbol: '%'),
-                                    ),
-                                  )
-                                ],
-                              ))
+                            ],
+                          )
                     : SizedBox(),
                 Expanded(
                   child: viewModel.allGraphs[3].selected
@@ -403,6 +404,47 @@ class GraphScreen extends StatelessWidget {
                         )
                       : SizedBox(),
                 ),
+                viewModel.allGraphs[4].selected
+                    ? Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          Expanded(
+                            child: InterestingNumberCardHorizontal(
+                                valueName: 'Sum of all incomes',
+                                largeScreen: mediumScreen,
+                                noData: viewModel.totalIncome.isNaN,
+                                numberValue:
+                                    viewModel.totalIncome.toStringAsFixed(0),
+                                numberSymbol: 'CZK'),
+                          ),
+                          SizedBox(
+                            width: 16.0,
+                          ),
+                          Expanded(
+                            child: InterestingNumberCardHorizontal(
+                                valueName: 'Sum of all outcomes',
+                                largeScreen: mediumScreen,
+                                noData: viewModel.totalOutcome.isNaN,
+                                numberValue:
+                                    viewModel.totalOutcome.toStringAsFixed(0),
+                                numberSymbol: 'CZK'),
+                          ),
+                          SizedBox(
+                            width: 16.0,
+                          ),
+                          Expanded(
+                            child: InterestingNumberCardHorizontal(
+                                valueName: 'Overall balance',
+                                largeScreen: mediumScreen,
+                                noData: viewModel.balance.isNaN,
+                                numberValue:
+                                    viewModel.balance.toStringAsFixed(0),
+                                numberSymbol: 'CZK'),
+                          ),
+                        ],
+                      )
+                    : SizedBox(),
+                SizedBox(height: 8.0),
                 Column(
                   children: [
                     SizedBox(height: 8.0),

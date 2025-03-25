@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:personal_finance/utils/functions.dart';
 
 class InterestingNumberCardHorizontal extends StatelessWidget {
   final String numberValue;
   final String valueName;
   final String numberSymbol;
   final bool largeScreen;
+  final bool noData;
 
   const InterestingNumberCardHorizontal({
     super.key,
@@ -12,10 +14,18 @@ class InterestingNumberCardHorizontal extends StatelessWidget {
     required this.numberValue,
     required this.numberSymbol,
     required this.largeScreen,
+    this.noData = false,
   });
 
   @override
   Widget build(BuildContext context) {
+    String prettyNumberValue = '';
+    if (numberSymbol.compareTo('CZK') == 0) {
+      prettyNumberValue = amountPretty(double.parse(numberValue)).split('.')[0];
+    } else {
+      prettyNumberValue = numberValue;
+    }
+
     return Card(
       elevation: 4,
       margin: EdgeInsets.symmetric(vertical: 12.0),
@@ -23,26 +33,29 @@ class InterestingNumberCardHorizontal extends StatelessWidget {
         borderRadius: BorderRadius.circular(15.0),
       ),
       child: Container(
-        height: 316,
+        height: 260,
         padding: EdgeInsets.all(16.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Tooltip(
-              message: 'Percentage is meauser from last 6 months.',
-              child: Text(valueName,
-                  style:
-                      TextStyle(fontSize: 16.0, fontWeight: FontWeight.normal)),
-            ),
+            Text(valueName,
+                style:
+                    TextStyle(fontSize: 16.0, fontWeight: FontWeight.normal)),
             Expanded(
               child: Center(
-                child: Text(
-                  '$numberValue $numberSymbol',
-                  style: TextStyle(
-                    fontSize: largeScreen ? 48 : 32,
-                  ),
-                ),
+                child: noData
+                    ? Text(
+                        'No data to display.',
+                        style: TextStyle(
+                            color: Theme.of(context).colorScheme.tertiary),
+                      )
+                    : Text(
+                        '$prettyNumberValue $numberSymbol',
+                        style: TextStyle(
+                          fontSize: largeScreen ? 40 : 28,
+                        ),
+                      ),
               ),
             ),
           ],
@@ -57,6 +70,7 @@ class InterestingNumberCardVertical extends StatelessWidget {
   final String numberValue;
   final String valueName;
   final String numberSymbol;
+  final bool noData;
 
   const InterestingNumberCardVertical({
     super.key,
@@ -64,10 +78,18 @@ class InterestingNumberCardVertical extends StatelessWidget {
     required this.numberValue,
     required this.numberSymbol,
     required this.largeScreen,
+    this.noData = false,
   });
 
   @override
   Widget build(BuildContext context) {
+    String prettyNumberValue = '';
+    if (numberSymbol.compareTo('CZK') == 0) {
+      prettyNumberValue = amountPretty(double.parse(numberValue));
+    } else {
+      prettyNumberValue = numberValue;
+    }
+
     return Card(
       elevation: 4,
       margin: EdgeInsets.symmetric(vertical: 6.0),
@@ -81,20 +103,24 @@ class InterestingNumberCardVertical extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Tooltip(
-              message: 'Percentage is meauser from last 6 months.',
-              child: Text(valueName,
-                  style:
-                      TextStyle(fontSize: 16.0, fontWeight: FontWeight.normal)),
-            ),
+            Text(valueName,
+                style:
+                    TextStyle(fontSize: 16.0, fontWeight: FontWeight.normal)),
             Expanded(
               child: Center(
-                child: Text(
-                  '$numberValue $numberSymbol',
-                  style: TextStyle(
-                    fontSize: largeScreen ? 48 : 32,
-                  ),
-                ),
+                child: noData
+                    ? Text(
+                        'No data to display.',
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.tertiary,
+                        ),
+                      )
+                    : Text(
+                        '$prettyNumberValue $numberSymbol',
+                        style: TextStyle(
+                          fontSize: largeScreen ? 44 : 32,
+                        ),
+                      ),
               ),
             ),
           ],

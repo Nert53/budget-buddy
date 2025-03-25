@@ -153,7 +153,8 @@ class SettingsScreen extends StatelessWidget {
                         title: Text(NamedColor.values[index].name),
                         trailing: context
                                     .read<ThemeProvider>()
-                                    .themeData.colorScheme.primary.toString() ==
+                                    .themeColorName
+                                    .toLowerCase() ==
                                 NamedColor.values[index].name
                             ? Icon(Icons.check)
                             : null,
@@ -168,7 +169,7 @@ class SettingsScreen extends StatelessWidget {
                 ],
               ),
             ),
-            Card(
+            /*Card(
               child: ListTile(
                 leading: Icon(
                   Icons.storage_outlined,
@@ -182,7 +183,7 @@ class SettingsScreen extends StatelessWidget {
                   context.go('/database');
                 },
               ),
-            ),
+            ),*/
             Card(
               child: ListTile(
                 leading: Icon(
@@ -192,7 +193,38 @@ class SettingsScreen extends StatelessWidget {
                 title: Text('Delete All Transactions',
                     style:
                         TextStyle(color: Theme.of(context).colorScheme.error)),
-                onTap: () {},
+                onTap: () {
+                  showDialog(
+                    context: context,
+                    builder: (context) {
+                      return AlertDialog(
+                        title: Text('Delete all transactions?'),
+                        content: Text(
+                            'This action will delete all transactions. This action cannot be undone.'),
+                        actions: [
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            child: Text('Cancel'),
+                          ),
+                          FilledButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            style: ButtonStyle(
+                              backgroundColor: WidgetStateProperty.all(
+                                  Theme.of(context).colorScheme.error),
+                            ),
+                            child: Text(
+                              'Delete',
+                            ),
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                },
               ),
             ),
             Card(

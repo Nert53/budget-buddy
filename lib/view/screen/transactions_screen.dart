@@ -164,17 +164,20 @@ class TransactionScreen extends StatelessWidget {
                       radius: 32,
                       backgroundColor: Colors.white,
                       child: Icon(
-                        viewModel.getFilterCount() > 0
-                            ? Icons.filter_alt_off_outlined
-                            : Icons.search_off,
-                        size: 36,
-                        color: Theme.of(context).textTheme.bodyMedium?.color,
-                      ),
+                          viewModel.getFilterCount() > 0
+                              ? Icons.filter_alt_off_outlined
+                              : Icons.search_off,
+                          size: 36,
+                          color: Theme.of(context).colorScheme.tertiary),
                     ),
                     SizedBox(height: 16),
                     viewModel.getFilterCount() > 0
                         ? Text('No transactions meet the current filters.')
-                        : Text('No transactions found in this period.'),
+                        : Text(
+                            'No transactions found in this period.',
+                            style: TextStyle(
+                                color: Theme.of(context).colorScheme.tertiary),
+                          ),
                   ],
                 ),
               ),

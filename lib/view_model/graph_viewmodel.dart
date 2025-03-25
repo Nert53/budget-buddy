@@ -36,6 +36,12 @@ class GraphViewModel extends ChangeNotifier {
         namePretty: 'Category ratio',
         icon: Icons.pie_chart_outline,
         selected: true),
+    Graph(
+        id: 5,
+        name: 'income-outcome-numbers',
+        namePretty: 'Income / Outcome numbers',
+        icon: Icons.swap_vert_circle_rounded,
+        selected: false),
   ];
   List<CategorySpentGraph> topCategoriesGraphData = [];
   List<MapEntry<int, double>> dailySpentInMonthGraphData = [];
@@ -44,6 +50,9 @@ class GraphViewModel extends ChangeNotifier {
   double averageDailySpending = 0;
   double percentageForeignCurrencyTransactions = 0;
   double savingFromIncome = 0;
+  double totalIncome = 0;
+  double totalOutcome = 0;
+  double balance = 0;
 
   GraphViewModel(this._db) {
     _db.watchAllTransactions().listen((event) {
@@ -67,6 +76,9 @@ class GraphViewModel extends ChangeNotifier {
     getAverageDailySpending();
     getIncomeCategories();
     getOutcomeCategories();
+    getIncomeAmount();
+    getOutcomeAmount();
+    getBalance();
     isLoading = false;
   }
 
@@ -338,5 +350,40 @@ class GraphViewModel extends ChangeNotifier {
       }).toList();
       notifyListeners();
     });
+  }
+
+  void getIncomeAmount() async {
+    final query = _db.selectOnly(_db.transactionItems)
+      ..addColumns([_db.transactionItems.amountInCZK.sum()])
+      ..where(_db.transactionItems.isOutcome.equals(false))
+      ..where(_db.transactionItems.date
+          .isBiggerOrEqualValue(selectedDateRange.start))
+      ..where(_db.transactionItems.date
+          .isSmallerOrEqualValue(selectedDateRange.end));
+
+    var result = await query.getSingle();
+    totalIncome =
+        result.read<double>(_db.transactionItems.amountInCZK.sum()) ?? 0.0;
+    notifyListeners();
+  }
+
+  void getOutcomeAmount() async {
+    final query = _db.selectOnly(_db.transactionItems)
+      ..addColumns([_db.transactionItems.amountInCZK.sum()])
+      ..where(_db.transactionItems.isOutcome.equals(true))
+      ..where(_db.transactionItems.date
+          .isBiggerOrEqualValue(selectedDateRange.start))
+      ..where(_db.transactionItems.date
+          .isSmallerOrEqualValue(selectedDateRange.end));
+
+    var result = await query.getSingle();
+    totalOutcome =
+        result.read<double>(_db.transactionItems.amountInCZK.sum()) ?? 0.0;
+    notifyListeners();
+  }
+
+  void getBalance() async {
+    balance = totalIncome - totalOutcome;
+    notifyListeners();
   }
 }
