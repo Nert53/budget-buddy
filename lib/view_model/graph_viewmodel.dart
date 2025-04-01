@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:personal_finance/data/database.dart';
 import 'package:personal_finance/model/category_spent_graph.dart';
 import 'package:personal_finance/model/graph.dart';
+import 'package:personal_finance/model/one_day_spent.dart';
 import 'package:personal_finance/utils/functions.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -47,9 +48,9 @@ class GraphViewModel extends ChangeNotifier {
   List<MapEntry<int, double>> dailySpentInMonthGraphData = [];
   List<CategorySpentGraph> incomeCategories = [];
   List<CategorySpentGraph> outcomeCategories = [];
-  double averageDailySpending = 0;
-  double percentageForeignCurrencyTransactions = 0;
-  double savingFromIncome = 0;
+  double averageDailySpent = 0;
+  double transactionsForeignCurrenciesPercent = 0;
+  double savedFromIncome = 0;
   double totalIncome = 0;
   double totalOutcome = 0;
   double balance = 0;
@@ -79,6 +80,7 @@ class GraphViewModel extends ChangeNotifier {
     getIncomeAmount();
     getOutcomeAmount();
     getBalance();
+    loadVisibleGraphs();
     isLoading = false;
   }
 
@@ -170,13 +172,20 @@ class GraphViewModel extends ChangeNotifier {
       ..where(_db.transactionItems.date
           .isSmallerOrEqualValue(selectedDateRange.end))
       ..groupBy([_db.transactionItems.date]);
-    var result = await query.get();
+    List<TypedResult> result = await query.get();
 
-    dailySpentInMonthGraphData.clear();
-    for (var row in result) {
-      dailySpentInMonthGraphData.add(MapEntry(
-          row.read<DateTime>(_db.transactionItems.date)!.day,
-          row.read<double>(_db.transactionItems.amountInCZK.sum()) ?? 0.0));
+    final List<OneDaySpent> oneDaySpent = result.map((row) {
+      DateTime date =
+          row.read<DateTime>(_db.transactionItems.date) ?? DateTime.now();
+      return OneDaySpent(
+          amount: row.read<double>(_db.transactionItems.amountInCZK.sum()) ?? 0,
+          date: date.copyWith(hour: 0, minute: 0, second: 0, millisecond: 0),
+          currency: 'CZK');
+    }).toList();
+
+    DateTime startDate = selectedDateRange.start;
+    while (startDate.isBefore(selectedDateRange.end)) {
+      startDate = startDate.add(Duration(days: 1));
     }
 
     notifyListeners();
@@ -199,7 +208,7 @@ class GraphViewModel extends ChangeNotifier {
           daysWithTransactions.add(transaction.date.day);
         }
       }
-      averageDailySpending = totalAmount / daysWithTransactions.length;
+      averageDailySpent = totalAmount / daysWithTransactions.length;
       notifyListeners();
     });
   }
@@ -229,7 +238,7 @@ class GraphViewModel extends ChangeNotifier {
           totalOutcome += transaction.amountInCZK;
         }
 
-        savingFromIncome = (totalIncome - totalOutcome) / totalIncome * 100;
+        savedFromIncome = (totalIncome - totalOutcome) / totalIncome * 100;
         notifyListeners();
       });
     });
@@ -260,7 +269,7 @@ class GraphViewModel extends ChangeNotifier {
     if (allTransactions.isNotEmpty) {
       percentage = (foreignTransactions.length / allTransactions.length) * 100;
     }
-    percentageForeignCurrencyTransactions = percentage;
+    transactionsForeignCurrenciesPercent = percentage;
     notifyListeners();
   }
 

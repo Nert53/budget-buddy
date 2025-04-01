@@ -184,6 +184,21 @@ class SettingsScreen extends StatelessWidget {
                 },
               ),
             ),*/
+
+            Card(
+              child: ListTile(
+                leading: Icon(Icons.ios_share_outlined),
+                title: Text('Export Data'),
+                onTap: () {
+                  showDialog(
+                    context: context,
+                    builder: (context) {
+                      return ExportTransactionsDialog(viewModel: viewModel);
+                    },
+                  );
+                },
+              ),
+            ),
             Card(
               child: ListTile(
                 leading: Icon(
@@ -222,20 +237,6 @@ class SettingsScreen extends StatelessWidget {
                           ),
                         ],
                       );
-                    },
-                  );
-                },
-              ),
-            ),
-            Card(
-              child: ListTile(
-                leading: Icon(Icons.ios_share_outlined),
-                title: Text('Export Data'),
-                onTap: () {
-                  showDialog(
-                    context: context,
-                    builder: (context) {
-                      return ExportTransactionsDialog(viewModel: viewModel);
                     },
                   );
                 },

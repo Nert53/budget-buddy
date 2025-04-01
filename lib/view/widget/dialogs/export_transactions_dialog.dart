@@ -48,6 +48,22 @@ class _ExportTransactionsDialogState extends State<ExportTransactionsDialog> {
               },
             ),
           ),
+          ListTile(
+            title: Text(
+              'sqlite file (only for backup)',
+              style: TextStyle(color: Theme.of(context).colorScheme.secondary),
+            ),
+            contentPadding: EdgeInsets.zero,
+            leading: Radio(
+              value: 'sqlite',
+              groupValue: _selectedFormat,
+              onChanged: (String? value) {
+                setState(() {
+                  if (value != null) _selectedFormat = value;
+                });
+              },
+            ),
+          ),
         ],
       ),
       actions: [

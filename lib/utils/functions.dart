@@ -1,4 +1,3 @@
-
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -101,8 +100,15 @@ extension DateTimeExtension on DateTime {
   }
 }
 
-String amountPretty(double amount) {
+bool isSameDate(DateTime date1, DateTime date2) {
+  return date1.year == date2.year &&
+      date1.month == date2.month &&
+      date1.day == date2.day;
+}
+
+String amountPretty(double amount, {int decimalDigits = 0}) {
   final formatter = NumberFormat("#,##0.0", "en_US");
+  formatter.maximumFractionDigits = decimalDigits;
   return formatter.format(amount).replaceAll(",", " ");
 }
 

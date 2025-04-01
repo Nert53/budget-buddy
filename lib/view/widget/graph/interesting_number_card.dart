@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:personal_finance/utils/functions.dart';
 
 class InterestingNumberCardHorizontal extends StatelessWidget {
-  final String numberValue;
+  final double numberValue;
   final String valueName;
   final String numberSymbol;
   final bool largeScreen;
@@ -21,14 +21,14 @@ class InterestingNumberCardHorizontal extends StatelessWidget {
   Widget build(BuildContext context) {
     String prettyNumberValue = '';
     if (numberSymbol.compareTo('CZK') == 0) {
-      prettyNumberValue = amountPretty(double.parse(numberValue)).split('.')[0];
+      prettyNumberValue = amountPretty(numberValue);
     } else {
-      prettyNumberValue = numberValue;
+      prettyNumberValue = numberValue.toString();
     }
 
     return Card(
-      elevation: 4,
-      margin: EdgeInsets.symmetric(vertical: 12.0),
+      elevation: 2,
+      margin: EdgeInsets.symmetric(vertical: 6.0),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(15.0),
       ),
@@ -91,8 +91,8 @@ class InterestingNumberCardVertical extends StatelessWidget {
     }
 
     return Card(
-      elevation: 4,
-      margin: EdgeInsets.symmetric(vertical: 6.0),
+      elevation: 2,
+      margin: EdgeInsets.symmetric(vertical: 6.0, horizontal: 12),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(15.0),
       ),

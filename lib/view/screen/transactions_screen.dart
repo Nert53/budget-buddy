@@ -220,6 +220,7 @@ class TransactionScreen extends StatelessWidget {
                           );
                         },
                         child: Card(
+                          elevation: 2,
                           child: ListTile(
                               key: ValueKey(currentTransaction.id.toString()),
                               title: Column(

@@ -282,11 +282,7 @@ class _EditTransactionState extends State<EditTransaction> {
                         ),
                         DropdownMenu<String>(
                             controller: categoryController,
-                            label: categoryController.text.isEmpty || categoryModified
-                                ? const Text('Category')
-                                : Text(categoryController.text,
-                                    style:
-                                        TextStyle(color: widget.categoryColor)),
+                            label: const Text('Category'),
                             leadingIcon: Icon(widget.categoryIcon,
                                 color: widget.categoryColor),
                             textStyle: TextStyle(color: widget.categoryColor),
@@ -308,7 +304,8 @@ class _EditTransactionState extends State<EditTransaction> {
                                     value: category.id,
                                     label: category.name,
                                     style: ButtonStyle(
-                                        foregroundColor: WidgetStateProperty.all(convertColorCodeToColor(category.color))),
+                                        foregroundColor: WidgetStateProperty.all(
+                                            convertColorCodeToColor(category.color))),
                                     trailingIcon: Icon(convertIconCodePointToIcon(category.icon), color: convertColorCodeToColor(category.color))))
                                 .toList()),
                         SizedBox(
@@ -316,12 +313,7 @@ class _EditTransactionState extends State<EditTransaction> {
                         ),
                         DropdownMenu<String>(
                             controller: currencyController,
-                            label: currencyController.text.isEmpty ||
-                                    currencyModified
-                                ? const Text('Currency')
-                                : Text(
-                                    currencyController.text,
-                                  ),
+                            label: const Text('Currency'),
                             leadingIcon: CircleAvatar(
                                 backgroundColor: Colors.transparent,
                                 child: Text(widget.currencySymbol)),

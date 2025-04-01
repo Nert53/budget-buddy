@@ -76,6 +76,7 @@ class _FilterTransactionsScreenState extends State<FilterTransactionsScreen> {
                       SizedBox(width: 8),
                       Wrap(
                         spacing: 4,
+                        runSpacing: 4,
                         children: [
                           ChoiceChip(
                             label: Text(
@@ -158,6 +159,7 @@ class _FilterTransactionsScreenState extends State<FilterTransactionsScreen> {
                           )),
                       Wrap(
                         spacing: 4,
+                        runSpacing: 4,
                         children: viewModel.categories
                             .map((category) => FilterChip(
                                   label: Text(
@@ -197,6 +199,7 @@ class _FilterTransactionsScreenState extends State<FilterTransactionsScreen> {
                           )),
                       Wrap(
                         spacing: 4,
+                        runSpacing: 4,
                         children: viewModel.currencies
                             .map((currency) => FilterChip(
                                   avatar: viewModel.currenciesFilter
@@ -229,6 +232,7 @@ class _FilterTransactionsScreenState extends State<FilterTransactionsScreen> {
                                   .fontSize)),
                       Wrap(
                         spacing: 4,
+                        runSpacing: 4,
                         children: [
                           FilterChip(
                             avatar: viewModel.typesFilter['income']!
@@ -294,41 +298,15 @@ class _FilterTransactionsScreenState extends State<FilterTransactionsScreen> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            DecoratedBox(
-                                decoration: BoxDecoration(
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .secondaryContainer,
-                                    borderRadius: BorderRadius.circular(12),
-                                    shape: BoxShape.rectangle),
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 8, vertical: 4),
-                                  child: Text(
-                                      '${viewModel.amountLow.toStringAsFixed(1)} CZK',
-                                      style: TextStyle(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .onSecondaryContainer,
-                                      )),
+                            FilledButton.tonal(
+                                onPressed: () {},
+                                child: Text(
+                                  '${amountPretty(viewModel.amountLow, decimalDigits: 0)} CZK',
                                 )),
-                            DecoratedBox(
-                                decoration: BoxDecoration(
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .secondaryContainer,
-                                    borderRadius: BorderRadius.circular(12),
-                                    shape: BoxShape.rectangle),
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 8, vertical: 4),
-                                  child: Text(
-                                      '${viewModel.amountHigh.toStringAsFixed(1)} CZK',
-                                      style: TextStyle(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .onSecondaryContainer,
-                                      )),
+                            FilledButton.tonal(
+                                onPressed: () {},
+                                child: Text(
+                                  '${amountPretty(viewModel.amountHigh, decimalDigits: 0)} CZK',
                                 )),
                           ],
                         ),

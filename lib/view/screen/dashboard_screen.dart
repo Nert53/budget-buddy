@@ -53,7 +53,7 @@ class DashboardScreen extends StatelessWidget {
                         BoxShadow(
                           color: Colors.black26,
                           offset: Offset(0, 1),
-                          blurRadius: 5.0,
+                          blurRadius: 2.0,
                         ),
                       ],
                     ),
@@ -154,7 +154,7 @@ class DashboardScreen extends StatelessWidget {
                               BoxShadow(
                                 color: Colors.black26,
                                 offset: Offset(0, 1),
-                                blurRadius: 5.0,
+                                blurRadius: 2.0,
                               ),
                             ],
                           ),
@@ -216,7 +216,7 @@ class DashboardScreen extends StatelessWidget {
                       BoxShadow(
                         color: Colors.black26,
                         offset: Offset(0, 1),
-                        blurRadius: 5.0,
+                        blurRadius: 2.0,
                       ),
                     ],
                   ),
@@ -231,7 +231,7 @@ class DashboardScreen extends StatelessWidget {
                       Expanded(
                           child: Center(
                               child: Text(
-                                  '${NumberFormat('#,###').format(viewModel.accountBalance).replaceAll(',', ' ')} CZK',
+                                  '${amountPretty(viewModel.accountBalance, decimalDigits: 0)} CZK',
                                   style: TextStyle(
                                       color: Theme.of(context)
                                           .colorScheme
@@ -255,7 +255,7 @@ class DashboardScreen extends StatelessWidget {
                       BoxShadow(
                         color: Colors.black26,
                         offset: Offset(0, 1),
-                        blurRadius: 5.0,
+                        blurRadius: 2.0,
                       ),
                     ],
                   ),
@@ -268,7 +268,7 @@ class DashboardScreen extends StatelessWidget {
                       Expanded(
                           child: Center(
                               child: Text(
-                                  '${viewModel.thisMonthSpent.toStringAsFixed(0)} CZK',
+                                  '${amountPretty(viewModel.thisMonthSpent, decimalDigits: 0)} CZK',
                                   style: TextStyle(
                                       color: Theme.of(context)
                                           .colorScheme
@@ -301,7 +301,7 @@ class DashboardScreen extends StatelessWidget {
                   BoxShadow(
                     color: Colors.black26,
                     offset: Offset(0, 1),
-                    blurRadius: 5.0,
+                    blurRadius: 2.0,
                   ),
                 ],
               ),
