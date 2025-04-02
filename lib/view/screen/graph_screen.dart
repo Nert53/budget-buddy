@@ -427,11 +427,13 @@ class GraphScreen extends StatelessWidget {
                               ),
                               Expanded(
                                 child: InterestingNumberCardHorizontal(
-                                    valueName: 'Overall balance',
-                                    largeScreen: mediumScreen,
-                                    noData: viewModel.balance.isNaN,
-                                    numberValue: viewModel.balance,
-                                    numberSymbol: 'CZK'),
+                                  valueName: 'Overall balance',
+                                  largeScreen: mediumScreen,
+                                  noData: viewModel.balance.isNaN,
+                                  numberValue: viewModel.balance,
+                                  numberSymbol: 'CZK',
+                                  coloredStyle: 1,
+                                ),
                               ),
                             ],
                           ),

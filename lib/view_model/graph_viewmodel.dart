@@ -392,7 +392,26 @@ class GraphViewModel extends ChangeNotifier {
   }
 
   void getBalance() async {
-    balance = totalIncome - totalOutcome;
+    final q = _db.select(_db.transactionItems)
+      ..where((t) =>
+          t.date.isBiggerOrEqualValue(selectedDateRange.start) &
+          t.date.isSmallerOrEqualValue(selectedDateRange.end))
+      ..get();
+    List<TransactionItem> transactions = await q.get();
+
+    double income = 0.0;
+    double outcome = 0.0;
+    if (transactions.isNotEmpty) {
+      for (var transaction in transactions) {
+        if (transaction.isOutcome) {
+          outcome += transaction.amountInCZK;
+        } else {
+          income += transaction.amountInCZK;
+        }
+      }
+    }
+    balance = income - outcome;
+
     notifyListeners();
   }
 }

@@ -7,6 +7,7 @@ class InterestingNumberCardHorizontal extends StatelessWidget {
   final String numberSymbol;
   final bool largeScreen;
   final bool noData;
+  final int coloredStyle;
 
   const InterestingNumberCardHorizontal({
     super.key,
@@ -15,16 +16,12 @@ class InterestingNumberCardHorizontal extends StatelessWidget {
     required this.numberSymbol,
     required this.largeScreen,
     this.noData = false,
+    this.coloredStyle = 0,
   });
 
   @override
   Widget build(BuildContext context) {
-    String prettyNumberValue = '';
-    if (numberSymbol.compareTo('CZK') == 0) {
-      prettyNumberValue = amountPretty(numberValue);
-    } else {
-      prettyNumberValue = numberValue.toString();
-    }
+    String prettyNumberValue = amountPretty(numberValue);
 
     return Card(
       elevation: 2,
@@ -52,9 +49,19 @@ class InterestingNumberCardHorizontal extends StatelessWidget {
                       )
                     : Text(
                         '$prettyNumberValue $numberSymbol',
-                        style: TextStyle(
-                          fontSize: largeScreen ? 40 : 28,
-                        ),
+                        style: coloredStyle == 1
+                            ? TextStyle(
+                                fontSize: largeScreen ? 38 : 28,
+                                color: Colors.green[700],
+                              )
+                            : coloredStyle == 2
+                                ? TextStyle(
+                                    fontSize: largeScreen ? 38 : 28,
+                                    color: Colors.red[800],
+                                  )
+                                : TextStyle(
+                                    fontSize: largeScreen ? 38 : 28,
+                                  ),
                       ),
               ),
             ),

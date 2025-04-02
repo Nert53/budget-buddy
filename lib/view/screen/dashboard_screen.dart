@@ -85,7 +85,7 @@ class DashboardScreen extends StatelessWidget {
                                     ),
                                     SizedBox(height: 16.0),
                                     Text(
-                                      'No data to display in graph.',
+                                      'No avaliavable data to display in graph.',
                                       style: TextStyle(
                                           color: Theme.of(context)
                                               .colorScheme
@@ -167,32 +167,45 @@ class DashboardScreen extends StatelessWidget {
                                       fontWeight: FontWeight.bold)),
                               const SizedBox(height: 8.0),
                               Expanded(
-                                  child: ListView.builder(
-                                itemCount: viewModel.categoryGraphData.length,
-                                itemBuilder: (BuildContext context, int index) {
-                                  var category =
-                                      viewModel.categoryGraphData[index];
+                                  child: viewModel.categoryGraphData.isEmpty
+                                      ? Center(
+                                          child: Text(
+                                            '(Graph data is empty.)',
+                                            style: TextStyle(
+                                                color: Theme.of(context)
+                                                    .colorScheme
+                                                    .tertiary),
+                                          ),
+                                        )
+                                      : ListView.builder(
+                                          itemCount: viewModel
+                                              .categoryGraphData.length,
+                                          itemBuilder: (BuildContext context,
+                                              int index) {
+                                            var category = viewModel
+                                                .categoryGraphData[index];
 
-                                  return Row(
-                                    children: [
-                                      Container(
-                                        width: 16.0,
-                                        height: 16.0,
-                                        decoration: BoxDecoration(
-                                            color: category.color,
-                                            borderRadius:
-                                                BorderRadius.circular(8.0)),
-                                      ),
-                                      const SizedBox(width: 6.0),
-                                      Text(
-                                          '${category.amount.toStringAsFixed(0)} CZK',
-                                          style: const TextStyle(
-                                            fontSize: 16.0,
-                                          )),
-                                    ],
-                                  );
-                                },
-                              ))
+                                            return Row(
+                                              children: [
+                                                Container(
+                                                  width: 16.0,
+                                                  height: 16.0,
+                                                  decoration: BoxDecoration(
+                                                      color: category.color,
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              8.0)),
+                                                ),
+                                                const SizedBox(width: 6.0),
+                                                Text(
+                                                    '${category.amount.toStringAsFixed(0)} CZK',
+                                                    style: const TextStyle(
+                                                      fontSize: 16.0,
+                                                    )),
+                                              ],
+                                            );
+                                          },
+                                        ))
                             ],
                           ),
                         ),
