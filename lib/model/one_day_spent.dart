@@ -1,7 +1,10 @@
 class OneDaySpent {
-  final double amount;
+  double amount;
   final DateTime date;
-  final String currency;
+  final int index;
 
-  OneDaySpent({required this.amount, required this.date, required this.currency});
+  OneDaySpent(
+      {required this.amount,
+      required this.date,
+      required this.index,});
 }

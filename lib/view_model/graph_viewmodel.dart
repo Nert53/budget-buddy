@@ -45,7 +45,7 @@ class GraphViewModel extends ChangeNotifier {
         selected: false),
   ];
   List<CategorySpentGraph> topCategoriesGraphData = [];
-  List<MapEntry<int, double>> dailySpentInMonthGraphData = [];
+  List<MapEntry<DateTime, double>> dailySpentInMonthGraphData = [];
   List<CategorySpentGraph> incomeCategories = [];
   List<CategorySpentGraph> outcomeCategories = [];
   double averageDailySpent = 0;
@@ -163,30 +163,36 @@ class GraphViewModel extends ChangeNotifier {
   }
 
   void getDailySpentInMotnhGraphData() async {
-    final query = _db.selectOnly(_db.transactionItems)
-      ..addColumns(
-          [_db.transactionItems.date, _db.transactionItems.amountInCZK.sum()])
-      ..where(_db.transactionItems.isOutcome.equals(true))
-      ..where(_db.transactionItems.date
-          .isBiggerOrEqualValue(selectedDateRange.start))
-      ..where(_db.transactionItems.date
-          .isSmallerOrEqualValue(selectedDateRange.end))
-      ..groupBy([_db.transactionItems.date]);
-    List<TypedResult> result = await query.get();
+    final queryOutcome = _db.select(_db.transactionItems)
+      ..where((t) =>
+          t.date.isBiggerOrEqualValue(selectedDateRange.start) &
+          t.date.isSmallerOrEqualValue(selectedDateRange.end) &
+          t.isOutcome.equals(true))
+      ..get();
 
-    final List<OneDaySpent> oneDaySpent = result.map((row) {
-      DateTime date =
-          row.read<DateTime>(_db.transactionItems.date) ?? DateTime.now();
-      return OneDaySpent(
-          amount: row.read<double>(_db.transactionItems.amountInCZK.sum()) ?? 0,
-          date: date.copyWith(hour: 0, minute: 0, second: 0, millisecond: 0),
-          currency: 'CZK');
-    }).toList();
-
+    List<TransactionItem> outcomeTransactions = await queryOutcome.get();
+    List<OneDaySpent> oneDaySpent = [];
     DateTime startDate = selectedDateRange.start;
+    int index = 0;
     while (startDate.isBefore(selectedDateRange.end)) {
+      oneDaySpent.add(OneDaySpent(
+          amount: 0,
+          date: startDate.copyWith(hour: 0, minute: 0, second: 0),
+          index: index));
       startDate = startDate.add(Duration(days: 1));
+      index++;
     }
+    for (var t in outcomeTransactions) {
+      if (isSameDate(t.date,
+          oneDaySpent.firstWhere((date) => date.date.day == t.date.day).date)) {
+        oneDaySpent.firstWhere((date) => date.date.day == t.date.day).amount +=
+            t.amountInCZK;
+      }
+    }
+
+    dailySpentInMonthGraphData.clear();
+    dailySpentInMonthGraphData =
+        oneDaySpent.map((e) => MapEntry(e.date, e.amount)).toList();
 
     notifyListeners();
   }
@@ -392,12 +398,12 @@ class GraphViewModel extends ChangeNotifier {
   }
 
   void getBalance() async {
-    final q = _db.select(_db.transactionItems)
+    final query = _db.select(_db.transactionItems)
       ..where((t) =>
           t.date.isBiggerOrEqualValue(selectedDateRange.start) &
           t.date.isSmallerOrEqualValue(selectedDateRange.end))
       ..get();
-    List<TransactionItem> transactions = await q.get();
+    List<TransactionItem> transactions = await query.get();
 
     double income = 0.0;
     double outcome = 0.0;

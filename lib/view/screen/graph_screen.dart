@@ -144,13 +144,13 @@ class GraphScreen extends StatelessWidget {
                         borderRadius: BorderRadius.circular(15.0),
                       ),
                       child: SizedBox(
-                          height: 340,
+                          height: 400,
                           child: viewModel.dailySpentInMonthGraphData.isEmpty
                               ? Column(
                                   children: [
                                     SizedBox(height: 16.0),
                                     Text(
-                                      'Spent during month',
+                                      'Spent during time',
                                       style: Theme.of(context)
                                           .textTheme
                                           .titleLarge,
@@ -163,33 +163,37 @@ class GraphScreen extends StatelessWidget {
                                   title: ChartTitle(
                                     text: 'Spent during month',
                                   ),
-                                  primaryXAxis: NumericAxis(
+                                  primaryXAxis: DateTimeAxis(
+                                    dateFormat: DateFormat('dd. MM.'),
+                                    interval: mediumScreen ? 1 : 3,
+                                    intervalType: DateTimeIntervalType.days,
+                                    majorGridLines: MajorGridLines(width: 0),
                                     edgeLabelPlacement:
                                         EdgeLabelPlacement.shift,
-                                    minimum: 1,
-                                    maximum: viewModel
-                                        .dailySpentInMonthGraphData.length
-                                        .toDouble(),
-                                    interval: mediumScreen ? 1 : 3,
-                                    majorGridLines: MajorGridLines(width: 0),
                                   ),
                                   primaryYAxis: const NumericAxis(
                                     labelFormat: '{value} CZK',
                                     axisLine: AxisLine(width: 0),
-                                    majorTickLines: MajorTickLines(
-                                        color: Colors.transparent),
+                                    majorTickLines: MajorTickLines(size: 0),
                                   ),
-                                  series: <LineSeries<MapEntry<int, double>,
-                                      int>>[
-                                    LineSeries<MapEntry<int, double>, int>(
+                                  trackballBehavior: TrackballBehavior(
+                                    enable: true,
+                                    activationMode: ActivationMode.singleTap,
+                                    tooltipSettings: const InteractiveTooltip(
+                                        format: 'point.x : point.y'),
+                                  ),
+                                  series: <AreaSeries<
+                                      MapEntry<DateTime, double>, DateTime>>[
+                                    AreaSeries<MapEntry<DateTime, double>,
+                                        DateTime>(
                                       dataSource:
                                           viewModel.dailySpentInMonthGraphData,
                                       xValueMapper: (data, _) => data.key,
                                       yValueMapper: (data, _) => data.value,
-                                      name: 'Spent',
-                                      markerSettings: MarkerSettings(
-                                        isVisible: true,
-                                      ),
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .primary
+                                          .withAlpha((0.8 * 255).toInt()),
                                     ),
                                   ],
                                 )),
