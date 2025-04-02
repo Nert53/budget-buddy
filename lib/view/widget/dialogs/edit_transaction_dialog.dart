@@ -12,19 +12,19 @@ class EditTransaction extends StatefulWidget {
   final String transactionId;
   final double amount;
   final String note;
-  DateTime date;
-  bool isOutcome;
+  final DateTime date;
+  final bool isOutcome;
   final List<CategoryItem> categories;
   final List<CurrencyItem> currencies;
-  String categoryId;
-  String categoryName;
-  IconData categoryIcon;
-  Color categoryColor;
-  String currencyId;
-  String currencyName;
-  String currencySymbol;
+  final String categoryId;
+  final String categoryName;
+  final IconData categoryIcon;
+  final Color categoryColor;
+  final String currencyId;
+  final String currencyName;
+  final String currencySymbol;
 
-  EditTransaction({
+  const EditTransaction({
     super.key,
     required this.transactionId,
     required this.amount,
@@ -49,29 +49,41 @@ class EditTransaction extends StatefulWidget {
 class _EditTransactionState extends State<EditTransaction> {
   final TextEditingController amountController = TextEditingController();
   final TextEditingController noteController = TextEditingController();
-  final TextEditingController categoryController = TextEditingController();
-  final TextEditingController currencyController = TextEditingController();
+  final TextEditingController categoryNameController = TextEditingController();
+  final TextEditingController currencyNameController = TextEditingController();
   late String selectedCategoryId;
   late String selectedCurrencyId;
+
+  late String _transactionId;
+  late DateTime _date;
+  late bool _isOutcome;
+  late String _categoryId;
+  late IconData _categoryIcon;
+  late Color _categoryColor;
+  late String _currencyId;
+  late String _currencySymbol;
+
+  late CategoryItem selectedCategory;
+  late CurrencyItem selectedCurrency;
+
   bool categoryModified = false;
   bool currencyModified = false;
 
   changeIsOutcome(bool newValue) {
     setState(() {
-      widget.isOutcome = newValue;
+      _isOutcome = newValue;
     });
   }
 
   changeDate(DateTime newDate) {
     setState(() {
-      widget.date = newDate;
+      _date = newDate;
     });
   }
 
   changeTime(TimeOfDay newTime) {
     setState(() {
-      widget.date =
-          widget.date.copyWith(hour: newTime.hour, minute: newTime.minute);
+      _date = _date.copyWith(hour: newTime.hour, minute: newTime.minute);
     });
   }
 
@@ -87,10 +99,9 @@ class _EditTransactionState extends State<EditTransaction> {
     setState(() {
       selectedCategoryId = newCategory.id;
       categoryModified = true;
-      widget.categoryId = newCategory.id;
-      widget.categoryName = newCategory.name;
-      widget.categoryIcon = convertIconCodePointToIcon(newCategory.icon);
-      widget.categoryColor = convertColorCodeToColor(newCategory.color);
+      _categoryId = newCategory.id;
+      _categoryIcon = convertIconCodePointToIcon(newCategory.icon);
+      _categoryColor = convertColorCodeToColor(newCategory.color);
     });
   }
 
@@ -106,19 +117,30 @@ class _EditTransactionState extends State<EditTransaction> {
     setState(() {
       selectedCurrencyId = newCurrency.id;
       currencyModified = true;
-      widget.currencyId = newCurrency.id;
-      widget.currencyName = newCurrency.name;
-      widget.currencySymbol = newCurrency.symbol;
+      _currencyId = newCurrency.id;
+      _currencySymbol = newCurrency.symbol;
     });
   }
 
   @override
   void initState() {
     super.initState();
+    amountController.text = widget.amount.toString();
+    noteController.text = widget.note;
+    categoryNameController.text = widget.categoryName;
+    currencyNameController.text = widget.currencyName;
+
+    _transactionId = widget.transactionId;
+    _date = widget.date;
+    _isOutcome = widget.isOutcome;
+    _categoryId = widget.categoryId;
+    _categoryIcon = widget.categoryIcon;
+    _categoryColor = widget.categoryColor;
+    _currencyId = widget.currencyId;
+    _currencySymbol = widget.currencySymbol;
+
     selectedCategoryId = widget.categoryId;
     selectedCurrencyId = widget.currencyId;
-    categoryController.text = widget.categoryName;
-    currencyController.text = widget.currencyName;
   }
 
   @override
@@ -136,7 +158,7 @@ class _EditTransactionState extends State<EditTransaction> {
                   const Text('Edit Transaction'),
                   IconButton(
                     onPressed: () {
-                      viewModel.deleteTransactionById(widget.transactionId);
+                      viewModel.deleteTransactionById(_transactionId);
                       Navigator.of(context).pop();
                     },
                     icon: Icon(Icons.delete_outlined),
@@ -153,8 +175,7 @@ class _EditTransactionState extends State<EditTransaction> {
                   : Column(
                       children: [
                         TextField(
-                          controller: amountController
-                            ..text = widget.amount.toString(),
+                          controller: amountController,
                           keyboardType: const TextInputType.numberWithOptions(
                               decimal: true),
                           inputFormatters: <TextInputFormatter>[
@@ -179,7 +200,7 @@ class _EditTransactionState extends State<EditTransaction> {
                           height: 16,
                         ),
                         TextField(
-                          controller: noteController..text = widget.note,
+                          controller: noteController,
                           keyboardType: TextInputType.text,
                           minLines: 2,
                           maxLines: 5,
@@ -216,12 +237,12 @@ class _EditTransactionState extends State<EditTransaction> {
                                 )),
                           ],
                           selected: <TransactionType>{
-                            widget.isOutcome == true
+                            _isOutcome == true
                                 ? TransactionType.outcome
                                 : TransactionType.income,
                           },
                           onSelectionChanged: (Set<TransactionType> newValue) {
-                            changeIsOutcome(!widget.isOutcome);
+                            changeIsOutcome(!_isOutcome);
                           },
                         ),
                         SizedBox(
@@ -237,19 +258,19 @@ class _EditTransactionState extends State<EditTransaction> {
                                   onPressed: () {
                                     showDatePicker(
                                       context: context,
-                                      initialDate: widget.date,
+                                      initialDate: _date,
                                       firstDate: DateTime(2000),
                                       lastDate: DateTime(2100),
                                     ).then((newDate) {
                                       // without copy method the hour:minute will be set to 00:00
                                       changeDate(newDate!.copyWith(
-                                          hour: widget.date.hour,
-                                          minute: widget.date.minute));
+                                          hour: _date.hour,
+                                          minute: _date.minute));
                                     });
                                   },
                                   child: Text(
                                     DateFormat('dd. MM. yyyy')
-                                        .format(widget.date)
+                                        .format(_date)
                                         .toString(),
                                   ),
                                 ),
@@ -269,7 +290,7 @@ class _EditTransactionState extends State<EditTransaction> {
                                   },
                                   child: Text(
                                     DateFormat('HH:mm')
-                                        .format(widget.date)
+                                        .format(_date)
                                         .toString(),
                                   ),
                                 ),
@@ -281,11 +302,11 @@ class _EditTransactionState extends State<EditTransaction> {
                           height: 16,
                         ),
                         DropdownMenu<String>(
-                            controller: categoryController,
+                            controller: categoryNameController,
                             label: const Text('Category'),
-                            leadingIcon: Icon(widget.categoryIcon,
-                                color: widget.categoryColor),
-                            textStyle: TextStyle(color: widget.categoryColor),
+                            leadingIcon:
+                                Icon(_categoryIcon, color: _categoryColor),
+                            textStyle: TextStyle(color: _categoryColor),
                             inputDecorationTheme: const InputDecorationTheme(
                                 border: OutlineInputBorder(
                                     borderRadius:
@@ -312,11 +333,11 @@ class _EditTransactionState extends State<EditTransaction> {
                           height: 16,
                         ),
                         DropdownMenu<String>(
-                            controller: currencyController,
+                            controller: currencyNameController,
                             label: const Text('Currency'),
                             leadingIcon: CircleAvatar(
                                 backgroundColor: Colors.transparent,
-                                child: Text(widget.currencySymbol)),
+                                child: Text(_currencySymbol)),
                             inputDecorationTheme: const InputDecorationTheme(
                                 border: OutlineInputBorder(
                                     borderRadius:
@@ -325,7 +346,6 @@ class _EditTransactionState extends State<EditTransaction> {
                             onSelected: (String? newCurrencyId) {
                               changeSelectedCurrency(newCurrencyId!);
                             },
-                            initialSelection: widget.categories.first.name,
                             dropdownMenuEntries: widget.currencies
                                 .map((currency) => DropdownMenuEntry<String>(
                                       value: currency.id,
@@ -348,13 +368,13 @@ class _EditTransactionState extends State<EditTransaction> {
                   onPressed: () {
                     Navigator.of(context).pop();
                     viewModel.updateTransaction(
-                      widget.transactionId,
+                      _transactionId,
                       double.parse(amountController.text),
                       noteController.text,
-                      widget.isOutcome,
-                      widget.date,
-                      widget.categoryId,
-                      widget.currencyId,
+                      _isOutcome,
+                      _date,
+                      _categoryId,
+                      _currencyId,
                     );
                   },
                   child: const Text('Save'),
