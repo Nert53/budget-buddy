@@ -5,9 +5,11 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
+import 'package:path/path.dart' as p;
 import 'package:personal_finance/data/database.dart';
 import 'package:personal_finance/model/exchange_rate.dart';
 import 'package:personal_finance/model/transaction.dart';
+import 'package:sqlite3/sqlite3.dart';
 
 class SettingsViewmodel extends ChangeNotifier {
   bool isLoading = true;
@@ -113,13 +115,13 @@ class SettingsViewmodel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<bool> exportDataJson() async {
-    return true;
-  }
-
   Future<bool> exportData(String selectedFormat) async {
     String? selectedDirectory = await FilePicker.platform.getDirectoryPath();
     if (selectedDirectory == null) return false;
+
+    if (selectedFormat == 'sqlite') {
+      return exportDatabase(selectedDirectory);
+    }
 
     if (selectedFormat != 'json' && selectedFormat != 'csv') return false;
 
@@ -157,10 +159,11 @@ class SettingsViewmodel extends ChangeNotifier {
         currencyName: currency.name,
         currencySymbol: currency.symbol,
       ));
-    } 
+    }
 
     String currentDate = DateFormat('yy-MM-dd').format(DateTime.now());
-    File file = File('$selectedDirectory/budget-buddy-export-$currentDate.$selectedFormat');
+    File file = File(
+        '$selectedDirectory/budget-buddy-export-$currentDate.$selectedFormat');
     if (selectedFormat == 'json') {
       saveJsonFile(transactionsToExport, file);
     } else if (selectedFormat == 'csv') {
@@ -199,5 +202,19 @@ class SettingsViewmodel extends ChangeNotifier {
           '${t.id},${t.amount},${t.date.toIso8601String()},${t.note},${t.isOutcome},${t.categoryId},${t.categoryName},${t.categoryIcon.codePoint},${t.categoryColor.value},${t.currencyId},${t.currencyName},${t.currencySymbol}\n';
     }
     file.writeAsStringSync(header);
+  }
+
+  Future<bool> exportDatabase(String selectedDirectory) async {
+    final directory =
+        '/Users/nert/Library/Containers/com.example.personalFinance/Data/Documents/personal_finance_db.sqlite';
+    String now = DateFormat('yy_MM_dd-HH_mm').format(DateTime.now());
+
+    final backupDb = sqlite3.open(directory);
+    final tempDb = p.join(selectedDirectory, 'budget-buddy-export-$now.sqlite');
+    backupDb
+      ..execute('VACUUM INTO ?', [tempDb])
+      ..dispose();
+
+    return true;
   }
 }
