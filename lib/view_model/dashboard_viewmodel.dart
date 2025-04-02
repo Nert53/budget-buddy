@@ -78,20 +78,22 @@ class DashboardViewmodel extends ChangeNotifier {
       var currencySymbol =
           await selectedCurrency.getSingle().then((cur) => cur.symbol);
 
-      lastTransactions.add(Transaction(
-        id: t.id.toString(),
-        amount: t.amount,
-        date: t.date,
-        note: t.note,
-        isOutcome: t.isOutcome,
-        categoryId: t.category,
-        categoryName: category.name,
-        categoryIcon: convertIconCodePointToIcon(category.icon),
-        categoryColor: Color(category.color),
-        currencyId: t.currency,
-        currencyName: currencyName,
-        currencySymbol: currencySymbol,
-      ));
+      if (!lastTransactions.any((item) => item.id == t.id.toString())) {
+        lastTransactions.add(Transaction(
+          id: t.id.toString(),
+          amount: t.amount,
+          date: t.date,
+          note: t.note,
+          isOutcome: t.isOutcome,
+          categoryId: t.category,
+          categoryName: category.name,
+          categoryIcon: convertIconCodePointToIcon(category.icon),
+          categoryColor: Color(category.color),
+          currencyId: t.currency,
+          currencyName: currencyName,
+          currencySymbol: currencySymbol,
+        )); // Skip if the transaction already exists
+      }
     }
 
     notifyListeners();
