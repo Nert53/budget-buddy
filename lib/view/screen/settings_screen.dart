@@ -169,22 +169,6 @@ class SettingsScreen extends StatelessWidget {
                 ],
               ),
             ),
-            /*Card(
-              child: ListTile(
-                leading: Icon(
-                  Icons.storage_outlined,
-                  color: Colors.orange,
-                ),
-                title: Text(
-                  'View Database',
-                  style: TextStyle(color: Colors.orange),
-                ),
-                onTap: () {
-                  context.go('/database');
-                },
-              ),
-            ),*/
-
             Card(
               child: ListTile(
                 leading: Icon(Icons.ios_share_outlined),

@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:path/path.dart' as p;
+import 'package:path_provider/path_provider.dart';
+import 'package:personal_finance/constants.dart';
 import 'package:personal_finance/data/database.dart';
 import 'package:personal_finance/model/exchange_rate.dart';
 import 'package:personal_finance/model/transaction.dart';
@@ -205,11 +207,11 @@ class SettingsViewmodel extends ChangeNotifier {
   }
 
   Future<bool> exportDatabase(String selectedDirectory) async {
-    final directory =
-        '/Users/nert/Library/Containers/com.example.personalFinance/Data/Documents/personal_finance_db.sqlite';
+    final appDirecrtory = await getApplicationDocumentsDirectory();
+    final dbDirectory = p.join(appDirecrtory.path, '$databaseName.db');
     String now = DateFormat('yy_MM_dd-HH_mm').format(DateTime.now());
 
-    final backupDb = sqlite3.open(directory);
+    final backupDb = sqlite3.open(dbDirectory);
     final tempDb = p.join(selectedDirectory, 'budget-buddy-export-$now.sqlite');
     backupDb
       ..execute('VACUUM INTO ?', [tempDb])
