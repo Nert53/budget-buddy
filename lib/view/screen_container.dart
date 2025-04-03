@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 import 'package:personal_finance/constants.dart';
 import 'package:personal_finance/view/constants/nav_destinations.dart';
 import 'package:personal_finance/view/widget/dialogs/add_transaction_dialog.dart';
@@ -66,6 +67,38 @@ class ScreenContainer extends StatelessWidget {
                   ),
                 ),
               ),
+              trailing: (screenWidth > largeScreenWidth)
+                  ? Expanded(
+                      child: Align(
+                      alignment: Alignment.bottomCenter,
+                      child: Container(
+                        margin: const EdgeInsets.only(bottom: 16),
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 6, horizontal: 12),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(16),
+                          color: Theme.of(context).colorScheme.primaryContainer,
+                        ),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              DateFormat('EEEE').format(DateTime.now()),
+                              style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            Text(
+                              DateFormat('dd. MMMM y').format(DateTime.now()),
+                              style: TextStyle(
+                                  fontSize: 14, fontWeight: FontWeight.w100),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ))
+                  : null,
               destinations: destinations.map<NavigationRailDestination>((d) {
                 return NavigationRailDestination(
                   icon: Icon(d.icon),
