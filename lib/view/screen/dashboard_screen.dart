@@ -138,7 +138,7 @@ class DashboardScreen extends StatelessWidget {
                   ),
                 ),
                 (screenWidth > mediumScreenWidth)
-                    ? const SizedBox(width: 16.0)
+                    ? const SizedBox(width: 12.0)
                     : const SizedBox(),
                 (screenWidth > mediumScreenWidth)
                     ? Expanded(
@@ -170,7 +170,7 @@ class DashboardScreen extends StatelessWidget {
                                   child: viewModel.categoryGraphData.isEmpty
                                       ? Center(
                                           child: Text(
-                                            '(Graph data is empty.)',
+                                            'Graph data is empty.',
                                             style: TextStyle(
                                                 color: Theme.of(context)
                                                     .colorScheme
@@ -213,7 +213,7 @@ class DashboardScreen extends StatelessWidget {
                     : const SizedBox(),
               ],
             ),
-            const SizedBox(height: 16.0),
+            const SizedBox(height: 12.0),
             Row(
               children: [
                 Container(
@@ -254,7 +254,7 @@ class DashboardScreen extends StatelessWidget {
                     ],
                   ),
                 ),
-                const SizedBox(width: 16.0),
+                const SizedBox(width: 12.0),
                 Container(
                   height: 160,
                   width: (screenWidth > mediumScreenWidth)
@@ -292,7 +292,7 @@ class DashboardScreen extends StatelessWidget {
                   ),
                 ),
                 (screenWidth > mediumScreenWidth)
-                    ? const SizedBox(width: 16.0)
+                    ? const SizedBox(width: 12.0)
                     : const SizedBox(),
                 (screenWidth > mediumScreenWidth)
                     ? SpendingDetailExtension(
@@ -303,9 +303,9 @@ class DashboardScreen extends StatelessWidget {
                     : const SizedBox(),
               ],
             ),
-            const SizedBox(height: 16.0),
+            const SizedBox(height: 12.0),
             Container(
-              constraints: BoxConstraints(maxHeight: 380),
+              constraints: BoxConstraints(maxHeight: 400),
               padding: const EdgeInsets.all(16.0),
               decoration: BoxDecoration(
                 color: Theme.of(context).colorScheme.surface,
@@ -353,7 +353,8 @@ class DashboardScreen extends StatelessWidget {
                             itemBuilder: (BuildContext context, int index) {
                               Transaction currentTransaction =
                                   viewModel.lastTransactions[index];
-                              DateFormat dateFormat = DateFormat('dd.MM.yyyy');
+                              DateFormat dateFormat =
+                                  DateFormat('dd. MM. yyyy');
                               DateFormat timeFormat = DateFormat('HH:mm');
 
                               return ListTile(
@@ -423,7 +424,6 @@ class DashboardScreen extends StatelessWidget {
                                 leading: Icon(currentTransaction.categoryIcon,
                                     color: currentTransaction.categoryColor),
                                 trailing: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.end,
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
                                   children: [

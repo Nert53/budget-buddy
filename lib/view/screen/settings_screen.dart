@@ -253,7 +253,7 @@ class SettingsScreen extends StatelessWidget {
                       applicationName: 'Buget Buddy',
                       children: [
                         Text(
-                            'This is a simple personal finance app made on Palacký University as a bachelor thesis by Vojtěch Netrh in 2025.'),
+                            'This is a multiplaform personal finance app made on Palacký University as a bachelor thesis by Vojtěch Netrh in 2025.'),
                       ]);
                 },
               ),

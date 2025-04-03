@@ -48,6 +48,9 @@ class TransactionViewModel extends ChangeNotifier {
 
   DateTime currentDate = DateTime.now();
   String currentPeriod = 'Month';
+  bool isRangePeriod = false;
+  DateTime startDate = DateTime.now();
+  DateTime endDate = DateTime.now();
   bool currentDisplayedOlder = false;
   bool currentDisplayedNewer = false;
   int categoryFilterCount = 0;
@@ -203,6 +206,9 @@ class TransactionViewModel extends ChangeNotifier {
                           currentDate.subtract(Duration(days: weekday)));
                 } else if (currentPeriod == 'Year') {
                   return t.date.year.equals(currentDate.year);
+                } else if (currentPeriod == 'Range') {
+                  return t.date.isBiggerOrEqualValue(startDate) &
+                      t.date.isSmallerOrEqualValue(endDate);
                 } else {
                   return Constant(true); // for 'all Time' and 'custom' period
                 }

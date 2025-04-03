@@ -1,4 +1,7 @@
+import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:marquee/marquee.dart';
 import 'package:personal_finance/model/time_period.dart';
 import 'package:personal_finance/utils/functions.dart';
 import 'package:personal_finance/view_model/transactions_viewmodel.dart';
@@ -15,6 +18,8 @@ class FilterDateSheet extends StatefulWidget {
 
 class _FilterDateSheetState extends State<FilterDateSheet> {
   late String selectedPeriodName;
+  late DateTime startDate;
+  late DateTime endDate;
 
   @override
   void initState() {
@@ -115,14 +120,56 @@ class _FilterDateSheetState extends State<FilterDateSheet> {
                                 label: SizedBox(
                                     height: 50,
                                     width: 90,
-                                    child: Center(child: Text(period.name))),
+                                    child: period.name.toLowerCase() == 'range'
+                                        ? Column(
+                                            mainAxisSize: MainAxisSize.min,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              Text(
+                                                'Date range',
+                                              ),
+                                              Expanded(
+                                                child: Marquee(
+                                                  velocity: 20,
+                                                  blankSpace: 16,
+                                                  style: TextStyle(
+                                                    fontSize: 10,
+                                                  ),
+                                                  text:
+                                                      '${DateFormat('dd.MM.yyyy').format(viewModel.startDate)} - ${DateFormat('dd.MM.yyyy').format(viewModel.endDate)}',
+                                                ),
+                                              ),
+                                            ],
+                                          )
+                                        : Center(child: Text(period.name))),
                                 showCheckmark: false,
                                 selected: period.name == selectedPeriodName,
                                 onSelected: (bool selected) {
                                   setState(() {
-                                    if (period.name.toLowerCase() == "range") {
-                                      
-                                      return;
+                                    if (period.name.toLowerCase() == 'range') {
+                                      showDateRangePicker(
+                                        context: context,
+                                        firstDate: DateTime(1970),
+                                        lastDate: DateTime(2100),
+                                      ).then((pickedDateRange) {
+                                        if (pickedDateRange != null) {
+                                          viewModel.startDate =
+                                              pickedDateRange.start;
+                                          viewModel.endDate =
+                                              pickedDateRange.end;
+                                        } else {
+                                          if (context.mounted) {
+                                            Flushbar(
+                                              message: 'No date range selected',
+                                              duration: Duration(seconds: 3),
+                                            ).show(context);
+                                          }
+                                        }
+                                      });
+                                      viewModel.isRangePeriod = true;
+                                    } else {
+                                      viewModel.isRangePeriod = false;
                                     }
 
                                     selectedPeriodName = period.name;

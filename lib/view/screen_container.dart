@@ -77,7 +77,8 @@ class ScreenContainer extends StatelessWidget {
                             vertical: 6, horizontal: 12),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(16),
-                          color: Theme.of(context).colorScheme.primaryContainer,
+                          color:
+                              Theme.of(context).colorScheme.secondaryContainer,
                         ),
                         child: Column(
                           mainAxisSize: MainAxisSize.min,

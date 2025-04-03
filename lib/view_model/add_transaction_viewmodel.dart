@@ -34,7 +34,6 @@ class AddTransactionViewModel extends ChangeNotifier {
       getCurrencies();
     });
 
-    getCurrencies();
     isLoading = false;
   }
 

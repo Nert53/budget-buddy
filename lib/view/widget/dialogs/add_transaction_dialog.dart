@@ -402,6 +402,7 @@ class AddWindow extends StatelessWidget {
                 controller: viewModel.noteController,
                 minLines: 3,
                 maxLines: 5,
+                maxLength: maxNoteLength,
                 keyboardType: TextInputType.text,
                 decoration: const InputDecoration(
                     labelText: 'Note',

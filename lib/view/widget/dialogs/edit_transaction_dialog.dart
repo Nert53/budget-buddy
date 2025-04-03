@@ -146,243 +146,240 @@ class _EditTransactionState extends State<EditTransaction> {
   @override
   Widget build(BuildContext context) {
     return Consumer<TransactionViewModel>(builder: (context, viewModel, child) {
-      return SingleChildScrollView(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            AlertDialog(
-              title: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text('Edit Transaction'),
-                  IconButton(
-                    onPressed: () {
-                      viewModel.deleteTransactionById(_transactionId);
-                      Navigator.of(context).pop();
-                    },
-                    icon: Icon(Icons.delete_outlined),
-                    iconSize: 30,
-                    style: ButtonStyle(
-                        iconColor: WidgetStateProperty.all(Colors.red)),
-                  ),
-                ],
-              ),
-              content: viewModel.isLoading
-                  ? const Center(
-                      child: CircularProgressIndicator(),
-                    )
-                  : Column(
-                      children: [
-                        TextField(
-                          controller: amountController,
-                          keyboardType: const TextInputType.numberWithOptions(
-                              decimal: true),
-                          inputFormatters: <TextInputFormatter>[
-                            // allow only numbers and dot/comma and comma is replaced with dot
-                            FilteringTextInputFormatter.allow(
-                                RegExp(r'(^\d*[.,]?\d*)')),
-                            TextInputFormatter.withFunction(
-                              (oldValue, newValue) => newValue.copyWith(
-                                text: newValue.text.replaceAll(',', '.'),
-                              ),
-                            ),
-                          ],
-                          decoration: InputDecoration(
-                            labelText: 'Amount',
-                            border: OutlineInputBorder(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(16))),
-                            suffixIcon: Icon(Icons.payments_outlined),
-                          ),
-                        ),
-                        SizedBox(
-                          height: 16,
-                        ),
-                        TextField(
-                          controller: noteController,
-                          keyboardType: TextInputType.text,
-                          minLines: 2,
-                          maxLines: 5,
-                          maxLength: maxNoteLength,
-                          decoration: InputDecoration(
-                            labelText: 'Note',
-                            border: OutlineInputBorder(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(16))),
-                            suffixIcon: Icon(Icons.text_snippet_outlined),
-                          ),
-                        ),
-                        SizedBox(
-                          height: 16,
-                        ),
-                        SegmentedButton<TransactionType>(
-                          showSelectedIcon: false,
-                          segments: const <ButtonSegment<TransactionType>>[
-                            ButtonSegment(
-                                value: TransactionType.income,
-                                label: Text('Income'),
-                                icon: Icon(
-                                  Icons.arrow_drop_up,
-                                  color: Colors.green,
-                                  size: 30,
-                                )),
-                            ButtonSegment(
-                                value: TransactionType.outcome,
-                                label: Text('Outcome'),
-                                icon: Icon(
-                                  Icons.arrow_drop_down,
-                                  color: Colors.red,
-                                  size: 30,
-                                )),
-                          ],
-                          selected: <TransactionType>{
-                            _isOutcome == true
-                                ? TransactionType.outcome
-                                : TransactionType.income,
-                          },
-                          onSelectionChanged: (Set<TransactionType> newValue) {
-                            changeIsOutcome(!_isOutcome);
-                          },
-                        ),
-                        SizedBox(
-                          height: 16,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            Row(
-                              children: [
-                                Icon(Icons.calendar_month_outlined),
-                                TextButton(
-                                  onPressed: () {
-                                    showDatePicker(
-                                      context: context,
-                                      initialDate: _date,
-                                      firstDate: DateTime(2000),
-                                      lastDate: DateTime(2100),
-                                    ).then((newDate) {
-                                      // without copy method the hour:minute will be set to 00:00
-                                      changeDate(newDate!.copyWith(
-                                          hour: _date.hour,
-                                          minute: _date.minute));
-                                    });
-                                  },
-                                  child: Text(
-                                    DateFormat('dd. MM. yyyy')
-                                        .format(_date)
-                                        .toString(),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            Row(
-                              children: [
-                                Icon(Icons.schedule_outlined),
-                                TextButton(
-                                  onPressed: () {
-                                    showTimePicker(
-                                      context: context,
-                                      initialTime: TimeOfDay.now(),
-                                    ).then((newTime) {
-                                      changeTime(newTime!);
-                                    });
-                                  },
-                                  child: Text(
-                                    DateFormat('HH:mm')
-                                        .format(_date)
-                                        .toString(),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                        SizedBox(
-                          height: 16,
-                        ),
-                        DropdownMenu<String>(
-                            controller: categoryNameController,
-                            label: const Text('Category'),
-                            leadingIcon:
-                                Icon(_categoryIcon, color: _categoryColor),
-                            textStyle: TextStyle(color: _categoryColor),
-                            inputDecorationTheme: const InputDecorationTheme(
-                                border: OutlineInputBorder(
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(16)))),
-                            menuStyle: MenuStyle(
-                                shape: WidgetStateProperty.all(
-                                    const RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(16))))),
-                            expandedInsets: EdgeInsets.zero,
-                            onSelected: (String? newCategoryId) {
-                              changeSelectedCategory(newCategoryId!);
-                            },
-                            dropdownMenuEntries: widget.categories
-                                .map((category) => DropdownMenuEntry<String>(
-                                    value: category.id,
-                                    label: category.name,
-                                    style: ButtonStyle(
-                                        foregroundColor: WidgetStateProperty.all(
-                                            convertColorCodeToColor(category.color))),
-                                    trailingIcon: Icon(convertIconCodePointToIcon(category.icon), color: convertColorCodeToColor(category.color))))
-                                .toList()),
-                        SizedBox(
-                          height: 16,
-                        ),
-                        DropdownMenu<String>(
-                            controller: currencyNameController,
-                            label: const Text('Currency'),
-                            leadingIcon: CircleAvatar(
-                                backgroundColor: Colors.transparent,
-                                child: Text(_currencySymbol)),
-                            inputDecorationTheme: const InputDecorationTheme(
-                                border: OutlineInputBorder(
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(16)))),
-                            expandedInsets: EdgeInsets.zero,
-                            onSelected: (String? newCurrencyId) {
-                              changeSelectedCurrency(newCurrencyId!);
-                            },
-                            dropdownMenuEntries: widget.currencies
-                                .map((currency) => DropdownMenuEntry<String>(
-                                      value: currency.id,
-                                      label: currency.name,
-                                      leadingIcon: CircleAvatar(
-                                          backgroundColor: Colors.transparent,
-                                          child: Text(currency.symbol)),
-                                    ))
-                                .toList()),
-                      ],
-                    ),
-              actions: [
-                TextButton(
+      return Column(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          AlertDialog(
+            title: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text('Edit Transaction'),
+                IconButton(
                   onPressed: () {
+                    viewModel.deleteTransactionById(_transactionId);
                     Navigator.of(context).pop();
                   },
-                  child: const Text('Discard'),
-                ),
-                FilledButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                    viewModel.updateTransaction(
-                      _transactionId,
-                      double.parse(amountController.text),
-                      noteController.text,
-                      _isOutcome,
-                      _date,
-                      _categoryId,
-                      _currencyId,
-                    );
-                  },
-                  child: const Text('Save'),
+                  icon: Icon(Icons.delete_outlined),
+                  iconSize: 30,
+                  style: ButtonStyle(
+                      iconColor: WidgetStateProperty.all(Colors.red)),
                 ),
               ],
             ),
-          ],
-        ),
+            content: viewModel.isLoading
+                ? const Center(
+                    child: CircularProgressIndicator(),
+                  )
+                : Column(
+                    children: [
+                      TextField(
+                        controller: amountController,
+                        keyboardType: const TextInputType.numberWithOptions(
+                            decimal: true),
+                        inputFormatters: <TextInputFormatter>[
+                          // allow only numbers and dot/comma and comma is replaced with dot
+                          FilteringTextInputFormatter.allow(
+                              RegExp(r'(^\d*[.,]?\d*)')),
+                          TextInputFormatter.withFunction(
+                            (oldValue, newValue) => newValue.copyWith(
+                              text: newValue.text.replaceAll(',', '.'),
+                            ),
+                          ),
+                        ],
+                        decoration: InputDecoration(
+                          labelText: 'Amount',
+                          border: OutlineInputBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(16))),
+                          suffixIcon: Icon(Icons.payments_outlined),
+                        ),
+                      ),
+                      SizedBox(
+                        height: 16,
+                      ),
+                      TextField(
+                        controller: noteController,
+                        keyboardType: TextInputType.text,
+                        minLines: 2,
+                        maxLines: 5,
+                        maxLength: maxNoteLength,
+                        decoration: InputDecoration(
+                          labelText: 'Note',
+                          border: OutlineInputBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(16))),
+                          suffixIcon: Icon(Icons.text_snippet_outlined),
+                        ),
+                      ),
+                      SizedBox(
+                        height: 16,
+                      ),
+                      SegmentedButton<TransactionType>(
+                        showSelectedIcon: false,
+                        segments: const <ButtonSegment<TransactionType>>[
+                          ButtonSegment(
+                              value: TransactionType.income,
+                              label: Text('Income'),
+                              icon: Icon(
+                                Icons.arrow_drop_up,
+                                color: Colors.green,
+                                size: 30,
+                              )),
+                          ButtonSegment(
+                              value: TransactionType.outcome,
+                              label: Text('Outcome'),
+                              icon: Icon(
+                                Icons.arrow_drop_down,
+                                color: Colors.red,
+                                size: 30,
+                              )),
+                        ],
+                        selected: <TransactionType>{
+                          _isOutcome == true
+                              ? TransactionType.outcome
+                              : TransactionType.income,
+                        },
+                        onSelectionChanged: (Set<TransactionType> newValue) {
+                          changeIsOutcome(!_isOutcome);
+                        },
+                      ),
+                      SizedBox(
+                        height: 16,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          Row(
+                            children: [
+                              Icon(Icons.calendar_month_outlined),
+                              TextButton(
+                                onPressed: () {
+                                  showDatePicker(
+                                    context: context,
+                                    initialDate: _date,
+                                    firstDate: DateTime(2000),
+                                    lastDate: DateTime(2100),
+                                  ).then((newDate) {
+                                    // without copy method the hour:minute will be set to 00:00
+                                    changeDate(newDate!.copyWith(
+                                        hour: _date.hour,
+                                        minute: _date.minute));
+                                  });
+                                },
+                                child: Text(
+                                  DateFormat('dd. MM. yyyy')
+                                      .format(_date)
+                                      .toString(),
+                                ),
+                              ),
+                            ],
+                          ),
+                          Row(
+                            children: [
+                              Icon(Icons.schedule_outlined),
+                              TextButton(
+                                onPressed: () {
+                                  showTimePicker(
+                                    context: context,
+                                    initialTime: TimeOfDay.now(),
+                                  ).then((newTime) {
+                                    changeTime(newTime!);
+                                  });
+                                },
+                                child: Text(
+                                  DateFormat('HH:mm').format(_date).toString(),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                      SizedBox(
+                        height: 16,
+                      ),
+                      DropdownMenu<String>(
+                          controller: categoryNameController,
+                          label: const Text('Category'),
+                          leadingIcon:
+                              Icon(_categoryIcon, color: _categoryColor),
+                          textStyle: TextStyle(color: _categoryColor),
+                          inputDecorationTheme: const InputDecorationTheme(
+                              border: OutlineInputBorder(
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(16)))),
+                          menuStyle: MenuStyle(
+                              shape: WidgetStateProperty.all(const RoundedRectangleBorder(
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(16))))),
+                          expandedInsets: EdgeInsets.zero,
+                          onSelected: (String? newCategoryId) {
+                            changeSelectedCategory(newCategoryId!);
+                          },
+                          dropdownMenuEntries: widget.categories
+                              .map((category) => DropdownMenuEntry<String>(
+                                  value: category.id,
+                                  label: category.name,
+                                  style: ButtonStyle(
+                                      foregroundColor: WidgetStateProperty.all(
+                                          convertColorCodeToColor(
+                                              category.color))),
+                                  trailingIcon:
+                                      Icon(convertIconCodePointToIcon(category.icon), color: convertColorCodeToColor(category.color))))
+                              .toList()),
+                      SizedBox(
+                        height: 16,
+                      ),
+                      DropdownMenu<String>(
+                          controller: currencyNameController,
+                          label: const Text('Currency'),
+                          leadingIcon: CircleAvatar(
+                              backgroundColor: Colors.transparent,
+                              child: Text(_currencySymbol)),
+                          inputDecorationTheme: const InputDecorationTheme(
+                              border: OutlineInputBorder(
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(16)))),
+                          expandedInsets: EdgeInsets.zero,
+                          onSelected: (String? newCurrencyId) {
+                            changeSelectedCurrency(newCurrencyId!);
+                          },
+                          dropdownMenuEntries: widget.currencies
+                              .map((currency) => DropdownMenuEntry<String>(
+                                    value: currency.id,
+                                    label: currency.name,
+                                    leadingIcon: CircleAvatar(
+                                        backgroundColor: Colors.transparent,
+                                        child: Text(currency.symbol)),
+                                  ))
+                              .toList()),
+                    ],
+                  ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text('Discard'),
+              ),
+              FilledButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  viewModel.updateTransaction(
+                    _transactionId,
+                    double.parse(amountController.text),
+                    noteController.text,
+                    _isOutcome,
+                    _date,
+                    _categoryId,
+                    _currencyId,
+                  );
+                },
+                child: const Text('Save'),
+              ),
+            ],
+          ),
+        ],
       );
     });
   }

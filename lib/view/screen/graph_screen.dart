@@ -17,7 +17,6 @@ class GraphScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     bool mediumScreen = MediaQuery.of(context).size.width > mediumScreenWidth;
     bool largeScreen = MediaQuery.of(context).size.width > largeScreenWidth;
-
     final DateFormat dateRangeFormat = DateFormat('dd. MM. yyyy');
 
     return Consumer<GraphViewModel>(builder: (context, viewModel, child) {
@@ -28,7 +27,6 @@ class GraphScreen extends StatelessWidget {
       }
 
       return Column(
-        mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           SizedBox(height: 8.0),
@@ -107,13 +105,9 @@ class GraphScreen extends StatelessWidget {
                                   plotAreaBorderWidth: 0,
                                   primaryXAxis: CategoryAxis(),
                                   primaryYAxis: NumericAxis(
-                                    minimum: 0,
-                                    maximum: viewModel.topCategoriesGraphData
-                                            .first.amount *
-                                        1.2,
-                                    interval: viewModel.topCategoriesGraphData
-                                            .first.amount *
-                                        0.3,
+                                    labelFormat: mediumScreen
+                                        ? '{value} CZK'
+                                        : '{value}',
                                   ),
                                   series: <ColumnSeries>[
                                     ColumnSeries(
@@ -161,7 +155,7 @@ class GraphScreen extends StatelessWidget {
                               : SfCartesianChart(
                                   plotAreaBorderWidth: 0,
                                   title: ChartTitle(
-                                    text: 'Spent during month',
+                                    text: 'Spent during time',
                                   ),
                                   primaryXAxis: DateTimeAxis(
                                     dateFormat: DateFormat('dd. MM.'),
@@ -180,7 +174,7 @@ class GraphScreen extends StatelessWidget {
                                     enable: true,
                                     activationMode: ActivationMode.singleTap,
                                     tooltipSettings: const InteractiveTooltip(
-                                        format: 'point.x : point.y'),
+                                        format: 'point.x point.y'),
                                   ),
                                   series: <AreaSeries<
                                       MapEntry<DateTime, double>, DateTime>>[
@@ -193,7 +187,8 @@ class GraphScreen extends StatelessWidget {
                                       color: Theme.of(context)
                                           .colorScheme
                                           .primary
-                                          .withAlpha((0.8 * 255).toInt()),
+                                          .withAlpha((0.9 * 255)
+                                              .toInt()), // makes the color bit transparent
                                     ),
                                   ],
                                 )),
@@ -244,162 +239,165 @@ class GraphScreen extends StatelessWidget {
                           children: [
                             SizedBox(
                               height: 160,
-                              child: Expanded(
-                                child: InterestingNumberCardVertical(
-                                    valueName: 'Saved from income',
-                                    largeScreen: mediumScreen,
-                                    noData: viewModel.savedFromIncome.isNaN,
-                                    numberValue: viewModel.savedFromIncome
-                                        .toStringAsFixed(0),
-                                    numberSymbol: '%'),
-                              ),
+                              child: InterestingNumberCardVertical(
+                                  valueName: 'Saved from income',
+                                  largeScreen: mediumScreen,
+                                  noData: viewModel.savedFromIncome.isNaN,
+                                  numberValue: viewModel.savedFromIncome
+                                      .toStringAsFixed(0),
+                                  numberSymbol: '%'),
                             ),
                             SizedBox(
                               height: 160,
-                              child: Expanded(
-                                child: InterestingNumberCardVertical(
-                                    valueName: 'Average daily spent',
-                                    largeScreen: mediumScreen,
-                                    noData: viewModel.averageDailySpent.isNaN,
-                                    numberValue: viewModel.averageDailySpent
-                                        .toStringAsFixed(0),
-                                    numberSymbol: 'CZK'),
-                              ),
+                              child: InterestingNumberCardVertical(
+                                  valueName: 'Average daily spent',
+                                  largeScreen: mediumScreen,
+                                  noData: viewModel.averageDailySpent.isNaN,
+                                  numberValue: viewModel.averageDailySpent
+                                      .toStringAsFixed(0),
+                                  numberSymbol: 'CZK'),
                             ),
                             SizedBox(
                               height: 160,
-                              child: Expanded(
-                                child: InterestingNumberCardVertical(
-                                    valueName:
-                                        'Transactions in foreign currencies',
-                                    largeScreen: mediumScreen,
-                                    numberValue: viewModel
-                                        .transactionsForeignCurrenciesPercent
-                                        .toStringAsFixed(0),
-                                    numberSymbol: '%'),
-                              ),
+                              child: InterestingNumberCardVertical(
+                                  valueName:
+                                      'Transactions in foreign currencies',
+                                  largeScreen: mediumScreen,
+                                  numberValue: viewModel
+                                      .transactionsForeignCurrenciesPercent
+                                      .toStringAsFixed(0),
+                                  numberSymbol: '%'),
                             )
                           ],
                         )
                   : SizedBox(),
-              Expanded(
-                child: viewModel.allGraphs[3].selected
-                    ? GridView(
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: mediumScreen ? 2 : 1,
-                          childAspectRatio: 1.3,
-                          crossAxisSpacing: mediumScreen ? 16.0 : 0,
-                          mainAxisSpacing: mediumScreen ? 10.0 : 0,
+              viewModel.allGraphs[3].selected
+                  ? Column(
+                      children: [
+                        GridView(
+                          gridDelegate:
+                              SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: mediumScreen ? 2 : 1,
+                            childAspectRatio: 1.3,
+                            crossAxisSpacing: mediumScreen ? 16.0 : 0,
+                            mainAxisSpacing: mediumScreen ? 10.0 : 0,
+                          ),
+                          shrinkWrap: true,
+                          padding: EdgeInsets.symmetric(horizontal: 12.0),
+                          physics:
+                              NeverScrollableScrollPhysics(), // to disable GridView's scrolling
+                          children: [
+                            Card(
+                              elevation: 2,
+                              margin: EdgeInsets.symmetric(vertical: 6.0),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(15.0),
+                              ),
+                              child: viewModel.incomeCategories.isEmpty
+                                  ? Column(
+                                      children: [
+                                        SizedBox(height: 16.0),
+                                        Text(
+                                          'Income types',
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .titleLarge,
+                                        ),
+                                        NothingToDisplay(),
+                                      ],
+                                    )
+                                  : SfCircularChart(
+                                      title: ChartTitle(text: 'Income types'),
+                                      legend: Legend(
+                                        isVisible: largeScreen,
+                                        overflowMode:
+                                            LegendItemOverflowMode.wrap,
+                                      ),
+                                      series: <PieSeries>[
+                                        PieSeries<CategorySpentGraph, String>(
+                                            dataSource: viewModel
+                                                .incomeCategories,
+                                            pointColorMapper:
+                                                (CategorySpentGraph data, _) =>
+                                                    data.color,
+                                            dataLabelMapper: (CategorySpentGraph
+                                                        data,
+                                                    index) =>
+                                                data.name,
+                                            dataLabelSettings:
+                                                DataLabelSettings(
+                                                    labelPosition:
+                                                        ChartDataLabelPosition
+                                                            .inside,
+                                                    useSeriesColor: true,
+                                                    isVisible: true),
+                                            xValueMapper:
+                                                (CategorySpentGraph data, _) =>
+                                                    data.name,
+                                            yValueMapper:
+                                                (CategorySpentGraph data, _) =>
+                                                    data.amount)
+                                      ],
+                                    ),
+                            ),
+                            Card(
+                              elevation: 2,
+                              margin: EdgeInsets.symmetric(vertical: 6.0),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(15.0),
+                              ),
+                              child: viewModel.outcomeCategories.isEmpty
+                                  ? Column(
+                                      children: [
+                                        SizedBox(height: 16.0),
+                                        Text(
+                                          'Outcome types',
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .titleLarge,
+                                        ),
+                                        NothingToDisplay(),
+                                      ],
+                                    )
+                                  : SfCircularChart(
+                                      title: ChartTitle(text: 'Outcome types'),
+                                      legend: Legend(
+                                        isVisible: largeScreen,
+                                        overflowMode:
+                                            LegendItemOverflowMode.wrap,
+                                      ),
+                                      series: <PieSeries>[
+                                        PieSeries<CategorySpentGraph, String>(
+                                            dataSource: viewModel
+                                                .outcomeCategories,
+                                            pointColorMapper:
+                                                (CategorySpentGraph data, _) =>
+                                                    data.color,
+                                            dataLabelMapper: (CategorySpentGraph
+                                                        data,
+                                                    index) =>
+                                                data.name,
+                                            dataLabelSettings:
+                                                DataLabelSettings(
+                                                    labelPosition:
+                                                        ChartDataLabelPosition
+                                                            .inside,
+                                                    useSeriesColor: true,
+                                                    isVisible: true),
+                                            xValueMapper:
+                                                (CategorySpentGraph data, _) =>
+                                                    data.name,
+                                            yValueMapper:
+                                                (CategorySpentGraph data, _) =>
+                                                    data.amount)
+                                      ],
+                                    ),
+                            ),
+                          ],
                         ),
-                        shrinkWrap: true,
-                        padding: EdgeInsets.symmetric(horizontal: 12.0),
-                        physics:
-                            NeverScrollableScrollPhysics(), // to disable GridView's scrolling
-                        children: [
-                          Card(
-                            elevation: 2,
-                            margin: EdgeInsets.symmetric(vertical: 12.0),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(15.0),
-                            ),
-                            child: viewModel.incomeCategories.isEmpty
-                                ? Column(
-                                    children: [
-                                      SizedBox(height: 16.0),
-                                      Text(
-                                        'Income types',
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .titleLarge,
-                                      ),
-                                      NothingToDisplay(),
-                                    ],
-                                  )
-                                : SfCircularChart(
-                                    title: ChartTitle(text: 'Income types'),
-                                    legend: Legend(
-                                      isVisible: largeScreen,
-                                      overflowMode: LegendItemOverflowMode.wrap,
-                                    ),
-                                    series: <PieSeries>[
-                                      PieSeries<CategorySpentGraph, String>(
-                                          dataSource:
-                                              viewModel.incomeCategories,
-                                          pointColorMapper:
-                                              (CategorySpentGraph data, _) =>
-                                                  data.color,
-                                          dataLabelMapper:
-                                              (CategorySpentGraph data,
-                                                      index) =>
-                                                  data.name,
-                                          dataLabelSettings: DataLabelSettings(
-                                              labelPosition:
-                                                  ChartDataLabelPosition.inside,
-                                              useSeriesColor: true,
-                                              isVisible: true),
-                                          xValueMapper:
-                                              (CategorySpentGraph data, _) =>
-                                                  data.name,
-                                          yValueMapper:
-                                              (CategorySpentGraph data, _) =>
-                                                  data.amount)
-                                    ],
-                                  ),
-                          ),
-                          Card(
-                            elevation: 2,
-                            margin: EdgeInsets.symmetric(vertical: 12.0),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(15.0),
-                            ),
-                            child: viewModel.outcomeCategories.isEmpty
-                                ? Column(
-                                    children: [
-                                      SizedBox(height: 16.0),
-                                      Text(
-                                        'Outcome types',
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .titleLarge,
-                                      ),
-                                      NothingToDisplay(),
-                                    ],
-                                  )
-                                : SfCircularChart(
-                                    title: ChartTitle(text: 'Outcome types'),
-                                    legend: Legend(
-                                      isVisible: largeScreen,
-                                      overflowMode: LegendItemOverflowMode.wrap,
-                                    ),
-                                    series: <PieSeries>[
-                                      PieSeries<CategorySpentGraph, String>(
-                                          dataSource:
-                                              viewModel.outcomeCategories,
-                                          pointColorMapper:
-                                              (CategorySpentGraph data, _) =>
-                                                  data.color,
-                                          dataLabelMapper:
-                                              (CategorySpentGraph data,
-                                                      index) =>
-                                                  data.name,
-                                          dataLabelSettings: DataLabelSettings(
-                                              labelPosition:
-                                                  ChartDataLabelPosition.inside,
-                                              useSeriesColor: true,
-                                              isVisible: true),
-                                          xValueMapper:
-                                              (CategorySpentGraph data, _) =>
-                                                  data.name,
-                                          yValueMapper:
-                                              (CategorySpentGraph data, _) =>
-                                                  data.amount)
-                                    ],
-                                  ),
-                          ),
-                        ],
-                      )
-                    : SizedBox(),
-              ),
+                      ],
+                    )
+                  : SizedBox(),
               viewModel.allGraphs[4].selected
                   ? mediumScreen
                       ? Padding(
@@ -446,38 +444,32 @@ class GraphScreen extends StatelessWidget {
                           children: [
                             SizedBox(
                               height: 160,
-                              child: Expanded(
-                                child: InterestingNumberCardVertical(
-                                    valueName: 'Sum of all incomes',
-                                    largeScreen: mediumScreen,
-                                    noData: viewModel.totalIncome.isNaN,
-                                    numberValue: viewModel.totalIncome
-                                        .toStringAsFixed(0),
-                                    numberSymbol: 'CZK'),
-                              ),
+                              child: InterestingNumberCardVertical(
+                                  valueName: 'Sum of all incomes',
+                                  largeScreen: mediumScreen,
+                                  noData: viewModel.totalIncome.isNaN,
+                                  numberValue:
+                                      viewModel.totalIncome.toStringAsFixed(0),
+                                  numberSymbol: 'CZK'),
                             ),
                             SizedBox(
                               height: 160,
-                              child: Expanded(
-                                child: InterestingNumberCardVertical(
-                                    valueName: 'Sum of all outcomes',
-                                    largeScreen: mediumScreen,
-                                    noData: viewModel.totalOutcome.isNaN,
-                                    numberValue: viewModel.totalOutcome
-                                        .toStringAsFixed(0),
-                                    numberSymbol: 'CZK'),
-                              ),
+                              child: InterestingNumberCardVertical(
+                                  valueName: 'Sum of all outcomes',
+                                  largeScreen: mediumScreen,
+                                  noData: viewModel.totalOutcome.isNaN,
+                                  numberValue:
+                                      viewModel.totalOutcome.toStringAsFixed(0),
+                                  numberSymbol: 'CZK'),
                             ),
                             SizedBox(
                               height: 160,
-                              child: Expanded(
-                                child: InterestingNumberCardVertical(
-                                    valueName: 'Overall balance',
-                                    largeScreen: mediumScreen,
-                                    numberValue:
-                                        viewModel.balance.toStringAsFixed(0),
-                                    numberSymbol: 'CZK'),
-                              ),
+                              child: InterestingNumberCardVertical(
+                                  valueName: 'Overall balance',
+                                  largeScreen: mediumScreen,
+                                  numberValue:
+                                      viewModel.balance.toStringAsFixed(0),
+                                  numberSymbol: 'CZK'),
                             )
                           ],
                         )

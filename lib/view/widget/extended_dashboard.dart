@@ -49,7 +49,7 @@ class SpendingDetailExtension extends StatelessWidget {
           ),
         ),
         SizedBox(
-          width: 16.0,
+          width: 12.0,
         ),
         Expanded(
           child: Container(

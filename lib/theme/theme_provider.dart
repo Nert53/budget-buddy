@@ -37,6 +37,7 @@ class ThemeProvider with ChangeNotifier {
     SharedPreferences.getInstance().then((prefs) {
       prefs.setString('themeColorName', newColorName);
     });
+    _themeColorName = newColorName;
     notifyListeners();
   }
 }

@@ -37,7 +37,8 @@ class TransactionScreen extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                viewModel.currentPeriod.toLowerCase() == 'all time'
+                viewModel.currentPeriod.toLowerCase() == 'all time' ||
+                        viewModel.currentPeriod.toLowerCase() == 'range'
                     ? const SizedBox()
                     : IconButton.filled(
                         icon: const Icon(
@@ -61,9 +62,9 @@ class TransactionScreen extends StatelessWidget {
                                           element.selected == true));
                             });
                       },
-                      child: viewModel.currentPeriod.toLowerCase() == 'all time'
+                      child: viewModel.currentPeriod.toLowerCase() == 'range'
                           ? Text(
-                              'All time',
+                              '${DateFormat('dd.MM.yyyy').format(viewModel.startDate)} - ${DateFormat('dd.MM.yyyy').format(viewModel.endDate)}',
                               style: TextStyle(
                                   fontSize: 20,
                                   color: Theme.of(context)
@@ -71,9 +72,9 @@ class TransactionScreen extends StatelessWidget {
                                       .headlineMedium!
                                       .color),
                             )
-                          : viewModel.currentPeriod.toLowerCase() == 'week'
+                          : viewModel.currentPeriod.toLowerCase() == 'all time'
                               ? Text(
-                                  '${DateFormat('dd. MM.').format(startOfWeek)} - ${DateFormat('dd. MM. yyyy').format(endOfWeek)}',
+                                  'All time',
                                   style: TextStyle(
                                       fontSize: 20,
                                       color: Theme.of(context)
@@ -81,9 +82,9 @@ class TransactionScreen extends StatelessWidget {
                                           .headlineMedium!
                                           .color),
                                 )
-                              : viewModel.currentPeriod.toLowerCase() == 'month'
+                              : viewModel.currentPeriod.toLowerCase() == 'week'
                                   ? Text(
-                                      '${convertMontNumToMonthName(viewModel.currentDate.month)}  ${periodFormat.format(viewModel.currentDate)}',
+                                      '${DateFormat('dd. MM.').format(startOfWeek)} - ${DateFormat('dd. MM. yyyy').format(endOfWeek)}',
                                       style: TextStyle(
                                           fontSize: 20,
                                           color: Theme.of(context)
@@ -91,20 +92,32 @@ class TransactionScreen extends StatelessWidget {
                                               .headlineMedium!
                                               .color),
                                     )
-                                  : Text(
-                                      periodFormat
-                                          .format(viewModel.currentDate),
-                                      style: TextStyle(
-                                          fontSize: 20,
-                                          color: Theme.of(context)
-                                              .textTheme
-                                              .headlineMedium!
-                                              .color),
-                                    ),
+                                  : viewModel.currentPeriod.toLowerCase() ==
+                                          'month'
+                                      ? Text(
+                                          '${convertMontNumToMonthName(viewModel.currentDate.month)}  ${periodFormat.format(viewModel.currentDate)}',
+                                          style: TextStyle(
+                                              fontSize: 20,
+                                              color: Theme.of(context)
+                                                  .textTheme
+                                                  .headlineMedium!
+                                                  .color),
+                                        )
+                                      : Text(
+                                          periodFormat
+                                              .format(viewModel.currentDate),
+                                          style: TextStyle(
+                                              fontSize: 20,
+                                              color: Theme.of(context)
+                                                  .textTheme
+                                                  .headlineMedium!
+                                                  .color),
+                                        ),
                     ),
                   ],
                 ),
-                viewModel.currentPeriod.toLowerCase() == 'all time'
+                viewModel.currentPeriod.toLowerCase() == 'all time' ||
+                        viewModel.currentPeriod.toLowerCase() == 'range'
                     ? const SizedBox()
                     : IconButton.filled(
                         icon: const Icon(
