@@ -30,7 +30,7 @@ class EditCategoriesScreen extends StatelessWidget {
         appBar: AppBar(
           title: Text('Edit Categories'),
           leading: IconButton(
-            icon: Icon(Icons.arrow_back),
+            icon: Icon(Icons.adaptive.arrow_back),
             onPressed: () {
               context.pop();
             },
@@ -71,14 +71,14 @@ class EditCategoriesScreen extends StatelessWidget {
                 child: Padding(
                   padding: MediaQuery.of(context).size.width > largeScreenWidth
                       ? const EdgeInsets.symmetric(vertical: 16.0)
-                      : const EdgeInsets.all(16.0),
+                      : const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
                   child: ConstrainedBox(
                     constraints: BoxConstraints(maxWidth: largeScreenWidth),
                     child: GridView.builder(
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: rowCardCount,
-                          crossAxisSpacing: 12,
-                          mainAxisSpacing: 12,
+                          crossAxisSpacing: 6,
+                          mainAxisSpacing: 6,
                           childAspectRatio:
                               screenWidth < mediumScreenWidth ? 2.5 : 2),
                       itemCount: viewModel.categories.length +

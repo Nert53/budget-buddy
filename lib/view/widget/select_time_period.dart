@@ -1,9 +1,10 @@
-import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:marquee/marquee.dart';
+import 'package:personal_finance/constants.dart';
 import 'package:personal_finance/model/time_period.dart';
 import 'package:personal_finance/utils/functions.dart';
+import 'package:personal_finance/view/widget/flushbars.dart';
 import 'package:personal_finance/view_model/transactions_viewmodel.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
@@ -29,6 +30,9 @@ class _FilterDateSheetState extends State<FilterDateSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final bool mediumScreen =
+        MediaQuery.of(context).size.width > mediumScreenWidth;
+
     return Consumer<TransactionViewModel>(
       builder: (context, viewModel, child) {
         return Column(
@@ -152,6 +156,20 @@ class _FilterDateSheetState extends State<FilterDateSheet> {
                                         context: context,
                                         firstDate: DateTime(1970),
                                         lastDate: DateTime(2100),
+                                        switchToInputEntryModeIcon:
+                                            Icon(Icons.keyboard_alt_outlined),
+                                        builder: (BuildContext context,
+                                            Widget? child) {
+                                          return SafeArea(
+                                            child: mediumScreen
+                                                ? Dialog(
+                                                    child: child,
+                                                  )
+                                                : Dialog.fullscreen(
+                                                    child: child,
+                                                  ),
+                                          );
+                                        },
                                       ).then((pickedDateRange) {
                                         if (pickedDateRange != null) {
                                           viewModel.startDate =
@@ -160,10 +178,11 @@ class _FilterDateSheetState extends State<FilterDateSheet> {
                                               pickedDateRange.end;
                                         } else {
                                           if (context.mounted) {
-                                            Flushbar(
-                                              message: 'No date range selected',
-                                              duration: Duration(seconds: 3),
-                                            ).show(context);
+                                            FlushbarError.show(
+                                              context: context,
+                                              message:
+                                                  'Date range not selected.',
+                                            );
                                           }
                                         }
                                       });

@@ -1,10 +1,10 @@
-import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:personal_finance/constants.dart';
 import 'package:personal_finance/model/transaction_category.dart';
 import 'package:personal_finance/model/currency.dart';
+import 'package:personal_finance/view/widget/flushbars.dart';
 import 'package:personal_finance/view_model/add_transaction_viewmodel.dart';
 import 'package:provider/provider.dart';
 
@@ -204,6 +204,11 @@ class AddWindowFullScreen extends StatelessWidget {
                   inputDecorationTheme: const InputDecorationTheme(
                       border: OutlineInputBorder(
                           borderRadius: BorderRadius.all(Radius.circular(16)))),
+                  menuStyle: MenuStyle(
+                      shape: WidgetStateProperty.all(
+                          const RoundedRectangleBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(16))))),
                   expandedInsets: EdgeInsets.zero,
                   onSelected: (Object? newValue) {
                     viewModel.changeCurrentCurrency(newValue as String);
@@ -270,18 +275,12 @@ class AddWindowFullScreen extends StatelessWidget {
                   if (viewModel.amountController.text.isEmpty ||
                       viewModel.selectedCategory == null ||
                       viewModel.selectedCurrency == null) {
-                    Flushbar(
-                      icon: Icon(Icons.error_outline,
-                          color: Theme.of(context).colorScheme.surface),
+                    FlushbarWarning.show(
+                      context: context,
                       message:
                           "Amount, category and currency can't be empty. Please enter a valid values.",
-                      shouldIconPulse: false,
-                      messageColor: Theme.of(context).colorScheme.surface,
-                      backgroundColor: Theme.of(context).colorScheme.error,
-                      borderRadius: BorderRadius.circular(16),
-                      margin: const EdgeInsets.all(12),
-                      duration: Duration(seconds: 4),
-                    ).show(context);
+                    );
+
                     return;
                   }
 
@@ -567,18 +566,12 @@ class AddWindow extends StatelessWidget {
                       if (viewModel.amountController.text.isEmpty ||
                           viewModel.selectedCategory == null ||
                           viewModel.selectedCurrency == null) {
-                        Flushbar(
-                          icon: Icon(Icons.error_outline,
-                              color: Theme.of(context).colorScheme.surface),
+                        FlushbarWarning.show(
+                          context: context,
                           message:
                               "Amount, category and currency can't be empty. Please enter a valid values.",
-                          shouldIconPulse: false,
-                          messageColor: Theme.of(context).colorScheme.surface,
-                          backgroundColor: Theme.of(context).colorScheme.error,
-                          borderRadius: BorderRadius.circular(16),
-                          margin: const EdgeInsets.all(12),
-                          duration: Duration(seconds: 4),
-                        ).show(context);
+                        );
+
                         return;
                       }
 

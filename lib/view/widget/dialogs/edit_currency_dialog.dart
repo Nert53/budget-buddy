@@ -1,8 +1,8 @@
-import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:personal_finance/data/database.dart';
 import 'package:personal_finance/utils/functions.dart';
+import 'package:personal_finance/view/widget/flushbars.dart';
 import 'package:personal_finance/view_model/settings_viewmodel.dart';
 
 class EditCurrencyDialog extends StatefulWidget {
@@ -119,18 +119,10 @@ class _EditCurrencyDialogState extends State<EditCurrencyDialog> {
 
                 if (!isConnected) {
                   if (context.mounted) {
-                    Flushbar(
-                      icon: Icon(Icons.signal_wifi_off_rounded,
-                          color: Theme.of(context).colorScheme.surface),
-                      message:
-                          "Device is not connected to the internet. Please check the connection.",
-                      shouldIconPulse: false,
-                      messageColor: Theme.of(context).colorScheme.surface,
-                      backgroundColor: Theme.of(context).colorScheme.error,
-                      borderRadius: BorderRadius.circular(16),
-                      margin: const EdgeInsets.all(12),
-                      duration: Duration(seconds: 4),
-                    ).show(context);
+                    FlushbarError.show(
+                      context: context,
+                      message: "No internet connection.",
+                    );
                   }
                   return;
                 }
@@ -140,35 +132,21 @@ class _EditCurrencyDialogState extends State<EditCurrencyDialog> {
 
                 if (newRate == 0.0) {
                   if (context.mounted) {
-                    Flushbar(
-                      icon: Icon(Icons.warning_amber_rounded,
-                          color: Theme.of(context).colorScheme.surface),
+                    FlushbarError.show(
+                      context: context,
                       message:
                           "Currency is not supported by CNB or the code entered is not correct.",
-                      shouldIconPulse: false,
-                      messageColor: Theme.of(context).colorScheme.surface,
-                      backgroundColor: Colors.amber[700]!,
-                      borderRadius: BorderRadius.circular(16),
-                      margin: const EdgeInsets.all(12),
-                      duration: Duration(seconds: 4),
-                    ).show(context);
+                    );
                   }
                   return;
                 }
 
                 exchangeRateController.text = newRate.toStringAsFixed(3);
                 if (context.mounted) {
-                  Flushbar(
-                    icon: Icon(Icons.check_circle_outline_rounded,
-                        color: Theme.of(context).colorScheme.surface),
+                  FlushbarSuccess.show(
+                    context: context,
                     message: "Exchange rate updated.",
-                    shouldIconPulse: false,
-                    messageColor: Theme.of(context).colorScheme.surface,
-                    backgroundColor: Colors.green[700]!,
-                    borderRadius: BorderRadius.circular(16),
-                    margin: const EdgeInsets.all(12),
-                    duration: Duration(seconds: 3),
-                  ).show(context);
+                  );
                 }
               },
               icon: Icon(Icons.change_circle),
@@ -192,17 +170,11 @@ class _EditCurrencyDialogState extends State<EditCurrencyDialog> {
             try {
               newExchangeRate = double.parse(exchangeRateController.text);
             } catch (e) {
-              Flushbar(
-                icon: Icon(Icons.warning_amber_rounded,
-                    color: Theme.of(context).colorScheme.surface),
+              FlushbarWarning.show(
+                context: context,
                 message: "Please enter valid values or tap `cancel` button.",
-                shouldIconPulse: false,
-                messageColor: Theme.of(context).colorScheme.surface,
-                backgroundColor: Colors.amber[700]!,
-                borderRadius: BorderRadius.circular(16),
-                margin: const EdgeInsets.all(12),
-                duration: Duration(seconds: 3),
-              ).show(context);
+              );
+
               return;
             }
 

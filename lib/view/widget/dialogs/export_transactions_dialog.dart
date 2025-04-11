@@ -1,5 +1,5 @@
-import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
+import 'package:personal_finance/view/widget/flushbars.dart';
 import 'package:personal_finance/view_model/settings_viewmodel.dart';
 
 class ExportTransactionsDialog extends StatefulWidget {
@@ -23,7 +23,7 @@ class _ExportTransactionsDialogState extends State<ExportTransactionsDialog> {
         children: [
           Text('All transactions will be exported into selected format.'),
           ListTile(
-            title: const Text('.json'),
+            title: const Text('JSON'),
             contentPadding: EdgeInsets.zero,
             leading: Radio(
               value: 'json',
@@ -36,7 +36,7 @@ class _ExportTransactionsDialogState extends State<ExportTransactionsDialog> {
             ),
           ),
           ListTile(
-            title: const Text('.csv'),
+            title: const Text('CSV'),
             contentPadding: EdgeInsets.zero,
             leading: Radio(
               value: 'csv',
@@ -50,8 +50,7 @@ class _ExportTransactionsDialogState extends State<ExportTransactionsDialog> {
           ),
           ListTile(
             title: Text(
-              'sqlite file (only for backup)',
-              style: TextStyle(color: Theme.of(context).colorScheme.secondary),
+              'SQLite file (only for backup)',
             ),
             contentPadding: EdgeInsets.zero,
             leading: Radio(
@@ -79,30 +78,15 @@ class _ExportTransactionsDialogState extends State<ExportTransactionsDialog> {
                 await widget.viewModel.exportData(_selectedFormat);
             if (context.mounted) {
               Navigator.of(context).pop();
-              Flushbar(
-                icon: succesExport
-                    ? Icon(
-                        Icons.check_circle_outline_rounded,
-                        color: Colors.white,
-                      )
-                    : Icon(
-                        Icons.error_outline_rounded,
-                        color: Theme.of(context).colorScheme.onError,
-                      ),
-                message: succesExport
-                    ? 'Transactions exported successfully.'
-                    : 'Failed to export transactions.',
-                shouldIconPulse: false,
-                messageColor: succesExport
-                    ? Colors.white
-                    : Theme.of(context).colorScheme.onError,
-                backgroundColor: succesExport
-                    ? Colors.green
-                    : Theme.of(context).colorScheme.error,
-                borderRadius: BorderRadius.circular(16),
-                margin: const EdgeInsets.all(12),
-                duration: Duration(seconds: 4),
-              ).show(context);
+              succesExport
+                  ? FlushbarSuccess.show(
+                      context: context,
+                      message: 'Transactions exported successfully',
+                    )
+                  : FlushbarError.show(
+                      context: context,
+                      message: 'Error during export. Please try again later.',
+                    );
             }
           },
           child: Text('Export'),

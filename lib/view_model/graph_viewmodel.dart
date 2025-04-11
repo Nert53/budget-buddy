@@ -44,8 +44,8 @@ class GraphViewModel extends ChangeNotifier {
         icon: Icons.swap_vert_circle_rounded,
         selected: false),
   ];
-  List<CategorySpentGraph> topCategoriesGraphData = [];
-  List<MapEntry<DateTime, double>> dailySpentInMonthGraphData = [];
+  List<CategorySpentGraph> highestSpendingCategoriesData = [];
+  List<MapEntry<DateTime, double>> spendingOverTimeData = [];
   List<CategorySpentGraph> incomeCategories = [];
   List<CategorySpentGraph> outcomeCategories = [];
   double averageDailySpent = 0;
@@ -150,9 +150,9 @@ class GraphViewModel extends ChangeNotifier {
     categorySpendings.sort((a, b) => b.amount.compareTo(a.amount));
     categorySpendings.take(5);
 
-    topCategoriesGraphData.clear();
+    highestSpendingCategoriesData.clear();
     for (var category in categorySpendings) {
-      topCategoriesGraphData.add(CategorySpentGraph(
+      highestSpendingCategoriesData.add(CategorySpentGraph(
           color: category.color,
           amount: category.amount.roundToDouble(),
           name: category.name,
@@ -190,8 +190,8 @@ class GraphViewModel extends ChangeNotifier {
       }
     }
 
-    dailySpentInMonthGraphData.clear();
-    dailySpentInMonthGraphData =
+    spendingOverTimeData.clear();
+    spendingOverTimeData =
         oneDaySpent.map((e) => MapEntry(e.date, e.amount)).toList();
 
     notifyListeners();

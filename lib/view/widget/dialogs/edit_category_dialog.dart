@@ -1,12 +1,12 @@
 // allows to use value of color for saving with no error
 // ignore_for_file: deprecated_member_use
 
-import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:personal_finance/data/database.dart';
 import 'package:personal_finance/utils/functions.dart';
 import 'package:personal_finance/view/widget/dialogs/pick_color_dialog.dart';
 import 'package:personal_finance/view/widget/dialogs/pick_icon_dialog.dart';
+import 'package:personal_finance/view/widget/flushbars.dart';
 import 'package:personal_finance/view_model/edit_categories_viewmodel.dart';
 
 class EditCategoryDialogSmall extends StatefulWidget {
@@ -72,18 +72,11 @@ class _EditCategoryDialogSmallState extends State<EditCategoryDialogSmall> {
         FilledButton(
           onPressed: () {
             if (categoryNameController.text.isEmpty) {
-              Flushbar(
-                icon: Icon(Icons.error_outline,
-                    color: Theme.of(context).colorScheme.surface),
+              FlushbarWarning.show(
+                context: context,
                 message:
                     "Name of category can't be empty. Please enter some name.",
-                shouldIconPulse: false,
-                messageColor: Theme.of(context).colorScheme.surface,
-                backgroundColor: Theme.of(context).colorScheme.error,
-                borderRadius: BorderRadius.circular(16),
-                margin: const EdgeInsets.all(12),
-                duration: Duration(seconds: 4),
-              ).show(context);
+              );
               return;
             }
 
@@ -97,17 +90,10 @@ class _EditCategoryDialogSmallState extends State<EditCategoryDialogSmall> {
             );
             widget.viewModel.updateCategory(updatedCategory).then((isUpdated) {
               if (!isUpdated && context.mounted) {
-                Flushbar(
-                  icon: Icon(Icons.error_outline,
-                      color: Theme.of(context).colorScheme.surface),
+                FlushbarError.show(
+                  context: context,
                   message: 'Failed to update category. Please try again.',
-                  shouldIconPulse: false,
-                  messageColor: Theme.of(context).colorScheme.surface,
-                  backgroundColor: Theme.of(context).colorScheme.error,
-                  borderRadius: BorderRadius.circular(16),
-                  margin: const EdgeInsets.all(12),
-                  duration: Duration(seconds: 4),
-                ).show(context);
+                );
               }
             });
             Navigator.of(context).pop();

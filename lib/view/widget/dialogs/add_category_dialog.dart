@@ -1,9 +1,9 @@
-import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:personal_finance/view/constants/colors_categories.dart';
 import 'package:personal_finance/view/constants/icons_categories.dart';
 import 'package:personal_finance/view/widget/dialogs/pick_color_dialog.dart';
 import 'package:personal_finance/view/widget/dialogs/pick_icon_dialog.dart';
+import 'package:personal_finance/view/widget/flushbars.dart';
 import 'package:personal_finance/view_model/edit_categories_viewmodel.dart';
 
 class AddCategoryDialog extends StatefulWidget {
@@ -52,18 +52,12 @@ class _AddCategoryDialogState extends State<AddCategoryDialog> {
         FilledButton(
           onPressed: () {
             if (categoryNameController.text.isEmpty) {
-              Flushbar(
-                icon: Icon(Icons.error_outline,
-                    color: Theme.of(context).colorScheme.surface),
+              FlushbarWarning.show(
+                context: context,
                 message:
                     "Name of category can't be empty. Please enter some name.",
-                shouldIconPulse: false,
-                messageColor: Theme.of(context).colorScheme.surface,
-                backgroundColor: Theme.of(context).colorScheme.error,
-                borderRadius: BorderRadius.circular(16),
-                margin: const EdgeInsets.all(12),
-                duration: Duration(seconds: 4),
-              ).show(context);
+              );
+
               return;
             }
 

@@ -100,6 +100,12 @@ extension DateTimeExtension on DateTime {
   }
 }
 
+extension StringExtension on String {
+  String capitalize(){
+    return this[0].toUpperCase() + substring(1);
+  }
+}
+
 bool isSameDate(DateTime date1, DateTime date2) {
   return date1.year == date2.year &&
       date1.month == date2.month &&

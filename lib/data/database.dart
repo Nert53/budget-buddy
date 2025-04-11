@@ -147,13 +147,6 @@ class AppDatabase extends _$AppDatabase {
       );
       await into(categoryItems).insert(
         CategoryItemsCompanion.insert(
-          name: 'Home',
-          color: 4294940672, // orange
-          icon: 61703,
-        ),
-      );
-      await into(categoryItems).insert(
-        CategoryItemsCompanion.insert(
           name: 'Groceries',
           color: 4283215696, // dark green
           icon: 62335,
@@ -201,16 +194,16 @@ class AppDatabase extends _$AppDatabase {
       );
       await into(currencyItems).insert(
         CurrencyItemsCompanion.insert(
-          name: 'Dollar',
-          symbol: 'USD',
-          exchangeRate: 24.0,
+          name: 'Czech Koruna',
+          symbol: 'CZK',
+          exchangeRate: 1.0,
         ),
       );
       await into(currencyItems).insert(
         CurrencyItemsCompanion.insert(
-          name: 'Czech Koruna',
-          symbol: 'CZK',
-          exchangeRate: 1.0,
+          name: 'Dollar',
+          symbol: 'USD',
+          exchangeRate: 24.0,
         ),
       );
       await into(currencyItems).insert(

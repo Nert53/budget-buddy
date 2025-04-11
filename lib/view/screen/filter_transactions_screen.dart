@@ -24,7 +24,7 @@ class _FilterTransactionsScreenState extends State<FilterTransactionsScreen> {
         appBar: AppBar(
           title: Text('Filter Transactions'),
           leading: IconButton(
-            icon: Icon(Icons.arrow_back),
+            icon: Icon(Icons.adaptive.arrow_back),
             onPressed: () {
               viewModel.getFilterSettings();
               context.pop();

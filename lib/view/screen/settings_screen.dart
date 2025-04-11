@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:personal_finance/data/database.dart';
 import 'package:personal_finance/theme/seed_colors.dart';
 import 'package:personal_finance/theme/theme_provider.dart';
+import 'package:personal_finance/utils/functions.dart';
 import 'package:personal_finance/view/widget/dialogs/add_currency_dialog.dart';
 import 'package:personal_finance/view/widget/dialogs/edit_currency_dialog.dart';
 import 'package:personal_finance/view/widget/dialogs/export_transactions_dialog.dart';
@@ -22,10 +23,10 @@ class SettingsScreen extends StatelessWidget {
       }
 
       return Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10.0),
+        padding: const EdgeInsets.symmetric(horizontal: 8.0),
         child: ListView(
           children: <Widget>[
-            SizedBox(height: 12.0),
+            SizedBox(height: 8.0),
             Card(
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(15.0),
@@ -132,7 +133,7 @@ class SettingsScreen extends StatelessWidget {
             Card(
               child: ExpansionTile(
                 leading: Icon(Icons.color_lens_outlined),
-                title: Text('Color Theme'),
+                title: Text('Color theme'),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12.0),
                 ),
@@ -150,7 +151,7 @@ class SettingsScreen extends StatelessWidget {
                             color: NamedColor.values[index].color,
                           ),
                         ),
-                        title: Text(NamedColor.values[index].name),
+                        title: Text(NamedColor.values[index].name.capitalize()),
                         trailing: context
                                     .read<ThemeProvider>()
                                     .themeColorName
@@ -171,8 +172,10 @@ class SettingsScreen extends StatelessWidget {
             ),
             Card(
               child: ListTile(
-                leading: Icon(Icons.ios_share_outlined),
-                title: Text('Export Data'),
+                leading: Icon(
+                  Icons.adaptive.share_outlined,
+                ),
+                title: Text('Export data'),
                 onTap: () {
                   showDialog(
                     context: context,
@@ -189,7 +192,7 @@ class SettingsScreen extends StatelessWidget {
                   Icons.delete_forever_outlined,
                   color: Theme.of(context).colorScheme.error,
                 ),
-                title: Text('Delete All Transactions',
+                title: Text('Delete all transactions',
                     style:
                         TextStyle(color: Theme.of(context).colorScheme.error)),
                 onTap: () {
@@ -229,7 +232,7 @@ class SettingsScreen extends StatelessWidget {
             Card(
               child: ListTile(
                 leading: Icon(Icons.info_outlined),
-                title: Text('About App'),
+                title: Text('About app'),
                 onTap: () {
                   showAboutDialog(
                       context: context,

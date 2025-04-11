@@ -32,7 +32,7 @@ class DashboardScreen extends StatelessWidget {
       }
 
       return SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
+        padding: const EdgeInsets.symmetric(horizontal: 10),
         child: Column(
           children: [
             SizedBox(
@@ -220,7 +220,7 @@ class DashboardScreen extends StatelessWidget {
                   height: 160,
                   width: (screenWidth > mediumScreenWidth)
                       ? (contentWidth - 176) / 2
-                      : contentWidth / 2 - 8,
+                      : contentWidth / 2 + 4,
                   padding: const EdgeInsets.all(16.0),
                   decoration: BoxDecoration(
                     color: Theme.of(context).colorScheme.surface,
