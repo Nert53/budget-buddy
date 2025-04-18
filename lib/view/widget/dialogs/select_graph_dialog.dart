@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:personal_finance/view_model/graph_viewmodel.dart';
+import 'package:personal_finance/view_model/reports_viewmodel.dart';
 import 'dart:math';
 
 class GraphSelectDialog extends StatefulWidget {
-  final GraphViewModel viewModel;
+  final ReportsViewModel viewModel;
   const GraphSelectDialog({super.key, required this.viewModel});
 
   @override

@@ -135,8 +135,28 @@ class _EditCurrencyDialogState extends State<EditCurrencyDialog> {
             ),
             SizedBox(width: 8),
             IconButton.filled(
+              icon: Icon(Icons.change_circle),
+              tooltip: 'Adjust exchange rate from Czech National Bank.',
               onPressed: () async {
+                showDialog(
+                    context: context,
+                    builder: (_) => AlertDialog(
+                          content: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              CircularProgressIndicator.adaptive(),
+                              SizedBox(width: 12),
+                              Text('Loading exchange rate...')
+                            ],
+                          ),
+                        ));
+
                 var isConnected = await isConnectedToInternet();
+
+                if (context.mounted) {
+                  Navigator.pop(context); // close loading dialog
+                }
 
                 if (!isConnected) {
                   if (context.mounted) {
@@ -170,8 +190,6 @@ class _EditCurrencyDialogState extends State<EditCurrencyDialog> {
                   );
                 }
               },
-              icon: Icon(Icons.change_circle),
-              tooltip: 'Adjust exchange rate from Czech National Bank.',
             ),
           ],
         ),

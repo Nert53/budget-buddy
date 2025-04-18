@@ -15,7 +15,7 @@ class HighSpendingCategoriesGraph extends StatelessWidget {
       title: ChartTitle(
           text: 'Highets spending categories',
           textStyle: TextStyle(
-            fontSize: 19,
+            fontSize: 16,
             color: Theme.of(context).textTheme.titleMedium?.color,
           )),
       plotAreaBorderWidth: 0,

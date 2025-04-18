@@ -340,6 +340,11 @@ class _EditTransactionState extends State<EditTransaction> {
                               border: OutlineInputBorder(
                                   borderRadius:
                                       BorderRadius.all(Radius.circular(16)))),
+                          menuStyle: MenuStyle(
+                              shape: WidgetStateProperty.all(
+                                  const RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.all(
+                                          Radius.circular(16))))),
                           expandedInsets: EdgeInsets.zero,
                           onSelected: (String? newCurrencyId) {
                             changeSelectedCurrency(newCurrencyId!);

@@ -51,7 +51,7 @@ class IncomeOutcomeRatioGraph extends StatelessWidget {
                   title: ChartTitle(
                       text: 'Ratio of income categories',
                       textStyle: TextStyle(
-                        fontSize: 19,
+                        fontSize: 16,
                         color: Theme.of(context).textTheme.titleMedium?.color,
                       )),
                   legend: Legend(
@@ -119,7 +119,7 @@ class IncomeOutcomeRatioGraph extends StatelessWidget {
                   title: ChartTitle(
                       text: 'Ratio of outcome categories',
                       textStyle: TextStyle(
-                        fontSize: 19,
+                        fontSize: 16,
                         color: Theme.of(context).textTheme.titleMedium?.color,
                       )),
                   legend: Legend(

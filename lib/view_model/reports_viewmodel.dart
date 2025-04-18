@@ -7,7 +7,7 @@ import 'package:personal_finance/model/one_day_spent.dart';
 import 'package:personal_finance/utils/functions.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class GraphViewModel extends ChangeNotifier {
+class ReportsViewModel extends ChangeNotifier {
   final AppDatabase _db;
   bool isLoading = true;
   final int numOfTopCategories = 5;
@@ -56,7 +56,7 @@ class GraphViewModel extends ChangeNotifier {
   double totalOutcome = 0;
   double balance = 0;
 
-  GraphViewModel(this._db) {
+  ReportsViewModel(this._db) {
     _db.watchTransactions().listen((event) {
       getAllData();
     });

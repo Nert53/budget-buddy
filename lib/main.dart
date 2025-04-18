@@ -5,14 +5,14 @@ import 'package:personal_finance/theme/theme_provider.dart';
 import 'package:personal_finance/view/screen/dashboard_screen.dart';
 import 'package:personal_finance/view/screen/edit_categories_screen.dart';
 import 'package:personal_finance/view/screen/filter_transactions_screen.dart';
-import 'package:personal_finance/view/screen/graph_screen.dart';
+import 'package:personal_finance/view/screen/reports_screen.dart';
 import 'package:personal_finance/view/screen_container.dart';
 import 'package:personal_finance/view/screen/settings_screen.dart';
 import 'package:personal_finance/view/screen/transactions_screen.dart';
 import 'package:personal_finance/view_model/add_transaction_viewmodel.dart';
 import 'package:personal_finance/view_model/dashboard_viewmodel.dart';
 import 'package:personal_finance/view_model/edit_categories_viewmodel.dart';
-import 'package:personal_finance/view_model/graph_viewmodel.dart';
+import 'package:personal_finance/view_model/reports_viewmodel.dart';
 import 'package:personal_finance/view_model/settings_viewmodel.dart';
 import 'package:personal_finance/view_model/transactions_viewmodel.dart';
 import 'package:provider/provider.dart';
@@ -31,8 +31,8 @@ void main() {
     ChangeNotifierProvider<AddTransactionViewModel>(
       create: (context) => AddTransactionViewModel(context.read<AppDatabase>()),
     ),
-    ChangeNotifierProvider<GraphViewModel>(
-      create: (context) => GraphViewModel(context.read<AppDatabase>()),
+    ChangeNotifierProvider<ReportsViewModel>(
+      create: (context) => ReportsViewModel(context.read<AppDatabase>()),
     ),
     ChangeNotifierProvider<SettingsViewmodel>(
         create: (context) => SettingsViewmodel(context.read<AppDatabase>())),
@@ -73,7 +73,7 @@ final _router = GoRouter(
               GoRoute(
                 path: '/graphs',
                 builder: (BuildContext context, GoRouterState state) {
-                  return const GraphScreen();
+                  return const ReportsScreen();
                 },
               ),
             ]),

@@ -34,7 +34,7 @@ class DashboardScreen extends StatelessWidget {
                   Expanded(
                     flex: 3,
                     child: Container(
-                      height: 340,
+                      height: 360,
                       padding: const EdgeInsets.all(16.0),
                       decoration: BoxDecoration(
                         color: Theme.of(context).colorScheme.surface,
@@ -161,7 +161,7 @@ class DashboardScreen extends StatelessWidget {
                       ? Expanded(
                           flex: 1,
                           child: Container(
-                            height: 340,
+                            height: 360,
                             padding: const EdgeInsets.all(16.0),
                             decoration: BoxDecoration(
                               color: Theme.of(context).colorScheme.surface,
@@ -198,24 +198,29 @@ class DashboardScreen extends StatelessWidget {
                                               var category = viewModel
                                                   .categoryGraphData[index];
 
-                                              return Row(
-                                                children: [
-                                                  Container(
-                                                    width: 16.0,
-                                                    height: 16.0,
-                                                    decoration: BoxDecoration(
-                                                        color: category.color,
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(8.0)),
-                                                  ),
-                                                  const SizedBox(width: 6.0),
-                                                  Text(
-                                                      '${category.amount.toStringAsFixed(0)} CZK (${(category.amount / viewModel.thisMonthSpent * 100).toInt()} %)',
-                                                      style: const TextStyle(
-                                                        fontSize: 16.0,
-                                                      )),
-                                                ],
+                                              return Padding(
+                                                padding: const EdgeInsets.only(
+                                                    bottom: 6.0),
+                                                child: Row(
+                                                  children: [
+                                                    Container(
+                                                      width: 16.0,
+                                                      height: 16.0,
+                                                      decoration: BoxDecoration(
+                                                          color: category.color,
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(
+                                                                      8.0)),
+                                                    ),
+                                                    const SizedBox(width: 6.0),
+                                                    Text(
+                                                        '${amountPretty(category.amount)} CZK (${(category.amount / viewModel.thisMonthSpent * 100).toInt()} %)',
+                                                        style: const TextStyle(
+                                                          fontSize: 16.0,
+                                                        )),
+                                                  ],
+                                                ),
                                               );
                                             },
                                           ))
@@ -232,7 +237,7 @@ class DashboardScreen extends StatelessWidget {
                   Container(
                     height: 160,
                     width: (screenWidth > mediumScreenWidth)
-                        ? (contentWidth - 176) / 2
+                        ? (contentWidth - 176) / 3
                         : contentWidth / 2 + 4,
                     padding: const EdgeInsets.all(16.0),
                     decoration: BoxDecoration(
@@ -272,7 +277,7 @@ class DashboardScreen extends StatelessWidget {
                   Container(
                     height: 160,
                     width: (screenWidth > mediumScreenWidth)
-                        ? (contentWidth - 176) / 4
+                        ? (contentWidth - 176) / 3
                         : contentWidth / 2 - 8,
                     padding: const EdgeInsets.all(16.0),
                     decoration: BoxDecoration(

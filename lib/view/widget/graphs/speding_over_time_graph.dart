@@ -16,7 +16,7 @@ class SpendingOverTimeGraph extends StatelessWidget {
       title: ChartTitle(
         text: 'Spending over time',
         textStyle: TextStyle(
-          fontSize: 20,
+          fontSize: 16,
           color: Theme.of(context).textTheme.titleMedium?.color,
         ),
       ),

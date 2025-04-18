@@ -52,7 +52,7 @@ class _FilterTransactionsScreenState extends State<FilterTransactionsScreen> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    CircularProgressIndicator(),
+                    CircularProgressIndicator.adaptive(),
                     SizedBox(height: 16),
                     Text('Loading filters...'),
                   ],
@@ -76,7 +76,7 @@ class _FilterTransactionsScreenState extends State<FilterTransactionsScreen> {
                       SizedBox(width: 8),
                       Wrap(
                         spacing: 4,
-                        runSpacing: 4,
+                        runSpacing: largeScreen ? 4 : 3,
                         children: [
                           for (var order in SortOrder.values)
                             ChoiceChip(
@@ -102,7 +102,7 @@ class _FilterTransactionsScreenState extends State<FilterTransactionsScreen> {
                           )),
                       Wrap(
                         spacing: 4,
-                        runSpacing: 4,
+                        runSpacing: largeScreen ? 4 : 3,
                         children: viewModel.categories
                             .map((category) => FilterChip(
                                   label: Text(
@@ -142,7 +142,7 @@ class _FilterTransactionsScreenState extends State<FilterTransactionsScreen> {
                           )),
                       Wrap(
                         spacing: 4,
-                        runSpacing: 4,
+                        runSpacing: largeScreen ? 4 : 3,
                         children: viewModel.currencies
                             .map((currency) => FilterChip(
                                   avatar: viewModel.currenciesFilter
@@ -175,7 +175,7 @@ class _FilterTransactionsScreenState extends State<FilterTransactionsScreen> {
                                   .fontSize)),
                       Wrap(
                         spacing: 4,
-                        runSpacing: 4,
+                        runSpacing: largeScreen ? 4 : 2,
                         children: [
                           FilterChip(
                             avatar: viewModel.typesFilter['income']!

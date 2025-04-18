@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:personal_finance/utils/functions.dart';
 
 class SpendingDetailExtension extends StatelessWidget {
   final double containerHeight;
@@ -38,7 +39,7 @@ class SpendingDetailExtension extends StatelessWidget {
                 ),
                 Expanded(
                     child: Center(
-                  child: Text('${todaySpent.toStringAsFixed(0)} CZK',
+                  child: Text('${amountPretty(todaySpent)} CZK',
                       style: TextStyle(
                           color: Theme.of(context).colorScheme.onSurface,
                           fontSize: 24.0,
@@ -73,7 +74,7 @@ class SpendingDetailExtension extends StatelessWidget {
                 Expanded(
                     child: Center(
                         child: Text(
-                  '${predictedSpent.toStringAsFixed(0)} CZK',
+                  '${amountPretty(predictedSpent)} CZK',
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24.0),
                 ))),
               ],
