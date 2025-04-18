@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:personal_finance/data/database.dart';
+import 'package:personal_finance/repository/database.dart';
 import 'package:personal_finance/theme/theme_provider.dart';
 import 'package:personal_finance/view/screen/dashboard_screen.dart';
 import 'package:personal_finance/view/screen/edit_categories_screen.dart';

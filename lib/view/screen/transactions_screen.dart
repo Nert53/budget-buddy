@@ -4,7 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:personal_finance/model/transaction.dart';
 import 'package:personal_finance/utils/functions.dart';
 import 'package:personal_finance/view/widget/dialogs/edit_transaction_dialog.dart';
-import 'package:personal_finance/view/widget/select_time_period.dart';
+import 'package:personal_finance/view/widget/dialogs/select_time_period.dart';
 import 'package:personal_finance/view/widget/transactions_skeleton.dart';
 import 'package:personal_finance/view_model/transactions_viewmodel.dart';
 import 'package:provider/provider.dart';

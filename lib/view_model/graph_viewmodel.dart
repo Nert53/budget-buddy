@@ -1,8 +1,8 @@
 import 'package:drift/drift.dart';
 import 'package:flutter/material.dart';
-import 'package:personal_finance/data/database.dart';
+import 'package:personal_finance/repository/database.dart';
 import 'package:personal_finance/model/category_spent_graph.dart';
-import 'package:personal_finance/model/graph.dart';
+import 'package:personal_finance/model/graph_type.dart';
 import 'package:personal_finance/model/one_day_spent.dart';
 import 'package:personal_finance/utils/functions.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -10,34 +10,35 @@ import 'package:shared_preferences/shared_preferences.dart';
 class GraphViewModel extends ChangeNotifier {
   final AppDatabase _db;
   bool isLoading = true;
+  final int numOfTopCategories = 5;
   DateTimeRange selectedDateRange = DateTimeRange(
       start: DateTime.now().subtract(Duration(days: 30)), end: DateTime.now());
-  List<Graph> allGraphs = [
-    Graph(
+  List<GraphType> allGraphs = [
+    GraphType(
         id: 1,
         name: 'top-categories-graph',
         namePretty: 'Top Categories',
         icon: Icons.sort,
         selected: true),
-    Graph(
+    GraphType(
         id: 2,
         name: 'spent-month-graph',
         namePretty: 'Spent during month',
         icon: Icons.bar_chart,
         selected: true),
-    Graph(
+    GraphType(
         id: 3,
         name: 'numbers-graph',
         namePretty: 'Interesting numbers',
         icon: Icons.pin_outlined,
         selected: true),
-    Graph(
+    GraphType(
         id: 4,
         name: 'catgory-ratio-graph',
         namePretty: 'Category ratio',
         icon: Icons.pie_chart_outline,
-        selected: true),
-    Graph(
+        selected: false),
+    GraphType(
         id: 5,
         name: 'income-outcome-numbers',
         namePretty: 'Income / Outcome numbers',
@@ -56,15 +57,17 @@ class GraphViewModel extends ChangeNotifier {
   double balance = 0;
 
   GraphViewModel(this._db) {
-    _db.watchAllTransactions().listen((event) {
+    _db.watchTransactions().listen((event) {
       getAllData();
     });
-    _db.watchAllCategories().listen((event) {
+    _db.watchCategories().listen((event) {
       getAllData();
     });
-    _db.watchAllCurrencies().listen((event) {
+    _db.watchCurrencies().listen((event) {
       getAllData();
     });
+
+    setDefaultVisibleGraphs();
 
     notifyListeners();
   }
@@ -82,6 +85,13 @@ class GraphViewModel extends ChangeNotifier {
     getBalance();
     loadVisibleGraphs();
     isLoading = false;
+  }
+
+  void setDefaultVisibleGraphs() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    for (var graph in allGraphs) {
+      prefs.setBool(graph.name, graph.selected);
+    }
   }
 
   void reselectGraph(int graphId, String graphName, bool newValue) async {
@@ -111,7 +121,7 @@ class GraphViewModel extends ChangeNotifier {
     final query = _db.selectOnly(_db.transactionItems)
       ..addColumns([
         _db.categoryItems.name, // Category name
-        _db.categoryItems.color, // Category color
+        _db.categoryItems.colorCode, // Category color
         _db.categoryItems.icon, // Category icon
         _db.categoryItems.id, // Category ID
         _db.transactionItems.isOutcome,
@@ -130,7 +140,7 @@ class GraphViewModel extends ChangeNotifier {
       ..groupBy([
         _db.transactionItems.category,
         _db.categoryItems.name,
-        _db.categoryItems.color,
+        _db.categoryItems.colorCode,
         _db.categoryItems.icon,
         _db.categoryItems.id
       ]);
@@ -141,14 +151,14 @@ class GraphViewModel extends ChangeNotifier {
         id: row.read<String>(_db.categoryItems.id) ?? '',
         name: row.read<String>(_db.categoryItems.name) ?? '',
         color: convertColorCodeToColor(
-            row.read<int>(_db.categoryItems.color) ?? 0),
+            row.read<int>(_db.categoryItems.colorCode) ?? 0),
         icon: convertIconCodePointToIcon(
             row.read<int>(_db.categoryItems.icon) ?? 0),
         amount: row.read<double>(_db.transactionItems.amountInCZK.sum()) ?? 0,
       );
     }).toList();
     categorySpendings.sort((a, b) => b.amount.compareTo(a.amount));
-    categorySpendings.take(5);
+    categorySpendings.take(numOfTopCategories);
 
     highestSpendingCategoriesData.clear();
     for (var category in categorySpendings) {
@@ -283,7 +293,7 @@ class GraphViewModel extends ChangeNotifier {
     final query = _db.selectOnly(_db.transactionItems)
       ..addColumns([
         _db.categoryItems.name, // Category name
-        _db.categoryItems.color, // Category color
+        _db.categoryItems.colorCode, // Category color
         _db.categoryItems.icon, // Category icon
         _db.categoryItems.id, // Category ID
         _db.transactionItems.isOutcome,
@@ -302,7 +312,7 @@ class GraphViewModel extends ChangeNotifier {
       ..groupBy([
         _db.transactionItems.category,
         _db.categoryItems.name,
-        _db.categoryItems.color,
+        _db.categoryItems.colorCode,
         _db.categoryItems.icon,
         _db.categoryItems.id
       ]);
@@ -313,7 +323,7 @@ class GraphViewModel extends ChangeNotifier {
           id: row.read<String>(_db.categoryItems.id) ?? '',
           name: row.read<String>(_db.categoryItems.name) ?? '',
           color: convertColorCodeToColor(
-              row.read<int>(_db.categoryItems.color) ?? 0),
+              row.read<int>(_db.categoryItems.colorCode) ?? 0),
           icon: convertIconCodePointToIcon(
               row.read<int>(_db.categoryItems.icon) ?? 0),
           amount: row.read<double>(_db.transactionItems.amountInCZK.sum()) ?? 0,
@@ -327,7 +337,7 @@ class GraphViewModel extends ChangeNotifier {
     final query = _db.selectOnly(_db.transactionItems)
       ..addColumns([
         _db.categoryItems.name, // Category name
-        _db.categoryItems.color, // Category color
+        _db.categoryItems.colorCode, // Category color
         _db.categoryItems.icon, // Category icon
         _db.categoryItems.id, // Category ID
         _db.transactionItems.isOutcome,
@@ -346,7 +356,7 @@ class GraphViewModel extends ChangeNotifier {
       ..groupBy([
         _db.transactionItems.category,
         _db.categoryItems.name,
-        _db.categoryItems.color,
+        _db.categoryItems.colorCode,
         _db.categoryItems.icon,
         _db.categoryItems.id
       ]);
@@ -357,7 +367,7 @@ class GraphViewModel extends ChangeNotifier {
           id: row.read<String>(_db.categoryItems.id) ?? '',
           name: row.read<String>(_db.categoryItems.name) ?? '',
           color: convertColorCodeToColor(
-              row.read<int>(_db.categoryItems.color) ?? 0),
+              row.read<int>(_db.categoryItems.colorCode) ?? 0),
           icon: convertIconCodePointToIcon(
               row.read<int>(_db.categoryItems.icon) ?? 0),
           amount: row.read<double>(_db.transactionItems.amountInCZK.sum()) ?? 0,

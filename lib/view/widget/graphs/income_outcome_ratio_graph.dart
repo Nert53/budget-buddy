@@ -52,6 +52,29 @@ class IncomeOutcomeRatioGraph extends StatelessWidget {
                   legend: Legend(
                     isVisible: largeScreen,
                     overflowMode: LegendItemOverflowMode.wrap,
+                    legendItemBuilder: (
+                      String name,
+                      dynamic series,
+                      dynamic point,
+                      int index,
+                    ) {
+                      return SizedBox(
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            Icon(
+                              incomeCategories[index].icon,
+                              color: incomeCategories[index].color,
+                              size: 18,
+                            ),
+                            SizedBox(
+                              width: 8,
+                            ),
+                            Text(name),
+                          ],
+                        ),
+                      );
+                    },
                   ),
                   series: <PieSeries>[
                     PieSeries<CategorySpentGraph, String>(
@@ -92,6 +115,29 @@ class IncomeOutcomeRatioGraph extends StatelessWidget {
                   legend: Legend(
                     isVisible: largeScreen,
                     overflowMode: LegendItemOverflowMode.wrap,
+                    legendItemBuilder: (
+                      String name,
+                      dynamic series,
+                      dynamic point,
+                      int index,
+                    ) {
+                      return SizedBox(
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            Icon(
+                              outcomeCategories[index].icon,
+                              color: outcomeCategories[index].color,
+                              size: 18,
+                            ),
+                            SizedBox(
+                              width: 8,
+                            ),
+                            Text(name),
+                          ],
+                        ),
+                      );
+                    },
                   ),
                   series: <PieSeries>[
                     PieSeries<CategorySpentGraph, String>(

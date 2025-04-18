@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:personal_finance/constants.dart';
-import 'package:personal_finance/data/database.dart';
+import 'package:personal_finance/repository/database.dart';
 import 'package:personal_finance/utils/functions.dart';
 import 'package:personal_finance/view_model/add_transaction_viewmodel.dart';
 import 'package:personal_finance/view_model/transactions_viewmodel.dart';

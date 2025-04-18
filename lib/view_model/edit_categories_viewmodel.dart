@@ -1,5 +1,7 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/material.dart';
-import 'package:personal_finance/data/database.dart';
+import 'package:personal_finance/repository/database.dart';
 
 class EditCategoriesViewmodel extends ChangeNotifier {
   final AppDatabase _db;
@@ -7,7 +9,7 @@ class EditCategoriesViewmodel extends ChangeNotifier {
   List<CategoryItem> categories = [];
 
   EditCategoriesViewmodel(this._db) {
-    _db.watchAllCategories().listen((event) {
+    _db.watchCategories().listen((event) {
       getAllData();
     });
 
@@ -23,7 +25,7 @@ class EditCategoriesViewmodel extends ChangeNotifier {
   }
 
   void loadCategories() async {
-    categories = await _db.select(_db.categoryItems).get();
+    categories = await _db.getAllCategoryItems();
   }
 
   void addCategory(String name, Color color, IconData icon) async {
@@ -32,7 +34,7 @@ class EditCategoriesViewmodel extends ChangeNotifier {
   }
 
   void deleteCategory(CategoryItem category) async {
-    // will also delete all transactions with this category
+    // also delete all transactions with this category
     await _db.deleteCategoryHard(category);
     getAllData();
   }

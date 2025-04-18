@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:personal_finance/constants.dart';
 import 'package:personal_finance/utils/functions.dart';
+import 'package:personal_finance/view/constants/sort_order.dart';
 import 'package:personal_finance/view_model/transactions_viewmodel.dart';
 import 'package:provider/provider.dart';
 
@@ -78,75 +79,18 @@ class _FilterTransactionsScreenState extends State<FilterTransactionsScreen> {
                         spacing: 4,
                         runSpacing: 4,
                         children: [
-                          ChoiceChip(
-                            label: Text(
-                              'Oldest',
+                          for (var order in SortOrder.values)
+                            ChoiceChip(
+                              label: Text(
+                                order.name.capitalize(),
+                              ),
+                              selected: viewModel.sortOrder == order,
+                              onSelected: (bool selected) {
+                                setState(() {
+                                  viewModel.sortOrder = order;
+                                });
+                              },
                             ),
-                            selected: viewModel.sortOrder == SortOrder.oldest,
-                            onSelected: (bool selected) {
-                              setState(() {
-                                viewModel.sortOrder = SortOrder.oldest;
-                              });
-                            },
-                          ),
-                          ChoiceChip(
-                            label: Text(
-                              'Newest',
-                            ),
-                            selected: viewModel.sortOrder == SortOrder.newest,
-                            onSelected: (bool selected) {
-                              setState(() {
-                                viewModel.sortOrder = SortOrder.newest;
-                              });
-                            },
-                          ),
-                          ChoiceChip(
-                            label: Text(
-                              'A - Z',
-                            ),
-                            selected:
-                                viewModel.sortOrder == SortOrder.alphabetical,
-                            onSelected: (bool selected) {
-                              setState(() {
-                                viewModel.sortOrder = SortOrder.alphabetical;
-                              });
-                            },
-                          ),
-                          ChoiceChip(
-                            label: Text(
-                              'Z - A',
-                            ),
-                            selected: viewModel.sortOrder ==
-                                SortOrder.reverseAlphabetical,
-                            onSelected: (bool selected) {
-                              setState(() {
-                                viewModel.sortOrder =
-                                    SortOrder.reverseAlphabetical;
-                              });
-                            },
-                          ),
-                          ChoiceChip(
-                            label: Text(
-                              'Lowest',
-                            ),
-                            selected: viewModel.sortOrder == SortOrder.lowest,
-                            onSelected: (bool selected) {
-                              setState(() {
-                                viewModel.sortOrder = SortOrder.lowest;
-                              });
-                            },
-                          ),
-                          ChoiceChip(
-                            label: Text(
-                              'Highest',
-                            ),
-                            selected: viewModel.sortOrder == SortOrder.highest,
-                            onSelected: (bool selected) {
-                              setState(() {
-                                viewModel.sortOrder = SortOrder.highest;
-                              });
-                            },
-                          ),
                         ],
                       ),
                       Divider(),

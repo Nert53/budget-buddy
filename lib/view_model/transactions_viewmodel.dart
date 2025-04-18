@@ -1,18 +1,11 @@
 import 'package:drift/drift.dart';
 import 'package:flutter/material.dart';
-import 'package:personal_finance/data/database.dart';
+import 'package:personal_finance/repository/database.dart';
 import 'package:personal_finance/model/time_period.dart';
 import 'package:personal_finance/model/transaction.dart';
 import 'package:personal_finance/utils/functions.dart';
+import 'package:personal_finance/view/constants/sort_order.dart';
 
-enum SortOrder {
-  oldest,
-  newest,
-  alphabetical,
-  reverseAlphabetical,
-  lowest,
-  highest
-}
 
 class TransactionViewModel extends ChangeNotifier {
   bool isLoading = true;
@@ -64,31 +57,31 @@ class TransactionViewModel extends ChangeNotifier {
   SortOrder sortOrder = SortOrder.newest;
 
   TransactionViewModel(this._db) {
-    _db.watchAllTransactions().listen((event) {
+    _db.watchTransactions().listen((event) {
       getAllData();
+      getFilterSettings();
     });
 
-    _db.watchAllCategories().listen((event) {
+    _db.watchCategories().listen((event) {
       getAllData();
+      getFilterSettings();
     });
 
-    _db.watchAllCurrencies().listen((event) {
+    _db.watchCurrencies().listen((event) {
       getAllData();
+      getFilterSettings();
     });
 
-    getFilterSettings();
-    setDateValues();
     notifyListeners();
   }
 
   void getAllData() async {
     isLoading = true;
-    notifyListeners();
-
     setDateValues();
     getTransactions();
     getAllCategories();
     getAllCurrencies();
+    notifyListeners();
     isLoading = false;
   }
 
@@ -363,6 +356,7 @@ class TransactionViewModel extends ChangeNotifier {
     getCurrenciesFilters();
     getTypesFilters();
     getAmountFilters();
+
     notifyListeners();
   }
 
@@ -414,11 +408,13 @@ class TransactionViewModel extends ChangeNotifier {
     };
   }
 
-  void getAmountFilters() {
-    amountMax = transactions.isNotEmpty
-        ? transactions.map((t) => t.amount).reduce((a, b) => a > b ? a : b)
-        : 0.0;
+  void getAmountFilters() async {
+    List<TransactionItem> transactionItems =
+        await _db.select(_db.transactionItems).get();
+    amountMax =
+        transactionItems.map((t) => t.amount).reduce((a, b) => a > b ? a : b);
     amountHigh = amountMax;
+    notifyListeners();
   }
 
   void updateFilterCount(bool value, int caseNumber) {

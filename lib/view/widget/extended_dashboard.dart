@@ -69,7 +69,7 @@ class SpendingDetailExtension extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Predicted month spent'),
+                Text('Monthly spending prediction'),
                 Expanded(
                     child: Center(
                         child: Text(

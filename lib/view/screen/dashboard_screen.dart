@@ -26,6 +26,7 @@ class DashboardScreen extends StatelessWidget {
             SizedBox(
               width: contentWidth / 2 - 24,
             ),
+            // TODO skeleton loading
             const CircularProgressIndicator(),
           ],
         ));
@@ -102,6 +103,32 @@ class DashboardScreen extends StatelessWidget {
                                     alignment: ChartAlignment.center,
                                     position: LegendPosition.left,
                                     overflowMode: LegendItemOverflowMode.scroll,
+                                    legendItemBuilder: (
+                                      String name,
+                                      dynamic series,
+                                      dynamic point,
+                                      int index,
+                                    ) {
+                                      return SizedBox(
+                                        child: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: <Widget>[
+                                            Icon(
+                                              viewModel.categoryGraphData[index]
+                                                  .icon,
+                                              color: viewModel
+                                                  .categoryGraphData[index]
+                                                  .color,
+                                              size: 18,
+                                            ),
+                                            SizedBox(
+                                              width: 8,
+                                            ),
+                                            Text(name),
+                                          ],
+                                        ),
+                                      );
+                                    },
                                   ),
                                   series: <CircularSeries>[
                                       // Renders doughnut chart
@@ -298,7 +325,7 @@ class DashboardScreen extends StatelessWidget {
                     ? SpendingDetailExtension(
                         containerHeight: 160,
                         todaySpent: viewModel.todaySpent,
-                        predictedSpent: viewModel.predictedSpentThisMonth,
+                        predictedSpent: viewModel.predictedSpent,
                       )
                     : const SizedBox(),
               ],
@@ -423,35 +450,28 @@ class DashboardScreen extends StatelessWidget {
                                 ),
                                 leading: Icon(currentTransaction.categoryIcon,
                                     color: currentTransaction.categoryColor),
-                                trailing: Column(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          currentTransaction.isOutcome
-                                              ? const Icon(
-                                                  Icons.arrow_drop_down,
-                                                  color: Colors.red,
-                                                )
-                                              : Icon(
-                                                  Icons.arrow_drop_up,
-                                                  color: Colors.green[700],
-                                                ),
-                                          Text(
-                                            '${amountPretty(currentTransaction.amount)} ${currentTransaction.currencySymbol}',
-                                            style: TextStyle(
-                                                color:
-                                                    currentTransaction.isOutcome
-                                                        ? Colors.red
-                                                        : Colors.green[700],
-                                                fontSize: 16,
-                                                fontWeight: FontWeight.bold),
-                                          ),
-                                        ]),
-                                  ],
-                                ),
+                                trailing: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      currentTransaction.isOutcome
+                                          ? const Icon(
+                                              Icons.arrow_drop_down,
+                                              color: Colors.red,
+                                            )
+                                          : Icon(
+                                              Icons.arrow_drop_up,
+                                              color: Colors.green[700],
+                                            ),
+                                      Text(
+                                        '${amountPretty(currentTransaction.amount)} ${currentTransaction.currencySymbol}',
+                                        style: TextStyle(
+                                            color: currentTransaction.isOutcome
+                                                ? Colors.red
+                                                : Colors.green[700],
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ]),
                               );
                             }),
                   ),

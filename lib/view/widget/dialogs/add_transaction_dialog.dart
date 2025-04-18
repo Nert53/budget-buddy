@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:personal_finance/constants.dart';
-import 'package:personal_finance/model/transaction_category.dart';
+import 'package:personal_finance/model/category_simple.dart';
 import 'package:personal_finance/model/currency.dart';
 import 'package:personal_finance/view/widget/flushbars.dart';
 import 'package:personal_finance/view_model/add_transaction_viewmodel.dart';
@@ -173,7 +173,7 @@ class AddWindowFullScreen extends StatelessWidget {
                   },
                   dropdownMenuEntries:
                       viewModel.categories.map<DropdownMenuEntry<String>>(
-                    (TransactionCategory cat) {
+                    (CategorySimple cat) {
                       return DropdownMenuEntry<String>(
                           value: cat.id,
                           label: cat.name,
@@ -445,7 +445,7 @@ class AddWindow extends StatelessWidget {
                         },
                         dropdownMenuEntries:
                             viewModel.categories.map<DropdownMenuEntry<String>>(
-                          (TransactionCategory cat) {
+                          (CategorySimple cat) {
                             return DropdownMenuEntry<String>(
                                 value: cat.id,
                                 label: cat.name,
