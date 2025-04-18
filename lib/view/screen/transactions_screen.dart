@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:personal_finance/constants.dart';
 import 'package:personal_finance/model/transaction.dart';
 import 'package:personal_finance/utils/functions.dart';
 import 'package:personal_finance/view/widget/dialogs/edit_transaction_dialog.dart';
 import 'package:personal_finance/view/widget/select_time_period.dart';
-import 'package:personal_finance/view/widget/transactions_skeleton.dart';
 import 'package:personal_finance/view_model/transactions_viewmodel.dart';
 import 'package:provider/provider.dart';
 import 'package:skeletonizer/skeletonizer.dart';
@@ -137,6 +137,13 @@ class TransactionScreen extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text('${viewModel.transactions.length} transactions'),
+                viewModel.filtersApplied
+                    ? const SizedBox()
+                    : Text(
+                        "Selected filters are not applied!",
+                        style: TextStyle(
+                            color: warningColor, fontWeight: FontWeight.bold),
+                      ),
                 Badge.count(
                   count: viewModel.categoryFilterCount +
                       viewModel.currencyFilterCount +
@@ -165,9 +172,7 @@ class TransactionScreen extends StatelessWidget {
             ),
           ),
           SizedBox(height: 8),
-          if (viewModel.isLoading)
-            Expanded(child: Skeletonizer(child: TransactionsSkeleton()))
-          else if (viewModel.transactions.isEmpty)
+          if (viewModel.transactions.isEmpty)
             Expanded(
               child: Center(
                 child: Column(
@@ -177,19 +182,17 @@ class TransactionScreen extends StatelessWidget {
                       radius: 32,
                       backgroundColor: Colors.white,
                       child: Icon(
-                          viewModel.getFilterCount() > 0
-                              ? Icons.filter_alt_off_outlined
-                              : Icons.search_off,
-                          size: 36,
-                          color: Theme.of(context).colorScheme.tertiary),
+                        viewModel.getFilterCount() > 0
+                            ? Icons.filter_alt_off_outlined
+                            : Icons.search_off,
+                        size: 36,
+                      ),
                     ),
                     SizedBox(height: 16),
                     viewModel.getFilterCount() > 0
                         ? Text('No transactions meet the current filters.')
                         : Text(
                             'No transactions found in this period.',
-                            style: TextStyle(
-                                color: Theme.of(context).colorScheme.tertiary),
                           ),
                   ],
                 ),
@@ -197,120 +200,128 @@ class TransactionScreen extends StatelessWidget {
             )
           else
             Expanded(
-              child: Padding(
-                padding: const EdgeInsets.only(left: 8.0, right: 8.0),
-                child: RefreshIndicator(
-                  onRefresh: () => viewModel.refreshTransactions(),
-                  child: ListView.builder(
-                    itemCount: viewModel.transactions.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      Transaction currentTransaction =
-                          viewModel.transactions[index];
+              child: Skeletonizer(
+                enabled: viewModel.isLoading,
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 8.0, right: 8.0),
+                  child: RefreshIndicator(
+                    onRefresh: () => viewModel.refreshTransactions(),
+                    child: ListView.builder(
+                      itemCount: viewModel.transactions.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        Transaction currentTransaction =
+                            viewModel.transactions[index];
 
-                      return GestureDetector(
-                        onTap: () {
-                          showDialog<void>(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return EditTransaction(
-                                transactionId: currentTransaction.id,
-                                amount: currentTransaction.amount,
-                                note: currentTransaction.note,
-                                date: currentTransaction.date,
-                                isOutcome: currentTransaction.isOutcome,
-                                categories: viewModel.categories,
-                                currencies: viewModel.currencies,
-                                categoryId: currentTransaction.categoryId,
-                                categoryName: currentTransaction.categoryName,
-                                categoryColor: currentTransaction.categoryColor,
-                                categoryIcon: currentTransaction.categoryIcon,
-                                currencyId: currentTransaction.currencyId,
-                                currencyName: currentTransaction.currencyName,
-                                currencySymbol:
-                                    currentTransaction.currencySymbol,
-                              );
-                            },
-                          );
-                        },
-                        child: Card(
-                          elevation: 2,
-                          child: ListTile(
-                              key: ValueKey(currentTransaction.id.toString()),
-                              title: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  currentTransaction.note.isEmpty
-                                      ? Text(
-                                          '(No note)',
-                                          style: const TextStyle(
-                                              fontSize: 15, color: Colors.grey),
-                                        )
-                                      : currentTransaction.note.length > 20
-                                          ? RichText(
-                                              text: TextSpan(
-                                                children: [
-                                                  TextSpan(
-                                                    text: currentTransaction
-                                                        .note
-                                                        .substring(0, 20),
-                                                    style: TextStyle(
-                                                        color: Theme.of(context)
-                                                            .textTheme
-                                                            .bodyMedium
-                                                            ?.color,
-                                                        fontWeight:
-                                                            FontWeight.bold),
-                                                  ),
-                                                  TextSpan(
-                                                    text: "...more",
-                                                    style: TextStyle(
-                                                      color: Colors.grey[700],
-                                                    ),
-                                                  )
-                                                ],
-                                              ),
-                                            )
-                                          : Text(
-                                              currentTransaction.note,
-                                              style: TextStyle(
-                                                  fontSize: 14,
-                                                  fontWeight: FontWeight.bold),
-                                            ),
-                                  Text(
-                                    '${dateFormat.format(currentTransaction.date)} | ${timeFormat.format(currentTransaction.date)}',
-                                    style: TextStyle(
-                                        fontSize: 12, color: Colors.grey[700]),
-                                  ),
-                                ],
-                              ),
-                              leading: Icon(
-                                currentTransaction.categoryIcon,
-                                color: currentTransaction.categoryColor,
-                              ),
-                              trailing: Row(
-                                  mainAxisSize: MainAxisSize.min,
+                        return GestureDetector(
+                          onTap: () {
+                            showDialog<void>(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return EditTransaction(
+                                  transactionId: currentTransaction.id,
+                                  amount: currentTransaction.amount,
+                                  note: currentTransaction.note,
+                                  date: currentTransaction.date,
+                                  isOutcome: currentTransaction.isOutcome,
+                                  categories: viewModel.categories,
+                                  currencies: viewModel.currencies,
+                                  categoryId: currentTransaction.categoryId,
+                                  categoryName: currentTransaction.categoryName,
+                                  categoryColor:
+                                      currentTransaction.categoryColor,
+                                  categoryIcon: currentTransaction.categoryIcon,
+                                  currencyId: currentTransaction.currencyId,
+                                  currencyName: currentTransaction.currencyName,
+                                  currencySymbol:
+                                      currentTransaction.currencySymbol,
+                                );
+                              },
+                            );
+                          },
+                          child: Card(
+                            elevation: 2,
+                            child: ListTile(
+                                key: ValueKey(currentTransaction.id.toString()),
+                                title: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    currentTransaction.isOutcome
-                                        ? const Icon(
-                                            Icons.arrow_drop_down,
-                                            color: Colors.red,
+                                    currentTransaction.note.isEmpty
+                                        ? Text(
+                                            '(No note)',
+                                            style: const TextStyle(
+                                                fontSize: 15,
+                                                color: Colors.grey),
                                           )
-                                        : Icon(
-                                            Icons.arrow_drop_up,
-                                            color: Colors.green[700],
-                                          ),
+                                        : currentTransaction.note.length > 20
+                                            ? RichText(
+                                                text: TextSpan(
+                                                  children: [
+                                                    TextSpan(
+                                                      text: currentTransaction
+                                                          .note
+                                                          .substring(0, 20),
+                                                      style: TextStyle(
+                                                          color:
+                                                              Theme.of(context)
+                                                                  .textTheme
+                                                                  .bodyMedium
+                                                                  ?.color,
+                                                          fontWeight:
+                                                              FontWeight.bold),
+                                                    ),
+                                                    TextSpan(
+                                                      text: "...more",
+                                                      style: TextStyle(
+                                                        color: Colors.grey[700],
+                                                      ),
+                                                    )
+                                                  ],
+                                                ),
+                                              )
+                                            : Text(
+                                                currentTransaction.note,
+                                                style: TextStyle(
+                                                    fontSize: 14,
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                              ),
                                     Text(
-                                      '${amountPretty(viewModel.transactions[index].amount)} ${viewModel.transactions[index].currencySymbol}',
+                                      '${dateFormat.format(currentTransaction.date)} | ${timeFormat.format(currentTransaction.date)}',
                                       style: TextStyle(
-                                          color: currentTransaction.isOutcome
-                                              ? Colors.red
-                                              : Colors.green[700],
-                                          fontSize: 14),
+                                          fontSize: 12,
+                                          color: Colors.grey[700]),
                                     ),
-                                  ])),
-                        ),
-                      );
-                    },
+                                  ],
+                                ),
+                                leading: Icon(
+                                  currentTransaction.categoryIcon,
+                                  color: currentTransaction.categoryColor,
+                                ),
+                                trailing: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      currentTransaction.isOutcome
+                                          ? const Icon(
+                                              Icons.arrow_drop_down,
+                                              color: Colors.red,
+                                            )
+                                          : Icon(
+                                              Icons.arrow_drop_up,
+                                              color: Colors.green[700],
+                                            ),
+                                      Text(
+                                        '${amountPretty(viewModel.transactions[index].amount)} ${viewModel.transactions[index].currencySymbol}',
+                                        style: TextStyle(
+                                            color: currentTransaction.isOutcome
+                                                ? Colors.red
+                                                : Colors.green[700],
+                                            fontSize: 14),
+                                      ),
+                                    ])),
+                          ),
+                        );
+                      },
+                    ),
                   ),
                 ),
               ),

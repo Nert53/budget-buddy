@@ -9,6 +9,8 @@ const navigationRailWidth = 111.0;
 
 // UI customisation
 const tealColor = Color(0x007fb9ae);
+Color warningColor = Colors.orange[800]!;
+Color successColor = Colors.green[800]!;
 
 const maxNoteLength = 1000;
 

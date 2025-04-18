@@ -12,7 +12,12 @@ class HighSpendingCategoriesGraph extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SfCartesianChart(
-      title: ChartTitle(text: 'Highets spending categories'),
+      title: ChartTitle(
+          text: 'Highets spending categories',
+          textStyle: TextStyle(
+            fontSize: 19,
+            color: Theme.of(context).textTheme.titleMedium?.color,
+          )),
       plotAreaBorderWidth: 0,
       primaryXAxis: CategoryAxis(),
       primaryYAxis: NumericAxis(

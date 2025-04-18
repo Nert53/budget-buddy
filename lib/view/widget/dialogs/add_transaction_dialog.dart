@@ -480,6 +480,11 @@ class AddWindow extends StatelessWidget {
                         onSelected: (Object? newValue) {
                           viewModel.changeCurrentCurrency(newValue as String);
                         },
+                        menuStyle: MenuStyle(
+                            shape: WidgetStateProperty.all(
+                                const RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.all(
+                                        Radius.circular(16))))),
                         dropdownMenuEntries: viewModel.currencies
                             .map<DropdownMenuEntry<String>>((Currency cur) {
                           return DropdownMenuEntry<String>(

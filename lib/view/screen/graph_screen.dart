@@ -90,13 +90,13 @@ class GraphScreen extends StatelessWidget {
                         borderRadius: BorderRadius.circular(15.0),
                       ),
                       child: SizedBox(
-                          height: 340,
+                          height: largeScreen ? 480 : 340,
                           child: viewModel.highestSpendingCategoriesData.isEmpty
                               ? Column(
                                   children: [
                                     SizedBox(height: 16.0),
                                     Text(
-                                      'Most spent categories',
+                                      'Highest speding categories',
                                       style: Theme.of(context)
                                           .textTheme
                                           .titleLarge,
@@ -118,13 +118,13 @@ class GraphScreen extends StatelessWidget {
                         borderRadius: BorderRadius.circular(15.0),
                       ),
                       child: SizedBox(
-                          height: 400,
-                          child: viewModel.spendingOverTimeData.isEmpty
+                          height: largeScreen ? 500 : 400,
+                          child: viewModel.outcomeCategories.isEmpty
                               ? Column(
                                   children: [
                                     SizedBox(height: 16.0),
                                     Text(
-                                      'Spent during time',
+                                      'Spending over time',
                                       style: Theme.of(context)
                                           .textTheme
                                           .titleLarge,
@@ -146,11 +146,21 @@ class GraphScreen extends StatelessWidget {
                             children: [
                               Expanded(
                                 child: InterestingNumberCardHorizontal(
-                                    valueName: 'Saved from income',
-                                    largeScreen: mediumScreen,
-                                    noData: viewModel.savedFromIncome.isNaN,
-                                    numberValue: viewModel.savedFromIncome,
-                                    numberSymbol: '%'),
+                                  valueName: 'Saved from income',
+                                  largeScreen: mediumScreen,
+                                  noData: viewModel.savedFromIncome.isNaN ||
+                                      viewModel.savedFromIncome.isInfinite,
+                                  numberValue: viewModel.savedFromIncome,
+                                  numberSymbol: '%',
+                                  coloredStyle: (viewModel.savedFromIncome >=
+                                          20)
+                                      ? 1
+                                      : (viewModel.savedFromIncome >= 10)
+                                          ? 2
+                                          : (viewModel.savedFromIncome <= 10)
+                                              ? 3
+                                              : 0,
+                                ),
                               ),
                               SizedBox(
                                 width: 12.0,
@@ -171,6 +181,9 @@ class GraphScreen extends StatelessWidget {
                                     valueName:
                                         'Transactions in foreign currencies',
                                     largeScreen: mediumScreen,
+                                    noData:
+                                        viewModel.incomeCategories.isEmpty &&
+                                            viewModel.outcomeCategories.isEmpty,
                                     numberValue: viewModel
                                         .transactionsForeignCurrenciesPercent,
                                     numberSymbol: '%'),
@@ -183,12 +196,20 @@ class GraphScreen extends StatelessWidget {
                             SizedBox(
                               height: 160,
                               child: InterestingNumberCardVertical(
-                                  valueName: 'Saved from income',
-                                  largeScreen: mediumScreen,
-                                  noData: viewModel.savedFromIncome.isNaN,
-                                  numberValue: viewModel.savedFromIncome
-                                      .toStringAsFixed(0),
-                                  numberSymbol: '%'),
+                                valueName: 'Saved from income',
+                                largeScreen: mediumScreen,
+                                noData: viewModel.savedFromIncome.isNaN ||
+                                    viewModel.savedFromIncome.isInfinite,
+                                numberValue: viewModel.savedFromIncome,
+                                numberSymbol: '%',
+                                coloredStyle: (viewModel.savedFromIncome >= 20)
+                                    ? 1
+                                    : (viewModel.savedFromIncome >= 10)
+                                        ? 2
+                                        : (viewModel.savedFromIncome <= 10)
+                                            ? 3
+                                            : 0,
+                              ),
                             ),
                             SizedBox(
                               height: 160,
@@ -196,8 +217,7 @@ class GraphScreen extends StatelessWidget {
                                   valueName: 'Average daily spent',
                                   largeScreen: mediumScreen,
                                   noData: viewModel.averageDailySpent.isNaN,
-                                  numberValue: viewModel.averageDailySpent
-                                      .toStringAsFixed(0),
+                                  numberValue: viewModel.averageDailySpent,
                                   numberSymbol: 'CZK'),
                             ),
                             SizedBox(
@@ -206,9 +226,10 @@ class GraphScreen extends StatelessWidget {
                                   valueName:
                                       'Transactions in foreign currencies',
                                   largeScreen: mediumScreen,
+                                  noData: viewModel.incomeCategories.isEmpty &&
+                                      viewModel.outcomeCategories.isEmpty,
                                   numberValue: viewModel
-                                      .transactionsForeignCurrenciesPercent
-                                      .toStringAsFixed(0),
+                                      .transactionsForeignCurrenciesPercent,
                                   numberSymbol: '%'),
                             )
                           ],
@@ -236,7 +257,6 @@ class GraphScreen extends StatelessWidget {
                                 child: InterestingNumberCardHorizontal(
                                     valueName: 'Sum of all incomes',
                                     largeScreen: mediumScreen,
-                                    noData: viewModel.totalIncome.isNaN,
                                     numberValue: viewModel.totalIncome,
                                     numberSymbol: 'CZK'),
                               ),
@@ -261,7 +281,6 @@ class GraphScreen extends StatelessWidget {
                                   noData: viewModel.balance.isNaN,
                                   numberValue: viewModel.balance,
                                   numberSymbol: 'CZK',
-                                  coloredStyle: 1,
                                 ),
                               ),
                             ],
@@ -275,8 +294,7 @@ class GraphScreen extends StatelessWidget {
                                   valueName: 'Sum of all incomes',
                                   largeScreen: mediumScreen,
                                   noData: viewModel.totalIncome.isNaN,
-                                  numberValue:
-                                      viewModel.totalIncome.toStringAsFixed(0),
+                                  numberValue: viewModel.totalIncome,
                                   numberSymbol: 'CZK'),
                             ),
                             SizedBox(
@@ -285,8 +303,7 @@ class GraphScreen extends StatelessWidget {
                                   valueName: 'Sum of all outcomes',
                                   largeScreen: mediumScreen,
                                   noData: viewModel.totalOutcome.isNaN,
-                                  numberValue:
-                                      viewModel.totalOutcome.toStringAsFixed(0),
+                                  numberValue: viewModel.totalOutcome,
                                   numberSymbol: 'CZK'),
                             ),
                             SizedBox(
@@ -294,8 +311,8 @@ class GraphScreen extends StatelessWidget {
                               child: InterestingNumberCardVertical(
                                   valueName: 'Overall balance',
                                   largeScreen: mediumScreen,
-                                  numberValue:
-                                      viewModel.balance.toStringAsFixed(0),
+                                  numberValue: viewModel.balance,
+                                  noData: viewModel.balance.isNaN,
                                   numberSymbol: 'CZK'),
                             )
                           ],

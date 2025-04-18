@@ -15,6 +15,10 @@ class SpendingOverTimeGraph extends StatelessWidget {
       plotAreaBorderWidth: 0,
       title: ChartTitle(
         text: 'Spending over time',
+        textStyle: TextStyle(
+          fontSize: 20,
+          color: Theme.of(context).textTheme.titleMedium?.color,
+        ),
       ),
       primaryXAxis: DateTimeAxis(
         dateFormat: DateFormat('dd. MM.'),

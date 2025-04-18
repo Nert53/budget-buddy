@@ -62,6 +62,7 @@ class TransactionViewModel extends ChangeNotifier {
   double amountMax = 0.0;
   double amountHigh = 0.0;
   SortOrder sortOrder = SortOrder.newest;
+  bool filtersApplied = false;
 
   TransactionViewModel(this._db) {
     _db.watchAllTransactions().listen((event) {
@@ -422,6 +423,7 @@ class TransactionViewModel extends ChangeNotifier {
   }
 
   void updateFilterCount(bool value, int caseNumber) {
+    filtersApplied = false;
     switch (caseNumber) {
       case 1:
         value ? categoryFilterCount++ : categoryFilterCount--;

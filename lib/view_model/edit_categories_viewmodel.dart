@@ -11,7 +11,7 @@ class EditCategoriesViewmodel extends ChangeNotifier {
       getAllData();
     });
 
-    isLoading = false;
+    getAllData();
     notifyListeners();
   }
 

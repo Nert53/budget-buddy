@@ -48,7 +48,12 @@ class IncomeOutcomeRatioGraph extends StatelessWidget {
                   ],
                 )
               : SfCircularChart(
-                  title: ChartTitle(text: 'Ratio of income categories'),
+                  title: ChartTitle(
+                      text: 'Ratio of income categories',
+                      textStyle: TextStyle(
+                        fontSize: 19,
+                        color: Theme.of(context).textTheme.titleMedium?.color,
+                      )),
                   legend: Legend(
                     isVisible: largeScreen,
                     overflowMode: LegendItemOverflowMode.wrap,
@@ -88,7 +93,12 @@ class IncomeOutcomeRatioGraph extends StatelessWidget {
                   ],
                 )
               : SfCircularChart(
-                  title: ChartTitle(text: 'Ratio of outcome categories'),
+                  title: ChartTitle(
+                      text: 'Ratio of outcome categories',
+                      textStyle: TextStyle(
+                        fontSize: 19,
+                        color: Theme.of(context).textTheme.titleMedium?.color,
+                      )),
                   legend: Legend(
                     isVisible: largeScreen,
                     overflowMode: LegendItemOverflowMode.wrap,

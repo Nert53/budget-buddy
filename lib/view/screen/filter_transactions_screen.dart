@@ -37,7 +37,6 @@ class _FilterTransactionsScreenState extends State<FilterTransactionsScreen> {
                 icon: Icon(Icons.filter_alt_off_outlined),
                 onPressed: () {
                   setState(() {
-                    // todo
                     viewModel.resetFilters();
                   });
                 },
@@ -316,6 +315,7 @@ class _FilterTransactionsScreenState extends State<FilterTransactionsScreen> {
                         child: FilledButton(
                             onPressed: () {
                               viewModel.getAllData();
+                              viewModel.filtersApplied = true;
                               context.pop();
                             },
                             child: Text('Apply filters')),

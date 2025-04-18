@@ -1,5 +1,6 @@
 import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
+import 'package:personal_finance/constants.dart';
 
 class FlushbarSuccess {
   static void show({
@@ -59,7 +60,7 @@ class FlushbarWarning {
       duration: const Duration(seconds: 4),
       margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
       borderRadius: BorderRadius.circular(16),
-      backgroundColor: Colors.orange[800]!,
+      backgroundColor: warningColor,
     ).show(context);
   }
 }

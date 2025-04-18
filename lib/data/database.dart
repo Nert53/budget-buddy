@@ -187,16 +187,16 @@ class AppDatabase extends _$AppDatabase {
     return await transaction(() async {
       await into(currencyItems).insert(
         CurrencyItemsCompanion.insert(
-          name: 'Euro',
-          symbol: 'EUR',
-          exchangeRate: 25.2,
+          name: 'Czech Koruna',
+          symbol: 'CZK',
+          exchangeRate: 1.0,
         ),
       );
       await into(currencyItems).insert(
         CurrencyItemsCompanion.insert(
-          name: 'Czech Koruna',
-          symbol: 'CZK',
-          exchangeRate: 1.0,
+          name: 'Euro',
+          symbol: 'EUR',
+          exchangeRate: 25.2,
         ),
       );
       await into(currencyItems).insert(

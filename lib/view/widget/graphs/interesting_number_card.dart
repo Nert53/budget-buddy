@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:personal_finance/constants.dart';
 import 'package:personal_finance/utils/functions.dart';
 
 class InterestingNumberCardHorizontal extends StatelessWidget {
@@ -44,24 +45,28 @@ class InterestingNumberCardHorizontal extends StatelessWidget {
                 child: noData
                     ? Text(
                         'No data to display.',
-                        style: TextStyle(
-                            color: Theme.of(context).colorScheme.tertiary),
                       )
                     : Text(
                         '$prettyNumberValue $numberSymbol',
                         style: coloredStyle == 1
                             ? TextStyle(
                                 fontSize: largeScreen ? 38 : 28,
-                                color: Colors.green[700],
+                                color: successColor,
                               )
                             : coloredStyle == 2
                                 ? TextStyle(
                                     fontSize: largeScreen ? 38 : 28,
-                                    color: Colors.red[800],
+                                    color: warningColor,
                                   )
-                                : TextStyle(
-                                    fontSize: largeScreen ? 38 : 28,
-                                  ),
+                                : coloredStyle == 3
+                                    ? TextStyle(
+                                        fontSize: largeScreen ? 38 : 28,
+                                        color:
+                                            Theme.of(context).colorScheme.error,
+                                      )
+                                    : TextStyle(
+                                        fontSize: largeScreen ? 38 : 28,
+                                      ),
                       ),
               ),
             ),
@@ -73,11 +78,12 @@ class InterestingNumberCardHorizontal extends StatelessWidget {
 }
 
 class InterestingNumberCardVertical extends StatelessWidget {
-  final bool largeScreen;
-  final String numberValue;
+  final double numberValue;
   final String valueName;
   final String numberSymbol;
+  final bool largeScreen;
   final bool noData;
+  final int coloredStyle;
 
   const InterestingNumberCardVertical({
     super.key,
@@ -86,16 +92,12 @@ class InterestingNumberCardVertical extends StatelessWidget {
     required this.numberSymbol,
     required this.largeScreen,
     this.noData = false,
+    this.coloredStyle = 0,
   });
 
   @override
   Widget build(BuildContext context) {
-    String prettyNumberValue = '';
-    if (numberSymbol.compareTo('CZK') == 0) {
-      prettyNumberValue = amountPretty(double.parse(numberValue));
-    } else {
-      prettyNumberValue = numberValue;
-    }
+    String prettyNumberValue = amountPretty(numberValue);
 
     return Card(
       elevation: 2,
@@ -126,6 +128,16 @@ class InterestingNumberCardVertical extends StatelessWidget {
                         '$prettyNumberValue $numberSymbol',
                         style: TextStyle(
                           fontSize: largeScreen ? 44 : 32,
+                          color: coloredStyle == 1
+                              ? successColor
+                              : coloredStyle == 2
+                                  ? warningColor
+                                  : coloredStyle == 3
+                                      ? Theme.of(context).colorScheme.error
+                                      : Theme.of(context)
+                                          .textTheme
+                                          .bodyMedium
+                                          ?.color,
                         ),
                       ),
               ),
