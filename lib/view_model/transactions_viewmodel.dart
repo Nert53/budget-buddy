@@ -6,7 +6,6 @@ import 'package:personal_finance/model/transaction.dart';
 import 'package:personal_finance/utils/functions.dart';
 import 'package:personal_finance/view/constants/sort_order.dart';
 
-
 class TransactionViewModel extends ChangeNotifier {
   bool isLoading = true;
   final AppDatabase _db;
@@ -55,7 +54,7 @@ class TransactionViewModel extends ChangeNotifier {
   double amountMax = 0.0;
   double amountHigh = 0.0;
   SortOrder sortOrder = SortOrder.newest;
-  bool filtersApplied = false;
+  bool filtersApplied = true;
 
   TransactionViewModel(this._db) {
     _db.watchTransactions().listen((event) {
@@ -419,7 +418,6 @@ class TransactionViewModel extends ChangeNotifier {
   }
 
   void updateFilterCount(bool value, int caseNumber) {
-    filtersApplied = false;
     switch (caseNumber) {
       case 1:
         value ? categoryFilterCount++ : categoryFilterCount--;
@@ -435,6 +433,11 @@ class TransactionViewModel extends ChangeNotifier {
         break;
       default:
         break;
+    }
+    if (getFilterCount() == 0) {
+      filtersApplied = true;
+    } else {
+      filtersApplied = false;
     }
     notifyListeners();
   }

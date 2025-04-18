@@ -89,6 +89,35 @@ class DashboardScreen extends StatelessWidget {
                                           position: LegendPosition.left,
                                           overflowMode:
                                               LegendItemOverflowMode.scroll,
+                                          legendItemBuilder: (
+                                            String name,
+                                            dynamic series,
+                                            dynamic point,
+                                            int index,
+                                          ) {
+                                            return SizedBox(
+                                              child: Row(
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: <Widget>[
+                                                  Icon(
+                                                    viewModel
+                                                        .categoryGraphData[
+                                                            index]
+                                                        .icon,
+                                                    color: viewModel
+                                                        .categoryGraphData[
+                                                            index]
+                                                        .color,
+                                                    size: 18,
+                                                  ),
+                                                  SizedBox(
+                                                    width: 8,
+                                                  ),
+                                                  Text(name),
+                                                ],
+                                              ),
+                                            );
+                                          },
                                         ),
                                         series: <CircularSeries>[
                                           // Renders doughnut chart
@@ -284,7 +313,7 @@ class DashboardScreen extends StatelessWidget {
                       ? SpendingDetailExtension(
                           containerHeight: 160,
                           todaySpent: viewModel.todaySpent,
-                          predictedSpent: viewModel.predictedSpentThisMonth,
+                          predictedSpent: viewModel.predictedSpent,
                         )
                       : const SizedBox(),
                 ],
