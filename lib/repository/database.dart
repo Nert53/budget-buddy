@@ -19,7 +19,7 @@ class TransactionItems extends Table {
 class CategoryItems extends Table {
   TextColumn get id => text().clientDefault(() => ShortUid.create())();
   TextColumn get name => text().withLength(min: 1, max: 32)();
-  IntColumn get color => integer()();
+  IntColumn get colorCode => integer()();
   IntColumn get icon => integer()();
 }
 
@@ -48,21 +48,21 @@ class AppDatabase extends _$AppDatabase {
         },
       );
 
-  Stream<List<TransactionItem>> watchAllTransactions() {
+  Stream<List<TransactionItem>> watchTransactions() {
     return select(transactionItems).watch();
   }
 
-  Stream<List<CategoryItem>> watchAllCategories() {
+  Stream<List<CategoryItem>> watchCategories() {
     return select(categoryItems).watch();
   }
 
-  Stream<List<CurrencyItem>> watchAllCurrencies() {
+  Stream<List<CurrencyItem>> watchCurrencies() {
     return select(currencyItems).watch();
   }
 
-  // methods for operating with transactions
-  void addTransactionItem(TransactionItem item) async {
-    await into(transactionItems).insert(item);
+  // 01 methods for operating with transactions
+  Future<int> addTransaction(TransactionItemsCompanion transaction) async {
+    return await into(transactionItems).insert(transaction);
   }
 
   Future<int> deleteTransactionItem(TransactionItem item) async {
@@ -73,14 +73,14 @@ class AppDatabase extends _$AppDatabase {
     return await select(transactionItems).get();
   }
 
-  // methods for operating with categories
+  // 02 methods for operating with categories
   Future<List<CategoryItem>> getAllCategoryItems() async {
     return await select(categoryItems).get();
   }
 
-  void insertCategory(String name, int colorCode, int iconCode) async {
-    await into(categoryItems).insert(CategoryItem(
-        id: ShortUid.create(), name: name, color: colorCode, icon: iconCode));
+  Future<int> insertCategory(String name, int colorCode, int iconCode) async {
+    return await into(categoryItems).insert(CategoryItemsCompanion(
+        name: Value(name), color: Value(colorCode), icon: Value(iconCode)));
   }
 
   Future<bool> deleteCategoryHard(CategoryItem category) async {
@@ -112,7 +112,7 @@ class AppDatabase extends _$AppDatabase {
     }
   }
 
-  // methods for operating with currencies
+  // 03 methods for operating with currencies
   Future<List<CurrencyItem>> getAllCurrencyItems() async {
     return await select(currencyItems).get();
   }
@@ -122,13 +122,20 @@ class AppDatabase extends _$AppDatabase {
         .getSingle();
   }
 
-  Future<int> deleteCurrencyItem(CurrencyItem currency) async {
+  Future<int> insertCurrency(String name, String symbol, double exchangeRate) async {
+    return await into(currencyItems).insert(CurrencyItemsCompanion(
+        name: Value(name),
+        symbol: Value(symbol),
+        exchangeRate: Value(exchangeRate)));
+  }
+
+  Future<int> deleteCurrency(String currencyId) async {
     return await (delete(currencyItems)
-          ..where((tbl) => tbl.id.equals(currency.id)))
+          ..where((tbl) => tbl.id.equals(currencyId)))
         .go();
   }
 
-  // initial data insert
+  // 04 initial data insert
   Future<Null> initialCategoriesInsert() async {
     return await transaction(() async {
       await into(categoryItems).insert(

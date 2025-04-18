@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:personal_finance/data/database.dart';
-import 'package:personal_finance/theme/seed_colors.dart';
+import 'package:personal_finance/repository/database.dart';
+import 'package:personal_finance/theme/named_colors.dart';
 import 'package:personal_finance/theme/theme_provider.dart';
 import 'package:personal_finance/utils/functions.dart';
 import 'package:personal_finance/view/widget/dialogs/add_currency_dialog.dart';
@@ -160,7 +160,7 @@ class SettingsScreen extends StatelessWidget {
                             ? Icon(Icons.check)
                             : null,
                         onTap: () {
-                          context.read<ThemeProvider>().setColor(
+                          context.read<ThemeProvider>().setColorFromSeed(
                               NamedColor.values[index].color,
                               NamedColor.values[index].name);
                         },

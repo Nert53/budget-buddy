@@ -23,6 +23,7 @@ class GraphScreen extends StatelessWidget {
     return Consumer<GraphViewModel>(builder: (context, viewModel, child) {
       if (viewModel.isLoading) {
         return Center(
+          // todo loading skeleton
           child: CircularProgressIndicator(),
         );
       }

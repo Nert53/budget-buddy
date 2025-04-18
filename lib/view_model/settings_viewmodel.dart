@@ -8,7 +8,7 @@ import 'package:intl/intl.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'package:personal_finance/constants.dart';
-import 'package:personal_finance/data/database.dart';
+import 'package:personal_finance/repository/database.dart';
 import 'package:personal_finance/model/exchange_rate.dart';
 import 'package:personal_finance/model/transaction.dart';
 import 'package:sqlite3/sqlite3.dart';
@@ -21,10 +21,10 @@ class SettingsViewmodel extends ChangeNotifier {
 
   SettingsViewmodel(this._db) {
     isLoading = true;
-    _db.watchAllCurrencies().listen((event) {
+    _db.watchCurrencies().listen((event) {
       getAllData();
     });
-    _db.watchAllCategories().listen((event) {
+    _db.watchCategories().listen((event) {
       getAllData();
     });
 
@@ -39,7 +39,7 @@ class SettingsViewmodel extends ChangeNotifier {
   }
 
   void getCurrencies() async {
-    currencies = await _db.select(_db.currencyItems).get();
+    currencies = await _db.getAllCurrencyItems();
     notifyListeners();
   }
 
@@ -57,8 +57,7 @@ class SettingsViewmodel extends ChangeNotifier {
   }
 
   Future<double> getExchangeRateFromInternet(String wantedCurrencyCode) async {
-    http.Response response = await http.get(Uri.parse(
-        'https://www.cnb.cz/cs/financni-trhy/devizovy-trh/kurzy-devizoveho-trhu/kurzy-devizoveho-trhu/denni_kurz.txt'));
+    http.Response response = await http.get(Uri.parse(exchangeRateUrl));
 
     if (response.statusCode == 200) {
       String data = response.body;
@@ -98,21 +97,13 @@ class SettingsViewmodel extends ChangeNotifier {
   }
 
   void addCurrency(String name, String symbol, double exchangeRate) async {
-    await _db.into(_db.currencyItems).insert(CurrencyItemsCompanion(
-        name: Value(name),
-        symbol: Value(symbol),
-        exchangeRate: Value(exchangeRate)));
+    await _db.insertCurrency(name, symbol, exchangeRate);
 
     notifyListeners();
   }
 
   void deleteCurrency(CurrencyItem currencyItem) async {
-    await _db.transaction(() async {
-      await _db.deleteCurrencyItem(currencyItem);
-      await (_db.delete(_db.transactionItems)
-            ..where((t) => t.currency.equals(currencyItem.id)))
-          .go();
-    });
+    await _db.deleteCurrency(currencyItem.id);
 
     notifyListeners();
   }

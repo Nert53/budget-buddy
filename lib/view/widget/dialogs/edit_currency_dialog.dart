@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:personal_finance/data/database.dart';
+import 'package:personal_finance/repository/database.dart';
 import 'package:personal_finance/utils/functions.dart';
 import 'package:personal_finance/view/widget/flushbars.dart';
 import 'package:personal_finance/view_model/settings_viewmodel.dart';
@@ -35,8 +35,29 @@ class _EditCurrencyDialogState extends State<EditCurrencyDialog> {
               showDialog(
                   context: context,
                   builder: (_) => AlertDialog(
+                        title: Text('Delete currency'),
                         content: Text(
-                            'Are you sure you want to delete this currency?'),
+                            'Are you sure you want to delete currency ${widget.currentCurrency.name}? All transactions with this currency will also be deleted.'),
+                        actions: [
+                          TextButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            child: Text('Cancel'),
+                          ),
+                          FilledButton(
+                            onPressed: () {
+                              widget.viewModel
+                                  .deleteCurrency(widget.currentCurrency);
+                              Navigator.pop(context);
+                            },
+                            style: ButtonStyle(
+                              backgroundColor: WidgetStateProperty.all(
+                                  Theme.of(context).colorScheme.error),
+                            ),
+                            child: Text('Delete'),
+                          )
+                        ],
                       )),
               //widget.viewModel.deleteCurrency(widget.currentCurrency),
               //Navigator.pop(context),

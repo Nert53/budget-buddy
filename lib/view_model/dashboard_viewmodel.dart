@@ -1,6 +1,6 @@
 import 'package:drift/drift.dart';
 import 'package:flutter/material.dart';
-import 'package:personal_finance/data/database.dart';
+import 'package:personal_finance/repository/database.dart';
 import 'package:personal_finance/model/category_spent_graph.dart';
 import 'package:personal_finance/model/transaction.dart';
 import 'package:personal_finance/utils/functions.dart';
@@ -12,7 +12,7 @@ class DashboardViewmodel extends ChangeNotifier {
   double accountBalance = 0.0;
   double thisMonthSpent = 0.0;
   double todaySpent = 0.0;
-  double predictedSpentThisMonth = 0.0;
+  double predictedSpent = 0.0;
   List<Transaction> lastTransactions = [];
   List<CategorySpentGraph> categoryGraphData = [];
 
@@ -22,13 +22,13 @@ class DashboardViewmodel extends ChangeNotifier {
   int numOfLastTransactions = 5;
 
   DashboardViewmodel(this._db) {
-    _db.watchAllTransactions().listen((event) {
+    _db.watchTransactions().listen((event) {
       getAllData();
     });
-    _db.watchAllCategories().listen((event) {
+    _db.watchCategories().listen((event) {
       getAllData();
     });
-    _db.watchAllCurrencies().listen((event) {
+    _db.watchCurrencies().listen((event) {
       getAllData();
     });
 
@@ -36,6 +36,7 @@ class DashboardViewmodel extends ChangeNotifier {
   }
 
   void getAllData() {
+    isLoading = true;
     getAccountBalance();
     getLastNTransactions(numOfLastTransactions);
     getThisMonthSpent();
@@ -46,9 +47,8 @@ class DashboardViewmodel extends ChangeNotifier {
   }
 
   void getAccountBalance() async {
-    List<TransactionItem> allTransactions =
-        await _db.select(_db.transactionItems).get();
-    accountBalance = allTransactions.fold(
+    final transactionItems = await _db.getAllTransactionItems();
+    accountBalance = transactionItems.fold<double>(
       0,
       (previousValue, element) => element.isOutcome
           ? previousValue - element.amountInCZK
@@ -147,7 +147,7 @@ class DashboardViewmodel extends ChangeNotifier {
       );
     });
 
-    predictedSpentThisMonth = tillNowSpent / currrentDate.day * 30;
+    predictedSpent = tillNowSpent / currrentDate.day * 30;
     notifyListeners();
   }
 
@@ -155,7 +155,7 @@ class DashboardViewmodel extends ChangeNotifier {
     final query = _db.selectOnly(_db.transactionItems)
       ..addColumns([
         _db.categoryItems.name, // Category name
-        _db.categoryItems.color, // Category color
+        _db.categoryItems.colorCode, // Category color
         _db.categoryItems.icon, // Category icon
         _db.categoryItems.id, // Category ID
         _db.transactionItems.isOutcome,
@@ -171,7 +171,7 @@ class DashboardViewmodel extends ChangeNotifier {
       ..groupBy([
         _db.transactionItems.category,
         _db.categoryItems.name,
-        _db.categoryItems.color,
+        _db.categoryItems.colorCode,
         _db.categoryItems.icon,
         _db.categoryItems.id
       ]);
@@ -182,7 +182,7 @@ class DashboardViewmodel extends ChangeNotifier {
         id: row.read<String>(_db.categoryItems.id) ?? '',
         name: row.read<String>(_db.categoryItems.name) ?? '',
         color: convertColorCodeToColor(
-            row.read<int>(_db.categoryItems.color) ?? 0),
+            row.read<int>(_db.categoryItems.colorCode) ?? 0),
         icon: convertIconCodePointToIcon(
             row.read<int>(_db.categoryItems.icon) ?? 0),
         amount: row.read<double>(_db.transactionItems.amountInCZK.sum()) ?? 0,

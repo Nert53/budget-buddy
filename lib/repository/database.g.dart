@@ -26,7 +26,7 @@ class $CategoryItemsTable extends CategoryItems
       requiredDuringInsert: true);
   static const VerificationMeta _colorMeta = const VerificationMeta('color');
   @override
-  late final GeneratedColumn<int> color = GeneratedColumn<int>(
+  late final GeneratedColumn<int> colorCode = GeneratedColumn<int>(
       'color', aliasedName, false,
       type: DriftSqlType.int, requiredDuringInsert: true);
   static const VerificationMeta _iconMeta = const VerificationMeta('icon');
@@ -35,7 +35,7 @@ class $CategoryItemsTable extends CategoryItems
       'icon', aliasedName, false,
       type: DriftSqlType.int, requiredDuringInsert: true);
   @override
-  List<GeneratedColumn> get $columns => [id, name, color, icon];
+  List<GeneratedColumn> get $columns => [id, name, colorCode, icon];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
@@ -56,8 +56,8 @@ class $CategoryItemsTable extends CategoryItems
       context.missing(_nameMeta);
     }
     if (data.containsKey('color')) {
-      context.handle(
-          _colorMeta, color.isAcceptableOrUnknown(data['color']!, _colorMeta));
+      context.handle(_colorMeta,
+          colorCode.isAcceptableOrUnknown(data['color']!, _colorMeta));
     } else if (isInserting) {
       context.missing(_colorMeta);
     }
@@ -1044,7 +1044,7 @@ class $$CategoryItemsTableFilterComposer
       column: $table.name, builder: (column) => ColumnFilters(column));
 
   ColumnFilters<int> get color => $composableBuilder(
-      column: $table.color, builder: (column) => ColumnFilters(column));
+      column: $table.colorCode, builder: (column) => ColumnFilters(column));
 
   ColumnFilters<int> get icon => $composableBuilder(
       column: $table.icon, builder: (column) => ColumnFilters(column));
@@ -1087,7 +1087,7 @@ class $$CategoryItemsTableOrderingComposer
       column: $table.name, builder: (column) => ColumnOrderings(column));
 
   ColumnOrderings<int> get color => $composableBuilder(
-      column: $table.color, builder: (column) => ColumnOrderings(column));
+      column: $table.colorCode, builder: (column) => ColumnOrderings(column));
 
   ColumnOrderings<int> get icon => $composableBuilder(
       column: $table.icon, builder: (column) => ColumnOrderings(column));
@@ -1109,7 +1109,7 @@ class $$CategoryItemsTableAnnotationComposer
       $composableBuilder(column: $table.name, builder: (column) => column);
 
   GeneratedColumn<int> get color =>
-      $composableBuilder(column: $table.color, builder: (column) => column);
+      $composableBuilder(column: $table.colorCode, builder: (column) => column);
 
   GeneratedColumn<int> get icon =>
       $composableBuilder(column: $table.icon, builder: (column) => column);

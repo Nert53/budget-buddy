@@ -2,7 +2,7 @@
 // ignore_for_file: deprecated_member_use
 
 import 'package:flutter/material.dart';
-import 'package:personal_finance/data/database.dart';
+import 'package:personal_finance/repository/database.dart';
 import 'package:personal_finance/utils/functions.dart';
 import 'package:personal_finance/view/widget/dialogs/pick_color_dialog.dart';
 import 'package:personal_finance/view/widget/dialogs/pick_icon_dialog.dart';
