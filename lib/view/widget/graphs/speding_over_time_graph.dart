@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:personal_finance/constants.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
 class SpendingOverTimeGraph extends StatelessWidget {
@@ -27,8 +28,8 @@ class SpendingOverTimeGraph extends StatelessWidget {
         majorGridLines: MajorGridLines(width: 0),
         edgeLabelPlacement: EdgeLabelPlacement.shift,
       ),
-      primaryYAxis: const NumericAxis(
-        labelFormat: '{value} CZK',
+      primaryYAxis: NumericAxis(
+        labelFormat: mediumScreen ? '{amountvalue} CZK' : '{value}',
         axisLine: AxisLine(width: 0),
         majorTickLines: MajorTickLines(size: 0),
       ),

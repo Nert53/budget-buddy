@@ -19,9 +19,11 @@ class HighSpendingCategoriesGraph extends StatelessWidget {
             color: Theme.of(context).textTheme.titleMedium?.color,
           )),
       plotAreaBorderWidth: 0,
-      primaryXAxis: CategoryAxis(),
+      primaryXAxis: CategoryAxis(
+        labelIntersectAction: AxisLabelIntersectAction.multipleRows,
+      ),
       primaryYAxis: NumericAxis(
-        labelFormat: mediumScreen ? '{value} CZK' : '{value}',
+        labelFormat: mediumScreen ? '{amountvalue} CZK' : '{value}',
       ),
       series: <ColumnSeries>[
         ColumnSeries(
@@ -31,7 +33,7 @@ class HighSpendingCategoriesGraph extends StatelessWidget {
           pointColorMapper: (data, _) => data.color,
           dataLabelSettings: DataLabelSettings(
             isVisible: true,
-            labelAlignment: ChartDataLabelAlignment.top,
+            labelAlignment: ChartDataLabelAlignment.auto,
           ),
           borderRadius: BorderRadius.vertical(
             top: Radius.circular(12),

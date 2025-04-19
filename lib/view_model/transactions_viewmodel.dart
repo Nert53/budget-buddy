@@ -365,6 +365,7 @@ class TransactionViewModel extends ChangeNotifier {
     currencyFilterCount = 0;
     typeFilterCount = 0;
     amountFilterActive = false;
+    filtersApplied = true;
 
     categoriesFilter.clear();
     currenciesFilter.clear();

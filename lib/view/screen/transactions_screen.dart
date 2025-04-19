@@ -139,11 +139,10 @@ class TransactionScreen extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('${viewModel.transactions.length} transactions'),
                 viewModel.filtersApplied
-                    ? const SizedBox()
+                    ? Text('${viewModel.transactions.length} transactions')
                     : Text(
-                        "Selected filters are not applied!",
+                        "Filters are not applied!",
                         style: TextStyle(
                             color: warningColor, fontWeight: FontWeight.bold),
                       ),
@@ -169,7 +168,7 @@ class TransactionScreen extends StatelessWidget {
                               Theme.of(context).colorScheme.onPrimary)),
                       icon: Icon(Icons.filter_alt_outlined,
                           color: Theme.of(context).colorScheme.onPrimary),
-                      label: Text('Filter')),
+                      label: Text('Filters')),
                 ),
               ],
             ),

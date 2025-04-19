@@ -32,6 +32,7 @@ class _IconPickDialogState extends State<IconPickDialog> {
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
+    bool mediumScreen = screenWidth > mediumScreenWidth;
 
     return AlertDialog(
       title: Text('Pick an icon'),
@@ -50,18 +51,18 @@ class _IconPickDialogState extends State<IconPickDialog> {
         ),
       ],
       content: SizedBox(
-        width: screenWidth > mediumScreenWidth ? 400 : double.maxFinite,
-        height: screenWidth > mediumScreenWidth ? 400 : double.maxFinite,
+        width: mediumScreen ? 400 : double.maxFinite,
+        height: mediumScreen ? 400 : 400,
         child: GridView.builder(
             shrinkWrap: true,
-            gridDelegate:
-                SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 5),
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: mediumScreen ? 5 : 4),
             itemCount: allCategoryIcons.length,
             itemBuilder: (context, index) {
               IconData currentIcon = allCategoryIcons[index];
 
               if (index == selecteedIconIndex) {
-                return IconButton.filled(
+                return IconButton.filledTonal(
                   isSelected: index == selecteedIconIndex,
                   onPressed: () {
                     changeSelectedIcon(currentIcon, index);

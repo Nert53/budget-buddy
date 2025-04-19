@@ -130,24 +130,26 @@ class DashboardScreen extends StatelessWidget {
                                                   (CategorySpentGraph data, _) =>
                                                       data.color,
                                               dataLabelMapper:
-                                                  (CategorySpentGraph data,
-                                                          index) =>
+                                                  (CategorySpentGraph data, index) =>
                                                       data.name,
                                               dataLabelSettings: DataLabelSettings(
-                                                  labelPosition: screenWidth >
-                                                          largeScreenWidth
-                                                      ? ChartDataLabelPosition
-                                                          .outside
-                                                      : ChartDataLabelPosition
-                                                          .inside,
+                                                  textStyle: TextStyle(
+                                                      fontSize: mediumScreen
+                                                          ? 12
+                                                          : 11),
+                                                  labelPosition:
+                                                      screenWidth > largeScreenWidth
+                                                          ? ChartDataLabelPosition
+                                                              .outside
+                                                          : ChartDataLabelPosition
+                                                              .inside,
                                                   useSeriesColor: true,
                                                   isVisible: true),
                                               xValueMapper:
                                                   (CategorySpentGraph data, _) =>
                                                       data.name,
                                               yValueMapper:
-                                                  (CategorySpentGraph data,
-                                                          _) =>
+                                                  (CategorySpentGraph data, _) =>
                                                       data.amount)
                                         ]),
                                   ),
@@ -386,97 +388,85 @@ class DashboardScreen extends StatelessWidget {
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          currentTransaction.note.isEmpty
-                                              ? Text(
-                                                  '(No note)',
-                                                  style: const TextStyle(
-                                                      fontSize: 15,
-                                                      color: Colors.grey),
-                                                )
-                                              : currentTransaction.note.length >
-                                                      maxVisibleNoteLength
-                                                  ? Text.rich(
+                                      currentTransaction.note.isEmpty
+                                          ? Text(
+                                              '(No note)',
+                                              style: const TextStyle(
+                                                  fontSize: 15,
+                                                  color: Colors.grey),
+                                            )
+                                          : currentTransaction.note.length >
+                                                  maxVisibleNoteLength
+                                              ? Text.rich(
+                                                  TextSpan(
+                                                    children: [
                                                       TextSpan(
-                                                        children: [
-                                                          TextSpan(
-                                                            text: currentTransaction
-                                                                .note
-                                                                .substring(0,
-                                                                    maxVisibleNoteLength),
-                                                            style: TextStyle(
-                                                                fontSize: 14,
-                                                                color: Theme.of(
-                                                                        context)
-                                                                    .textTheme
-                                                                    .bodyMedium
-                                                                    ?.color,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold),
-                                                          ),
-                                                          TextSpan(
-                                                            text: "...more",
-                                                            style: TextStyle(
-                                                              fontSize: 14,
-                                                              color: Colors
-                                                                  .grey[700],
-                                                            ),
-                                                          )
-                                                        ],
+                                                        text: currentTransaction
+                                                            .note
+                                                            .substring(0,
+                                                                maxVisibleNoteLength),
+                                                        style: TextStyle(
+                                                            fontSize: 14,
+                                                            color: Theme.of(
+                                                                    context)
+                                                                .textTheme
+                                                                .bodyMedium
+                                                                ?.color,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .bold),
                                                       ),
-                                                    )
-                                                  : Text(
-                                                      currentTransaction.note,
-                                                      style: TextStyle(
+                                                      TextSpan(
+                                                        text: "...more",
+                                                        style: TextStyle(
                                                           fontSize: 14,
-                                                          fontWeight:
-                                                              FontWeight.bold),
-                                                    ),
-                                          Text(
-                                            '${dateFormat.format(currentTransaction.date)} | ${timeFormat.format(currentTransaction.date)}',
-                                            style: TextStyle(
-                                                fontSize: 12,
-                                                color: Colors.grey[700]),
-                                          )
-                                        ],
-                                      ),
+                                                          color:
+                                                              Colors.grey[700],
+                                                        ),
+                                                      )
+                                                    ],
+                                                  ),
+                                                )
+                                              : Text(
+                                                  currentTransaction.note,
+                                                  style: TextStyle(
+                                                      fontSize: 14,
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                ),
+                                      Text(
+                                        '${dateFormat.format(currentTransaction.date)} | ${timeFormat.format(currentTransaction.date)}',
+                                        style: TextStyle(
+                                            fontSize: 12,
+                                            color: Colors.grey[700]),
+                                      )
                                     ],
                                   ),
                                   leading: Icon(currentTransaction.categoryIcon,
                                       color: currentTransaction.categoryColor),
-                                  trailing: Column(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Row(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            currentTransaction.isOutcome
-                                                ? const Icon(
-                                                    Icons.arrow_drop_down,
-                                                    color: Colors.red,
-                                                  )
-                                                : Icon(
-                                                    Icons.arrow_drop_up,
-                                                    color: Colors.green[700],
-                                                  ),
-                                            Text(
-                                              '${amountPretty(currentTransaction.amount)} ${currentTransaction.currencySymbol}',
-                                              style: TextStyle(
-                                                  color: currentTransaction
-                                                          .isOutcome
+                                  trailing: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        currentTransaction.isOutcome
+                                            ? const Icon(
+                                                Icons.arrow_drop_down,
+                                                color: Colors.red,
+                                              )
+                                            : Icon(
+                                                Icons.arrow_drop_up,
+                                                color: Colors.green[700],
+                                              ),
+                                        Text(
+                                          '${amountPretty(currentTransaction.amount)} ${currentTransaction.currencySymbol}',
+                                          style: TextStyle(
+                                              color:
+                                                  currentTransaction.isOutcome
                                                       ? Colors.red
                                                       : Colors.green[700],
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.bold),
-                                            ),
-                                          ]),
-                                    ],
-                                  ),
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                      ]),
                                 );
                               }),
                     ),

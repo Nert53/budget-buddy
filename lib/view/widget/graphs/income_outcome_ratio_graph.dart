@@ -22,7 +22,6 @@ class IncomeOutcomeRatioGraph extends StatelessWidget {
     return GridView(
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: mediumScreen ? 2 : 1,
-        childAspectRatio: 1.3,
         crossAxisSpacing: mediumScreen ? 16.0 : 0,
         mainAxisSpacing: mediumScreen ? 10.0 : 0,
       ),
@@ -33,7 +32,6 @@ class IncomeOutcomeRatioGraph extends StatelessWidget {
       children: [
         Card(
           elevation: 2,
-          margin: EdgeInsets.symmetric(vertical: 6.0),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(15.0),
           ),
@@ -55,6 +53,7 @@ class IncomeOutcomeRatioGraph extends StatelessWidget {
                         fontSize: 16,
                         color: Theme.of(context).textTheme.titleMedium?.color,
                       )),
+                  margin: EdgeInsets.only(top: 12),
                   legend: Legend(
                     isVisible: largeScreen,
                     overflowMode: LegendItemOverflowMode.wrap,
@@ -91,6 +90,8 @@ class IncomeOutcomeRatioGraph extends StatelessWidget {
                             "${data.name} (${amountPretty(data.amount)} CZK)",
                         dataLabelSettings: DataLabelSettings(
                             labelPosition: ChartDataLabelPosition.inside,
+                            textStyle:
+                                TextStyle(fontSize: mediumScreen ? 12 : 11),
                             useSeriesColor: true,
                             isVisible: true),
                         xValueMapper: (CategorySpentGraph data, _) => data.name,
@@ -123,6 +124,7 @@ class IncomeOutcomeRatioGraph extends StatelessWidget {
                         fontSize: 16,
                         color: Theme.of(context).textTheme.titleMedium?.color,
                       )),
+                  margin: EdgeInsets.only(top: 12),
                   legend: Legend(
                     isVisible: largeScreen,
                     overflowMode: LegendItemOverflowMode.wrap,
@@ -159,6 +161,8 @@ class IncomeOutcomeRatioGraph extends StatelessWidget {
                             "${data.name} (${amountPretty(data.amount)} CZK)",
                         dataLabelSettings: DataLabelSettings(
                             labelPosition: ChartDataLabelPosition.inside,
+                            textStyle:
+                                TextStyle(fontSize: mediumScreen ? 12 : 11),
                             useSeriesColor: true,
                             isVisible: true),
                         xValueMapper: (CategorySpentGraph data, _) => data.name,

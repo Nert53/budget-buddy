@@ -580,9 +580,9 @@ class AddWindow extends StatelessWidget {
                         return;
                       }
 
+                      Navigator.pop(context);
                       viewModel.saveTransaction();
                       viewModel.clearFields();
-                      Navigator.pop(context);
                     },
                     child: const Text('Save Transaction')),
               ],
