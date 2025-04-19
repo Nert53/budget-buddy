@@ -2,15 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:personal_finance/view_model/reports_viewmodel.dart';
 import 'dart:math';
 
-class GraphSelectDialog extends StatefulWidget {
+class ReportManagerDialog extends StatefulWidget {
   final ReportsViewModel viewModel;
-  const GraphSelectDialog({super.key, required this.viewModel});
+  const ReportManagerDialog({super.key, required this.viewModel});
 
   @override
-  State<GraphSelectDialog> createState() => _GraphSelectDialogState();
+  State<ReportManagerDialog> createState() => _ReportManagerDialogState();
 }
 
-class _GraphSelectDialogState extends State<GraphSelectDialog> {
+class _ReportManagerDialogState extends State<ReportManagerDialog> {
   @override
   void initState() {
     super.initState();
@@ -25,7 +25,7 @@ class _GraphSelectDialogState extends State<GraphSelectDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text('Manage graphs'),
+      title: Text('Manage reports'),
       actions: [
         TextButton(
           onPressed: () {

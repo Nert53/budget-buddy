@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:personal_finance/model/category_spent_graph.dart';
+import 'package:personal_finance/utils/functions.dart';
 import 'package:personal_finance/view/widget/graphs/nothing_to_display.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
@@ -87,7 +88,7 @@ class IncomeOutcomeRatioGraph extends StatelessWidget {
                         pointColorMapper: (CategorySpentGraph data, _) =>
                             data.color,
                         dataLabelMapper: (CategorySpentGraph data, index) =>
-                            data.name,
+                            "${data.name} (${amountPretty(data.amount)} CZK)",
                         dataLabelSettings: DataLabelSettings(
                             labelPosition: ChartDataLabelPosition.inside,
                             useSeriesColor: true,
@@ -155,7 +156,7 @@ class IncomeOutcomeRatioGraph extends StatelessWidget {
                         pointColorMapper: (CategorySpentGraph data, _) =>
                             data.color,
                         dataLabelMapper: (CategorySpentGraph data, index) =>
-                            data.name,
+                            "${data.name} (${amountPretty(data.amount)} CZK)",
                         dataLabelSettings: DataLabelSettings(
                             labelPosition: ChartDataLabelPosition.inside,
                             useSeriesColor: true,

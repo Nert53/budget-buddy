@@ -30,6 +30,9 @@ class TransactionScreen extends StatelessWidget {
       DateTime endOfWeek = viewModel.currentDate
           .add(Duration(days: 7 - viewModel.currentDate.weekday - 1));
 
+      bool mediumScreen = MediaQuery.of(context).size.width > mediumScreenWidth;
+      int maxVisibleNoteLength = mediumScreen ? 40 : 20;
+
       return Column(
         children: [
           Padding(
@@ -252,15 +255,18 @@ class TransactionScreen extends StatelessWidget {
                                                 fontSize: 15,
                                                 color: Colors.grey),
                                           )
-                                        : currentTransaction.note.length > 20
-                                            ? RichText(
-                                                text: TextSpan(
+                                        : currentTransaction.note.length >
+                                                maxVisibleNoteLength
+                                            ? Text.rich(
+                                                TextSpan(
                                                   children: [
                                                     TextSpan(
                                                       text: currentTransaction
                                                           .note
-                                                          .substring(0, 20),
+                                                          .substring(0,
+                                                              maxVisibleNoteLength),
                                                       style: TextStyle(
+                                                          fontSize: 14,
                                                           color:
                                                               Theme.of(context)
                                                                   .textTheme
@@ -272,6 +278,7 @@ class TransactionScreen extends StatelessWidget {
                                                     TextSpan(
                                                       text: "...more",
                                                       style: TextStyle(
+                                                        fontSize: 14,
                                                         color: Colors.grey[700],
                                                       ),
                                                     )

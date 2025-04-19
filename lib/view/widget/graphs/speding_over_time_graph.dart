@@ -42,8 +42,11 @@ class SpendingOverTimeGraph extends StatelessWidget {
           dataSource: data,
           xValueMapper: (data, _) => data.key,
           yValueMapper: (data, _) => data.value,
-          color: Theme.of(context).colorScheme.primary.withAlpha(
-              (0.9 * 255).toInt()), // makes the color bit transparent
+          color: Theme.of(context)
+              .colorScheme
+              .primary
+              .withAlpha((0.9 * 255).toInt()),
+          // makes the color bit transparent
         ),
       ],
     );

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:personal_finance/constants.dart';
-import 'package:personal_finance/view/widget/dialogs/select_graph_dialog.dart';
+import 'package:personal_finance/view/widget/dialogs/reports_manager_graph.dart';
 import 'package:personal_finance/view/widget/graphs/income_outcome_ratio_graph.dart';
 import 'package:personal_finance/view/widget/graphs/interesting_number_card.dart';
 import 'package:personal_finance/view/widget/graphs/nothing_to_display.dart';
@@ -328,10 +328,10 @@ class ReportsScreen extends StatelessWidget {
                         showDialog(
                             context: context,
                             builder: (context) {
-                              return GraphSelectDialog(viewModel: viewModel);
+                              return ReportManagerDialog(viewModel: viewModel);
                             });
                       },
-                      label: Text('Manage graphs'),
+                      label: Text('Manage reports'),
                       icon: Icon(
                         Icons.edit,
                       ),

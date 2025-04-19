@@ -18,6 +18,8 @@ class DashboardScreen extends StatelessWidget {
     final double screenWidth = MediaQuery.of(context).size.width;
     double contentWidth = screenWidth -
         ((screenWidth > mediumScreenWidth) ? (navigationRailWidth + 32) : 32);
+    bool mediumScreen = screenWidth > mediumScreenWidth;
+    int maxVisibleNoteLength = mediumScreen ? 40 : 20;
 
     return Consumer<DashboardViewmodel>(builder: (context, viewModel, child) {
       return Skeletonizer(
@@ -27,7 +29,7 @@ class DashboardScreen extends StatelessWidget {
           child: Column(
             children: [
               SizedBox(
-                height: 16.0,
+                height: 12.0,
               ),
               Row(
                 children: [
@@ -396,17 +398,17 @@ class DashboardScreen extends StatelessWidget {
                                                       color: Colors.grey),
                                                 )
                                               : currentTransaction.note.length >
-                                                      20
-                                                  ? RichText(
-                                                      text: TextSpan(
+                                                      maxVisibleNoteLength
+                                                  ? Text.rich(
+                                                      TextSpan(
                                                         children: [
                                                           TextSpan(
-                                                            text:
-                                                                currentTransaction
-                                                                    .note
-                                                                    .substring(
-                                                                        0, 20),
+                                                            text: currentTransaction
+                                                                .note
+                                                                .substring(0,
+                                                                    maxVisibleNoteLength),
                                                             style: TextStyle(
+                                                                fontSize: 14,
                                                                 color: Theme.of(
                                                                         context)
                                                                     .textTheme
@@ -419,6 +421,7 @@ class DashboardScreen extends StatelessWidget {
                                                           TextSpan(
                                                             text: "...more",
                                                             style: TextStyle(
+                                                              fontSize: 14,
                                                               color: Colors
                                                                   .grey[700],
                                                             ),

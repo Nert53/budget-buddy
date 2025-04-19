@@ -10,7 +10,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 class ReportsViewModel extends ChangeNotifier {
   final AppDatabase _db;
   bool isLoading = true;
-  final int numOfTopCategories = 5;
+  int countHighestSpendingCategories = 5;
   DateTimeRange selectedDateRange = DateTimeRange(
       start: DateTime.now().subtract(Duration(days: 30)), end: DateTime.now());
   List<GraphType> allGraphs = [
@@ -144,6 +144,7 @@ class ReportsViewModel extends ChangeNotifier {
         _db.categoryItems.icon,
         _db.categoryItems.id
       ]);
+    query.limit(countHighestSpendingCategories);
     var result = await query.get();
 
     final List<CategorySpentGraph> categorySpendings = result.map((row) {
@@ -158,7 +159,7 @@ class ReportsViewModel extends ChangeNotifier {
       );
     }).toList();
     categorySpendings.sort((a, b) => b.amount.compareTo(a.amount));
-    categorySpendings.take(numOfTopCategories);
+    categorySpendings.take(countHighestSpendingCategories);
 
     highestSpendingCategoriesData.clear();
     for (var category in categorySpendings) {
