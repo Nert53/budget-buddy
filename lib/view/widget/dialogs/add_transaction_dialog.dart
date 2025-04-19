@@ -258,7 +258,7 @@ class AddWindowFullScreen extends StatelessWidget {
                 onTap: () async {
                   TimeOfDay? time = await showTimePicker(
                       context: context, initialTime: TimeOfDay.now());
-                  if (time != null) {
+                  if (time != null && context.mounted) {
                     viewModel.timeController.text = time.format(context);
                   }
                 },
@@ -534,7 +534,7 @@ class AddWindow extends StatelessWidget {
                       onTap: () async {
                         TimeOfDay? time = await showTimePicker(
                             context: context, initialTime: TimeOfDay.now());
-                        if (time != null) {
+                        if (time != null && context.mounted) {
                           viewModel.timeController.text = time.format(context);
                         }
                       },
