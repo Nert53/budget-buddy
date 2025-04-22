@@ -307,20 +307,20 @@ class TransactionScreen extends StatelessWidget {
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
                                       currentTransaction.isOutcome
-                                          ? const Icon(
+                                          ? Icon(
                                               Icons.arrow_drop_down,
-                                              color: Colors.red,
+                                              color: outcomeColor,
                                             )
                                           : Icon(
                                               Icons.arrow_drop_up,
-                                              color: Colors.green[700],
+                                              color: incomeColor,
                                             ),
                                       Text(
                                         '${amountPretty(viewModel.transactions[index].amount)} ${viewModel.transactions[index].currencySymbol}',
                                         style: TextStyle(
                                             color: currentTransaction.isOutcome
-                                                ? Colors.red
-                                                : Colors.green[700],
+                                                ? outcomeColor
+                                                : incomeColor,
                                             fontSize: 14),
                                       ),
                                     ])),

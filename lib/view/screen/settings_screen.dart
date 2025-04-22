@@ -7,6 +7,7 @@ import 'package:personal_finance/utils/functions.dart';
 import 'package:personal_finance/view/widget/dialogs/add_currency_dialog.dart';
 import 'package:personal_finance/view/widget/dialogs/edit_currency_dialog.dart';
 import 'package:personal_finance/view/widget/dialogs/export_transactions_dialog.dart';
+import 'package:personal_finance/view/widget/flushbars.dart';
 import 'package:personal_finance/view_model/settings_viewmodel.dart';
 import 'package:provider/provider.dart';
 
@@ -207,8 +208,21 @@ class SettingsScreen extends StatelessWidget {
                           child: Text('Cancel'),
                         ),
                         FilledButton(
-                          onPressed: () {
-                            Navigator.of(context).pop();
+                          onPressed: () async {
+                            int deletedLines =
+                                await viewModel.deleteAllTransactions();
+                            if (context.mounted) Navigator.of(context).pop();
+                            if (deletedLines > 0 && context.mounted) {
+                              FlushbarSuccess.show(
+                                context: context,
+                                message: 'Deleted $deletedLines transactions.',
+                              );
+                            } else if (context.mounted) {
+                              FlushbarWarning.show(
+                                context: context,
+                                message: 'No transactions were deleted.',
+                              );
+                            }
                           },
                           style: ButtonStyle(
                             backgroundColor: WidgetStateProperty.all(

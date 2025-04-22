@@ -10,9 +10,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 class ReportsViewModel extends ChangeNotifier {
   final AppDatabase _db;
   bool isLoading = true;
-  int countHighestSpendingCategories = 5;
+
   DateTimeRange selectedDateRange = DateTimeRange(
       start: DateTime.now().subtract(Duration(days: 30)), end: DateTime.now());
+
+  // List of avaliavable graphs
   List<GraphType> allGraphs = [
     GraphType(
         id: 1,
@@ -45,7 +47,10 @@ class ReportsViewModel extends ChangeNotifier {
         icon: Icons.swap_vert_circle_rounded,
         selected: false),
   ];
+
+  // Structures for graph data
   List<CategorySpentGraph> highestSpendingCategoriesData = [];
+  int countHighestSpendingCategories = 5;
   List<MapEntry<DateTime, double>> spendingOverTimeData = [];
   List<CategorySpentGraph> incomeCategories = [];
   List<CategorySpentGraph> outcomeCategories = [];
@@ -54,7 +59,7 @@ class ReportsViewModel extends ChangeNotifier {
   double savedFromIncome = 0;
   double totalIncome = 0;
   double totalOutcome = 0;
-  double balance = 0;
+  double accountBalance = 0;
 
   ReportsViewModel(this._db) {
     _db.watchTransactions().listen((event) {
@@ -87,10 +92,18 @@ class ReportsViewModel extends ChangeNotifier {
     isLoading = false;
   }
 
+  // Set default visible graphs to be ready in shared preferences
   void setDefaultVisibleGraphs() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     for (var graph in allGraphs) {
       prefs.setBool(graph.name, graph.selected);
+    }
+  }
+
+  void loadVisibleGraphs() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    for (var graph in allGraphs) {
+      graph.selected = prefs.getBool(graph.name) ?? false;
     }
   }
 
@@ -102,13 +115,6 @@ class ReportsViewModel extends ChangeNotifier {
 
     getAllData();
     notifyListeners();
-  }
-
-  void loadVisibleGraphs() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    for (var graph in allGraphs) {
-      graph.selected = prefs.getBool(graph.name) ?? false;
-    }
   }
 
   void changeSelectedDateRange(DateTimeRange newDateRange) {
@@ -215,7 +221,7 @@ class ReportsViewModel extends ChangeNotifier {
           t.date.isSmallerOrEqualValue(selectedDateRange.end) &
           t.isOutcome.equals(true));
 
-    // only days with transactions are used to count the average
+    // Only days with at least 1 transaction are used to count the average
     allTransactions.get().then((value) {
       double totalAmount = 0;
       List daysWithTransactions = [];
@@ -262,17 +268,17 @@ class ReportsViewModel extends ChangeNotifier {
   }
 
   void getPercentageForeignCurrencyTransactions() async {
-    String currencyCzkId = await (_db.select(_db.currencyItems)
-          ..where((currency) => currency.name.equals('Czech Koruna')))
-        .getSingle()
-        .then((currency) => currency.id);
+    String currencyCzkId = await _db.getAllCurrencyItems().then((currencies) =>
+        currencies
+            .firstWhere((currency) => currency.name == 'Czech Koruna')
+            .id);
 
     final query = _db.select(_db.transactionItems)
       ..where((t) =>
           t.currency.equals(currencyCzkId).not() &
           t.date.isBiggerOrEqualValue(selectedDateRange.start) &
           t.date.isSmallerOrEqualValue(selectedDateRange.end));
-    var foreignTransactions = await query.get();
+    List<TransactionItem> foreignTransactions = await query.get();
 
     final totalTransactionsQuery = _db.selectOnly(_db.transactionItems)
       ..addColumns([_db.transactionItems.id])
@@ -416,18 +422,12 @@ class ReportsViewModel extends ChangeNotifier {
       ..get();
     List<TransactionItem> transactions = await query.get();
 
-    double income = 0.0;
-    double outcome = 0.0;
-    if (transactions.isNotEmpty) {
-      for (var transaction in transactions) {
-        if (transaction.isOutcome) {
-          outcome += transaction.amountInCZK;
-        } else {
-          income += transaction.amountInCZK;
-        }
-      }
-    }
-    balance = income - outcome;
+    accountBalance = transactions.fold<double>(0, (balance, transaction) {
+      return balance +
+          (transaction.isOutcome
+              ? -transaction.amountInCZK
+              : transaction.amountInCZK);
+    });
 
     notifyListeners();
   }

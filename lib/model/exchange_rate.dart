@@ -4,5 +4,9 @@ class ExchangeRate {
   final String code;
   final double rate;
 
-  ExchangeRate({required this.country, required this.currency, required this.code, required this.rate});
+  ExchangeRate(
+      {required this.country,
+      required this.currency,
+      required this.code,
+      required this.rate});
 }

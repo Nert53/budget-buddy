@@ -4,5 +4,9 @@ class Currency {
   final String symbol;
   final double exchangeRate;
 
-  Currency({required this.id, required this.name, required this.symbol, required this.exchangeRate});
+  Currency(
+      {required this.id,
+      required this.name,
+      required this.symbol,
+      required this.exchangeRate});
 }

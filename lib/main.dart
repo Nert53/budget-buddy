@@ -22,7 +22,7 @@ void main() {
     Provider<AppDatabase>(
       create: (_) => AppDatabase(),
     ),
-    ChangeNotifierProvider(create: (context) => ThemeProvider()),
+    ChangeNotifierProvider(create: (_) => ThemeProvider()),
     ChangeNotifierProvider<TransactionViewModel>(
       create: (context) => TransactionViewModel(context.read<AppDatabase>()),
     ),
@@ -71,7 +71,7 @@ final _router = GoRouter(
             ]),
             StatefulShellBranch(routes: <RouteBase>[
               GoRoute(
-                path: '/graphs',
+                path: '/reports',
                 builder: (BuildContext context, GoRouterState state) {
                   return const ReportsScreen();
                 },
@@ -105,7 +105,6 @@ class PersonalFinanceApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
-      debugShowCheckedModeBanner: false,
       title: 'Budget Buddy',
       theme: Provider.of<ThemeProvider>(context).themeData,
       routerConfig: _router,

@@ -9,6 +9,7 @@ class DashboardViewmodel extends ChangeNotifier {
   bool isLoading = true;
   final AppDatabase _db;
 
+  // Account numbers for dashboard
   double accountBalance = 0.0;
   double thisMonthSpent = 0.0;
   double todaySpent = 0.0;
@@ -47,7 +48,7 @@ class DashboardViewmodel extends ChangeNotifier {
   }
 
   void getAccountBalance() async {
-    final transactionItems = await _db.getAllTransactionItems();
+    List<TransactionItem> transactionItems = await _db.getAllTransactionItems();
     accountBalance = transactionItems.fold<double>(
       0,
       (previousValue, element) => element.isOutcome
@@ -58,11 +59,12 @@ class DashboardViewmodel extends ChangeNotifier {
   }
 
   void getLastNTransactions(int n) async {
+    // sorted by date from newest to oldest
     var transactions = await (_db.select(_db.transactionItems)
           ..orderBy([
             (t) => OrderingTerm(expression: t.date, mode: OrderingMode.desc)
           ])
-          ..limit(n)) // Sort by date in descending order
+          ..limit(n))
         .get();
 
     lastTransactions.clear();
@@ -107,7 +109,7 @@ class DashboardViewmodel extends ChangeNotifier {
           transaction.isOutcome.equals(true));
 
     query.get().then((value) {
-      thisMonthSpent = value.fold(
+      thisMonthSpent = value.fold<double>(
         0,
         (previousValue, element) => previousValue + element.amountInCZK,
       );
@@ -124,7 +126,7 @@ class DashboardViewmodel extends ChangeNotifier {
           transaction.isOutcome.equals(true));
 
     query.get().then((value) {
-      todaySpent = value.fold(
+      todaySpent = value.fold<double>(
         0,
         (previousValue, element) => previousValue + element.amountInCZK,
       );

@@ -30,15 +30,15 @@ class Transaction {
   });
 
   Map<String, dynamic> toJson() => {
-    'id': id,
-    'amount': amount,
-    'date': date.toIso8601String(),
-    'note': note,
-    'isOutcome': isOutcome,
-    'categoryName': categoryName,
-    'categoryIcon': categoryIcon.codePoint,
-    'categoryColor': categoryColor.value,
-    'currencyName': currencyName,
-    'currencySymbol': currencySymbol,
-  };
+        'id': id,
+        'amount': amount,
+        'date': date.toIso8601String(),
+        'note': note,
+        'isOutcome': isOutcome,
+        'categoryName': categoryName,
+        'categoryIcon': categoryIcon.codePoint,
+        'categoryColor': categoryColor.value,
+        'currencyName': currencyName,
+        'currencySymbol': currencySymbol,
+      };
 }

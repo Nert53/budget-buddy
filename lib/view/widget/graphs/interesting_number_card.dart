@@ -45,6 +45,9 @@ class InterestingNumberCardHorizontal extends StatelessWidget {
                 child: noData
                     ? Text(
                         'No data to display.',
+                        style: TextStyle(
+                          fontStyle: FontStyle.italic,
+                        ),
                       )
                     : Text(
                         '$prettyNumberValue $numberSymbol',
@@ -121,7 +124,7 @@ class InterestingNumberCardVertical extends StatelessWidget {
                     ? Text(
                         'No data to display.',
                         style: TextStyle(
-                          color: Theme.of(context).colorScheme.tertiary,
+                          fontStyle: FontStyle.italic,
                         ),
                       )
                     : Text(

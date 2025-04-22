@@ -75,7 +75,10 @@ class DashboardScreen extends StatelessWidget {
                                       ),
                                       SizedBox(height: 16.0),
                                       Text(
-                                        'No avaliavable data to display in graph.',
+                                        'No outcome transactions for graph.',
+                                        style: TextStyle(
+                                          fontStyle: FontStyle.italic,
+                                        ),
                                       ),
                                     ],
                                   ))
@@ -122,35 +125,33 @@ class DashboardScreen extends StatelessWidget {
                                           },
                                         ),
                                         series: <CircularSeries>[
-                                          // Renders doughnut chart
                                           DoughnutSeries<CategorySpentGraph, String>(
                                               dataSource:
                                                   viewModel.categoryGraphData,
                                               pointColorMapper:
                                                   (CategorySpentGraph data, _) =>
                                                       data.color,
-                                              dataLabelMapper:
-                                                  (CategorySpentGraph data, index) =>
-                                                      data.name,
+                                              dataLabelMapper: (CategorySpentGraph data,
+                                                      index) =>
+                                                  '${data.name} (${(data.amount / viewModel.thisMonthSpent * 100).toInt()} %)',
                                               dataLabelSettings: DataLabelSettings(
+                                                  borderRadius: 8,
+                                                  connectorLineSettings:
+                                                      ConnectorLineSettings(
+                                                          type: ConnectorType
+                                                              .curve),
                                                   textStyle: TextStyle(
                                                       fontSize: mediumScreen
                                                           ? 12
                                                           : 11),
-                                                  labelPosition:
-                                                      screenWidth > largeScreenWidth
-                                                          ? ChartDataLabelPosition
-                                                              .outside
-                                                          : ChartDataLabelPosition
-                                                              .inside,
+                                                  labelPosition: screenWidth >
+                                                          largeScreenWidth
+                                                      ? ChartDataLabelPosition.outside
+                                                      : ChartDataLabelPosition.inside,
                                                   useSeriesColor: true,
                                                   isVisible: true),
-                                              xValueMapper:
-                                                  (CategorySpentGraph data, _) =>
-                                                      data.name,
-                                              yValueMapper:
-                                                  (CategorySpentGraph data, _) =>
-                                                      data.amount)
+                                              xValueMapper: (CategorySpentGraph data, _) => data.name,
+                                              yValueMapper: (CategorySpentGraph data, _) => data.amount)
                                         ]),
                                   ),
                           )
@@ -346,8 +347,7 @@ class DashboardScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Text('Last 5 transactions',
-                        style: TextStyle(
-                            fontSize: 16.0, fontWeight: FontWeight.bold)),
+                        style: TextStyle(fontSize: 16.0)),
                     SizedBox(height: 16.0),
                     Expanded(
                       child: viewModel.lastTransactions.isEmpty
@@ -366,7 +366,12 @@ class DashboardScreen extends StatelessWidget {
                                   ),
                                 ),
                                 SizedBox(height: 16.0),
-                                Text('No transaction to display.'),
+                                Text(
+                                  'No transaction to display.',
+                                  style: TextStyle(
+                                    fontStyle: FontStyle.italic,
+                                  ),
+                                ),
                               ],
                             ))
                           : ListView.separated(
@@ -448,22 +453,22 @@ class DashboardScreen extends StatelessWidget {
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
                                         currentTransaction.isOutcome
-                                            ? const Icon(
+                                            ? Icon(
                                                 Icons.arrow_drop_down,
-                                                color: Colors.red,
+                                                color: outcomeColor,
                                               )
                                             : Icon(
                                                 Icons.arrow_drop_up,
-                                                color: Colors.green[700],
+                                                color: incomeColor,
                                               ),
                                         Text(
                                           '${amountPretty(currentTransaction.amount)} ${currentTransaction.currencySymbol}',
                                           style: TextStyle(
                                               color:
                                                   currentTransaction.isOutcome
-                                                      ? Colors.red
-                                                      : Colors.green[700],
-                                              fontSize: 16,
+                                                      ? outcomeColor
+                                                      : incomeColor,
+                                              fontSize: 15,
                                               fontWeight: FontWeight.bold),
                                         ),
                                       ]),

@@ -3,8 +3,9 @@ class OneDaySpent {
   final DateTime date;
   final int index;
 
-  OneDaySpent(
-      {required this.amount,
-      required this.date,
-      required this.index,});
+  OneDaySpent({
+    required this.amount,
+    required this.date,
+    required this.index,
+  });
 }

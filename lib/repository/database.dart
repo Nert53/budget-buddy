@@ -69,13 +69,27 @@ class AppDatabase extends _$AppDatabase {
     return await delete(transactionItems).delete(item);
   }
 
+  Future<int> deleteTransactionById(String id) async {
+    return await (delete(transactionItems)..where((tbl) => tbl.id.equals(id)))
+        .go();
+  }
+
   Future<List<TransactionItem>> getAllTransactionItems() async {
     return await select(transactionItems).get();
+  }
+
+  Future<int> deleteAllTransactions() async {
+    return await delete(transactionItems).go();
   }
 
   // 02 methods for operating with categories
   Future<List<CategoryItem>> getAllCategoryItems() async {
     return await select(categoryItems).get();
+  }
+
+  Future<CategoryItem> getCategoryById(String id) async {
+    return await (select(categoryItems)..where((c) => c.id.equals(id)))
+        .getSingle();
   }
 
   Future<int> insertCategory(String name, int colorCode, int iconCode) async {
@@ -122,7 +136,8 @@ class AppDatabase extends _$AppDatabase {
         .getSingle();
   }
 
-  Future<int> insertCurrency(String name, String symbol, double exchangeRate) async {
+  Future<int> insertCurrency(
+      String name, String symbol, double exchangeRate) async {
     return await into(currencyItems).insert(CurrencyItemsCompanion(
         name: Value(name),
         symbol: Value(symbol),

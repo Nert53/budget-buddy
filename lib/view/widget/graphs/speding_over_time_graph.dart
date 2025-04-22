@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:personal_finance/constants.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
 class SpendingOverTimeGraph extends StatelessWidget {
@@ -23,9 +22,16 @@ class SpendingOverTimeGraph extends StatelessWidget {
       ),
       primaryXAxis: DateTimeAxis(
         dateFormat: DateFormat('dd. MM.'),
-        interval: mediumScreen ? 1 : 3,
+        interval: (data.length > 30)
+            ? mediumScreen
+                ? 3
+                : 7
+            : mediumScreen
+                ? 1
+                : 3,
         intervalType: DateTimeIntervalType.days,
         majorGridLines: MajorGridLines(width: 0),
+        labelIntersectAction: AxisLabelIntersectAction.rotate45,
         edgeLabelPlacement: EdgeLabelPlacement.shift,
       ),
       primaryYAxis: NumericAxis(
@@ -36,7 +42,8 @@ class SpendingOverTimeGraph extends StatelessWidget {
       trackballBehavior: TrackballBehavior(
         enable: true,
         activationMode: ActivationMode.singleTap,
-        tooltipSettings: const InteractiveTooltip(format: 'point.x point.y'),
+        tooltipSettings:
+            const InteractiveTooltip(format: 'point.x - point.y CZK'),
       ),
       series: <AreaSeries<MapEntry<DateTime, double>, DateTime>>[
         AreaSeries<MapEntry<DateTime, double>, DateTime>(

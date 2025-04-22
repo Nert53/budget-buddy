@@ -5,7 +5,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
-import 'package:path/path.dart' as p;
+import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
 import 'package:personal_finance/constants.dart';
 import 'package:personal_finance/repository/database.dart';
@@ -59,6 +59,7 @@ class SettingsViewmodel extends ChangeNotifier {
   Future<double> getExchangeRateFromInternet(String wantedCurrencyCode) async {
     http.Response response = await http.get(Uri.parse(exchangeRateUrl));
 
+    // OK response
     if (response.statusCode == 200) {
       String data = response.body;
       List<String> lines = data.split("\n");
@@ -67,7 +68,8 @@ class SettingsViewmodel extends ChangeNotifier {
       for (int i = 2; i < lines.length; i++) {
         // skip metadata
         List<String> parts = lines[i].split("|");
-        if (parts.length < 5) continue; // skip empty or invalid lines
+        // skip empty or invalid lines
+        if (parts.length < 5) continue; 
 
         int amount = int.parse(parts[2]);
         rates.add(ExchangeRate(
@@ -86,7 +88,7 @@ class SettingsViewmodel extends ChangeNotifier {
             .rate;
       } catch (e) {
         // currency code not found
-        return 0.0;
+        wantedRate = 0.0;
       }
 
       return wantedRate;
@@ -108,10 +110,15 @@ class SettingsViewmodel extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<int> deleteAllTransactions() async {
+    return await _db.deleteAllTransactions();
+  }
+
   Future<bool> exportData(String selectedFormat) async {
     String? selectedDirectory = await FilePicker.platform.getDirectoryPath();
     if (selectedDirectory == null) return false;
 
+    // exporting whole sqlite file have different process
     if (selectedFormat == 'sqlite') {
       return exportDatabase(selectedDirectory);
     }
@@ -199,11 +206,11 @@ class SettingsViewmodel extends ChangeNotifier {
 
   Future<bool> exportDatabase(String selectedDirectory) async {
     final appDirecrtory = await getApplicationDocumentsDirectory();
-    final dbDirectory = p.join(appDirecrtory.path, '$databaseName.db');
+    final dbDirectory = path.join(appDirecrtory.path, '$databaseName.db');
     String now = DateFormat('yy_MM_dd-HH_mm').format(DateTime.now());
 
     final backupDb = sqlite3.open(dbDirectory);
-    final tempDb = p.join(selectedDirectory, 'budget-buddy-export-$now.sqlite');
+    final tempDb = path.join(selectedDirectory, 'budget-buddy-export-$now.sqlite');
     backupDb
       ..execute('VACUUM INTO ?', [tempDb])
       ..dispose();

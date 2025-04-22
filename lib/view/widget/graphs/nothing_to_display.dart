@@ -12,6 +12,9 @@ class NothingToDisplay extends StatelessWidget {
       children: [
         Text(
           'No data to display',
+          style: TextStyle(
+            fontStyle: FontStyle.italic,
+          ),
         ),
         SizedBox(width: 8.0),
         Icon(

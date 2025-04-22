@@ -9,16 +9,16 @@ class FlushbarSuccess {
   }) {
     Flushbar(
       message: message,
-      messageColor: Colors.white,
+      messageColor: Colors.black,
       icon: Icon(
         Icons.check_circle_outline_outlined,
-        color: Colors.white,
       ),
       shouldIconPulse: false,
-      duration: const Duration(seconds: 4),
+      duration: const Duration(seconds: 5),
       margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
-      borderRadius: BorderRadius.circular(16),
-      backgroundColor: Colors.green,
+      borderRadius: BorderRadius.circular(10),
+      leftBarIndicatorColor: successColor,
+      backgroundColor: Colors.green[200]!,
     ).show(context);
   }
 }
@@ -30,16 +30,17 @@ class FlushbarError {
   }) {
     Flushbar(
       message: message,
-      messageColor: Theme.of(context).colorScheme.onErrorContainer,
+      messageColor: Colors.black,
       icon: Icon(
         Icons.error_outline_outlined,
-        color: Theme.of(context).colorScheme.onErrorContainer,
+        color: Colors.black,
       ),
       shouldIconPulse: false,
-      duration: const Duration(seconds: 4),
+      duration: const Duration(seconds: 5),
       margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
-      borderRadius: BorderRadius.circular(16),
-      backgroundColor: Theme.of(context).colorScheme.errorContainer,
+      borderRadius: BorderRadius.circular(10),
+      leftBarIndicatorColor: Theme.of(context).colorScheme.error,
+      backgroundColor: Colors.red[200]!,
     ).show(context);
   }
 }
@@ -51,16 +52,17 @@ class FlushbarWarning {
   }) {
     Flushbar(
       message: message,
-      messageColor: Colors.white,
+      messageColor: Colors.black,
       icon: Icon(
         Icons.warning_amber_rounded,
-        color: Colors.white,
+        color: Colors.black,
       ),
       shouldIconPulse: false,
-      duration: const Duration(seconds: 4),
+      duration: const Duration(seconds: 5),
       margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
-      borderRadius: BorderRadius.circular(16),
-      backgroundColor: warningColor,
+      borderRadius: BorderRadius.circular(10),
+      leftBarIndicatorColor: warningColor,
+      backgroundColor: Colors.orange[300]!,
     ).show(context);
   }
 }

@@ -14,10 +14,7 @@ class TransactionViewModel extends ChangeNotifier {
   List<CategoryItem> categories = [];
   List<CurrencyItem> currencies = [];
 
-  Map<String, bool> categoriesFilter = {};
-  Map<String, bool> currenciesFilter = {};
-  Map<String, bool> typesFilter = {};
-
+  // Posible time periods for displaying transactions
   List<TimePeriod> periodChoice = [
     TimePeriod(
       name: 'All Time',
@@ -37,14 +34,12 @@ class TransactionViewModel extends ChangeNotifier {
         selected: false,
         icon: Icons.date_range.codePoint.toString()),
   ];
+  SortOrder sortOrder = SortOrder.newest;
 
-  DateTime currentDate = DateTime.now();
-  String currentPeriod = 'Month';
-  bool isRangePeriod = false;
-  DateTime startDate = DateTime.now();
-  DateTime endDate = DateTime.now();
-  bool currentDisplayedOlder = false;
-  bool currentDisplayedNewer = false;
+  // Pair of name of filter and if it is active
+  Map<String, bool> categoriesFilter = {};
+  Map<String, bool> currenciesFilter = {};
+  Map<String, bool> typesFilter = {};
   int categoryFilterCount = 0;
   int currencyFilterCount = 0;
   int typeFilterCount = 0;
@@ -53,8 +48,14 @@ class TransactionViewModel extends ChangeNotifier {
   double amountLow = 0.0;
   double amountMax = 0.0;
   double amountHigh = 0.0;
-  SortOrder sortOrder = SortOrder.newest;
   bool filtersApplied = true;
+
+  // DateTime for setting right time period
+  DateTime currentDate = DateTime.now();
+  String currentPeriod = 'Month';
+  bool isRangePeriod = false;
+  DateTime startDate = DateTime.now();
+  DateTime endDate = DateTime.now();
 
   TransactionViewModel(this._db) {
     _db.watchTransactions().listen((event) {
@@ -77,7 +78,6 @@ class TransactionViewModel extends ChangeNotifier {
 
   void getAllData() async {
     isLoading = true;
-    setDateValues();
     getTransactions();
     getAllCategories();
     getAllCurrencies();
@@ -86,9 +86,12 @@ class TransactionViewModel extends ChangeNotifier {
   }
 
   void refresh() {
-    setDateValues();
     getTransactions();
     notifyListeners();
+  }
+
+  Future<void> refreshTransactions() async {
+    getAllData();
   }
 
   int getFilterCount() {
@@ -96,39 +99,6 @@ class TransactionViewModel extends ChangeNotifier {
         currencyFilterCount +
         typeFilterCount +
         (amountFilterActive ? 1 : 0);
-  }
-
-  void setDateValues() {
-    var upToDateDate = DateTime.now();
-
-    if (upToDateDate.year == currentDate.year &&
-        upToDateDate.month == currentDate.month) {
-      currentDisplayedOlder = false;
-      currentDisplayedNewer = false;
-      return;
-    }
-
-    if (upToDateDate.year > currentDate.year) {
-      currentDisplayedNewer = false;
-      currentDisplayedOlder = true;
-      return;
-    } else if (upToDateDate.year < currentDate.year) {
-      currentDisplayedNewer = true;
-      currentDisplayedOlder = false;
-      return;
-    }
-
-    if (upToDateDate.year == currentDate.year) {
-      if (upToDateDate.month > currentDate.month) {
-        currentDisplayedNewer = false;
-        currentDisplayedOlder = true;
-        return;
-      } else if (upToDateDate.month < currentDate.month) {
-        currentDisplayedNewer = true;
-        currentDisplayedOlder = false;
-        return;
-      }
-    }
   }
 
   void upToDate() {
@@ -150,11 +120,7 @@ class TransactionViewModel extends ChangeNotifier {
     if (currentPeriod == 'Year') {
       currentDate = DateTime(currentDate.year - 1);
     } else if (currentPeriod == 'Month') {
-      if (currentDate.month == 1) {
-        currentDate = DateTime(currentDate.year - 1, 12);
-      } else {
-        currentDate = DateTime(currentDate.year, currentDate.month - 1);
-      }
+      currentDate = DateTime(currentDate.year, currentDate.month - 1);
     } else if (currentPeriod == 'Week') {
       currentDate = currentDate.subtract(Duration(days: 7));
     } else if (currentPeriod == 'Day') {
@@ -167,11 +133,7 @@ class TransactionViewModel extends ChangeNotifier {
     if (currentPeriod == 'Year') {
       currentDate = DateTime(currentDate.year + 1);
     } else if (currentPeriod == 'Month') {
-      if (currentDate.month == 12) {
-        currentDate = DateTime(currentDate.year + 1, 1);
-      } else {
-        currentDate = DateTime(currentDate.year, currentDate.month + 1);
-      }
+      currentDate = DateTime(currentDate.year, currentDate.month + 1);
     } else if (currentPeriod == 'Week') {
       currentDate = currentDate.add(Duration(days: 7));
     } else if (currentPeriod == 'Day') {
@@ -203,18 +165,17 @@ class TransactionViewModel extends ChangeNotifier {
                   return t.date.isBiggerOrEqualValue(startDate) &
                       t.date.isSmallerOrEqualValue(endDate);
                 } else {
-                  return Constant(true); // for 'all Time' and 'custom' period
+                  // for 'All Time' and 'Custom' periods
+                  return Constant(true);
                 }
-              })) // Sort by date in descending order
+              }))
             .get();
     List<TransactionItem> transactionItemsEdit = List.from(transactionItems);
 
-    if ((categoryFilterCount + currencyFilterCount + typeFilterCount) == 0 &&
-        !amountFilterActive) {
-      // no filter used, display all transactions
-    } else {
+    // filter used -> display only filtered ones
+    if ((categoryFilterCount + currencyFilterCount + typeFilterCount) != 0 ||
+        amountFilterActive) {
       for (var tItem in transactionItems) {
-        // filter used, display only filtered ones
         bool matchesCategory =
             categoryFilterCount > 0 && categoriesFilter[tItem.category] == true;
         bool matchesCurrency =
@@ -234,7 +195,7 @@ class TransactionViewModel extends ChangeNotifier {
 
     transactions.clear();
     for (var t in transactionItemsEdit) {
-      CategoryItem category = await getCategoryById(t.category);
+      CategoryItem category = await _db.getCategoryById(t.category);
       CurrencyItem selectedCurrency = await _db.getCurrencyById(t.currency);
 
       Transaction newTransaction = Transaction(
@@ -279,14 +240,7 @@ class TransactionViewModel extends ChangeNotifier {
     }
 
     isLoading = false;
-
     notifyListeners();
-  }
-
-  Future<void> refreshTransactions() async {
-    getAllData();
-
-    return Future<void>.delayed(Duration(seconds: 2));
   }
 
   void updateTransaction(
@@ -297,10 +251,7 @@ class TransactionViewModel extends ChangeNotifier {
       DateTime date,
       String categoryId,
       String currencyId) async {
-    var currencyExchangeRate = await (_db.select(_db.currencyItems)
-          ..where((c) => c.id.equals(currencyId)))
-        .getSingle()
-        .then((value) => value.exchangeRate);
+    double currencyExchangeRate = await _db.getCurrencyById(currencyId).then((value) => value.exchangeRate);  
 
     await (_db.update(_db.transactionItems)
           ..where((t) => t.id.equals(transactionId)))
@@ -319,15 +270,8 @@ class TransactionViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void deleteTransaction(TransactionItem transaction) async {
-    await _db.deleteTransactionItem(transaction);
-    notifyListeners();
-  }
-
   void deleteTransactionById(String id) async {
-    await (_db.delete(_db.transactionItems)..where((t) => t.id.equals(id)))
-        .go();
-
+    await _db.deleteTransactionById(id);
     notifyListeners();
   }
 
@@ -336,19 +280,9 @@ class TransactionViewModel extends ChangeNotifier {
     categories = await _db.getAllCategoryItems();
   }
 
-  Future<CategoryItem> getCategoryById(String id) async {
-    return await (_db.select(_db.categoryItems)..where((c) => c.id.equals(id)))
-        .getSingle();
-  }
-
   void getAllCurrencies() async {
     currencies.clear();
     currencies = await _db.getAllCurrencyItems();
-  }
-
-  Future<CurrencyItem> getCurrencyById(String id) async {
-    return await (_db.select(_db.currencyItems)..where((c) => c.id.equals(id)))
-        .getSingle();
   }
 
   void getFilterSettings() {

@@ -65,18 +65,17 @@ class AddTransactionViewModel extends ChangeNotifier {
     Value<DateTime> dateToSave = Value(DateTime(date.value.year,
         date.value.month, date.value.day, time.value.hour, time.value.minute));
 
-    
     await _db.addTransaction(
-          TransactionItemsCompanion(
-            amount: amountToSave,
-            amountInCZK: amountInCzkToSave,
-            date: dateToSave,
-            note: noteToSave,
-            isOutcome: isOutcomeToSave,
-            category: categoryToSaveId,
-            currency: currencyToSave,
-          ),
-        );
+      TransactionItemsCompanion(
+        amount: amountToSave,
+        amountInCZK: amountInCzkToSave,
+        date: dateToSave,
+        note: noteToSave,
+        isOutcome: isOutcomeToSave,
+        category: categoryToSaveId,
+        currency: currencyToSave,
+      ),
+    );
     notifyListeners();
   }
 
@@ -84,11 +83,13 @@ class AddTransactionViewModel extends ChangeNotifier {
     categories.clear();
 
     categories = await _db.getAllCategoryItems().then((value) {
-      return value.map((e) => CategorySimple(
-          id: e.id,
-          name: e.name,
-          color: Color(e.color),
-          icon: convertIconCodePointToIcon(e.icon))).toList();
+      return value
+          .map((e) => CategorySimple(
+              id: e.id,
+              name: e.name,
+              color: Color(e.color),
+              icon: convertIconCodePointToIcon(e.icon)))
+          .toList();
     });
     notifyListeners();
   }
@@ -112,11 +113,13 @@ class AddTransactionViewModel extends ChangeNotifier {
   void getCurrencies() async {
     currencies.clear();
     currencies = await _db.getAllCurrencyItems().then((value) {
-      return value.map((e) => Currency(
-          id: e.id,
-          name: e.name,
-          symbol: e.symbol,
-          exchangeRate: e.exchangeRate)).toList();
+      return value
+          .map((e) => Currency(
+              id: e.id,
+              name: e.name,
+              symbol: e.symbol,
+              exchangeRate: e.exchangeRate))
+          .toList();
     });
   }
 

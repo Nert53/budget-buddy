@@ -259,6 +259,7 @@ class ReportsScreen extends StatelessWidget {
                                   child: InterestingNumberCardHorizontal(
                                       valueName: 'Sum of all incomes',
                                       largeScreen: mediumScreen,
+                                      noData: viewModel.totalIncome.isNaN,
                                       numberValue: viewModel.totalIncome,
                                       numberSymbol: 'CZK'),
                                 ),
@@ -280,8 +281,8 @@ class ReportsScreen extends StatelessWidget {
                                   child: InterestingNumberCardHorizontal(
                                     valueName: 'Overall balance',
                                     largeScreen: mediumScreen,
-                                    noData: viewModel.balance.isNaN,
-                                    numberValue: viewModel.balance,
+                                    noData: viewModel.accountBalance.isNaN,
+                                    numberValue: viewModel.accountBalance,
                                     numberSymbol: 'CZK',
                                   ),
                                 ),
@@ -313,8 +314,8 @@ class ReportsScreen extends StatelessWidget {
                                 child: InterestingNumberCardVertical(
                                     valueName: 'Overall balance',
                                     largeScreen: mediumScreen,
-                                    numberValue: viewModel.balance,
-                                    noData: viewModel.balance.isNaN,
+                                    numberValue: viewModel.accountBalance,
+                                    noData: viewModel.accountBalance.isNaN,
                                     numberSymbol: 'CZK'),
                               )
                             ],
