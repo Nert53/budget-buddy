@@ -17,8 +17,9 @@ class FilterTransactionsScreen extends StatefulWidget {
 class _FilterTransactionsScreenState extends State<FilterTransactionsScreen> {
   @override
   Widget build(BuildContext context) {
-    final double screenWidth = MediaQuery.of(context).size.width;
-    final bool largeScreen = screenWidth > largeScreenWidth;
+    double screenWidth = MediaQuery.of(context).size.width;
+    bool smallScreen = screenWidth < compactScreenWidth;
+    bool largeScreen = screenWidth > largeScreenWidth;
 
     return Consumer<TransactionViewModel>(builder: (context, viewModel, child) {
       return Scaffold(
@@ -47,6 +48,19 @@ class _FilterTransactionsScreenState extends State<FilterTransactionsScreen> {
           backgroundColor: Theme.of(context).colorScheme.primary,
           foregroundColor: Theme.of(context).colorScheme.onPrimary,
         ),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+        floatingActionButton: smallScreen
+            ? FloatingActionButton.extended(
+                onPressed: () {
+                  viewModel.getAllData();
+                  viewModel.filtersApplied = true;
+                  context.pop();
+                },
+                backgroundColor: Theme.of(context).colorScheme.primary,
+                foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                label: Text('Apply filters'),
+              )
+            : null,
         body: viewModel.isLoading
             ? Center(
                 child: Column(
@@ -255,15 +269,17 @@ class _FilterTransactionsScreenState extends State<FilterTransactionsScreen> {
                         ),
                       ),
                       Divider(),
-                      Center(
-                        child: FilledButton(
-                            onPressed: () {
-                              viewModel.getAllData();
-                              viewModel.filtersApplied = true;
-                              context.pop();
-                            },
-                            child: Text('Apply filters')),
-                      ),
+                      smallScreen
+                          ? SizedBox()
+                          : Center(
+                              child: FilledButton(
+                                  onPressed: () {
+                                    viewModel.getAllData();
+                                    viewModel.filtersApplied = true;
+                                    context.pop();
+                                  },
+                                  child: Text('Apply filters')),
+                            ),
                       SizedBox(height: 16),
                     ],
                   ),

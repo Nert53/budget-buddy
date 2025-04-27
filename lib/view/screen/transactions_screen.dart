@@ -191,11 +191,13 @@ class TransactionScreen extends StatelessWidget {
                       ),
                     ),
                     SizedBox(height: 16),
-                    viewModel.getFilterCount() > 0
-                        ? Text('No transactions meet the current filters.')
-                        : Text(
-                            'No transactions found in this period.',
-                          ),
+                    Text(
+                        viewModel.getFilterCount() > 0
+                            ? 'No transactions meet the current filters.'
+                            : 'No transactions found in this period.',
+                        style: TextStyle(
+                          fontStyle: FontStyle.italic,
+                        ))
                   ],
                 ),
               ),
