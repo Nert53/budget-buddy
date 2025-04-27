@@ -83,6 +83,7 @@ class TransactionViewModel extends ChangeNotifier {
     getAllCurrencies();
     notifyListeners();
     isLoading = false;
+    notifyListeners();
   }
 
   void refresh() {
@@ -278,11 +279,13 @@ class TransactionViewModel extends ChangeNotifier {
   void getAllCategories() async {
     categories.clear();
     categories = await _db.getAllCategoryItems();
+    notifyListeners();
   }
 
   void getAllCurrencies() async {
     currencies.clear();
     currencies = await _db.getAllCurrencyItems();
+    notifyListeners();
   }
 
   void getFilterSettings() {
@@ -290,7 +293,6 @@ class TransactionViewModel extends ChangeNotifier {
     getCurrenciesFilters();
     getTypesFilters();
     getAmountFilters();
-
     notifyListeners();
   }
 
@@ -315,7 +317,7 @@ class TransactionViewModel extends ChangeNotifier {
   }
 
   void getCategoriesFilters() {
-    var oldFilter = Map.from(categoriesFilter);
+    Map oldFilter = Map.from(categoriesFilter);
     categoriesFilter.clear();
     for (var c in categories) {
       if (oldFilter.containsKey(c.id)) {
@@ -326,7 +328,7 @@ class TransactionViewModel extends ChangeNotifier {
   }
 
   void getCurrenciesFilters() {
-    var oldFilter = Map.from(currenciesFilter);
+    Map oldFilter = Map.from(currenciesFilter);
     currenciesFilter.clear();
     for (var c in currencies) {
       if (oldFilter.containsKey(c.id)) {

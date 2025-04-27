@@ -37,9 +37,7 @@ class InterestingNumberCardHorizontal extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(valueName,
-                style:
-                    TextStyle(fontSize: 16.0, fontWeight: FontWeight.normal)),
+            Text(valueName, style: Theme.of(context).textTheme.titleLarge),
             Expanded(
               child: Center(
                 child: noData

@@ -13,8 +13,10 @@ class ScreenContainer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final double screenWidth = MediaQuery.of(context).size.width;
+    bool smallScreen = screenWidth < mediumScreenWidth;
     bool mediumScreen =
         screenWidth > mediumScreenWidth && screenWidth < largeScreenWidth;
+    bool largeScreen = screenWidth > largeScreenWidth;
     bool graphsActive = navigationShell.currentIndex == 2;
     bool settingsActive = navigationShell.currentIndex == 3;
 
@@ -28,14 +30,12 @@ class ScreenContainer extends StatelessWidget {
       ),
       body: Row(
         children: [
-          if (mediumScreen || (screenWidth > largeScreenWidth))
+          if (mediumScreen || largeScreen)
             NavigationRail(
               selectedIndex: navigationShell.currentIndex,
               elevation: 5,
-              labelType: (screenWidth > largeScreenWidth)
-                  ? null
-                  : NavigationRailLabelType.all,
-              extended: (screenWidth > largeScreenWidth),
+              labelType: largeScreen ? null : NavigationRailLabelType.all,
+              extended: largeScreen,
               selectedLabelTextStyle: TextStyle(
                 color: Theme.of(context).textTheme.labelMedium?.color,
                 fontWeight: FontWeight.bold,
@@ -43,10 +43,10 @@ class ScreenContainer extends StatelessWidget {
               leading: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 8.0),
                 child: SizedBox(
-                  width: (screenWidth > largeScreenWidth) ? 256 - 32 : null,
+                  width: largeScreen ? 256 - 32 : null,
                   child: FloatingActionButton.extended(
                     elevation: 3,
-                    label: (screenWidth > largeScreenWidth)
+                    label: largeScreen
                         ? const Text('Add Transaction')
                         : const Text('Add'),
                     backgroundColor: Theme.of(context).colorScheme.primary,
@@ -55,7 +55,7 @@ class ScreenContainer extends StatelessWidget {
                       showDialog<void>(
                         context: context,
                         builder: (BuildContext context) {
-                          if (screenWidth < mediumScreenWidth) {
+                          if (smallScreen) {
                             return const AddWindowFullScreen();
                           } else {
                             return const AddWindow();
@@ -67,7 +67,7 @@ class ScreenContainer extends StatelessWidget {
                   ),
                 ),
               ),
-              trailing: (screenWidth > largeScreenWidth)
+              trailing: largeScreen
                   ? Expanded(
                       child: Align(
                       alignment: Alignment.bottomCenter,
@@ -117,11 +117,12 @@ class ScreenContainer extends StatelessWidget {
       bottomNavigationBar: mediumScreen || (screenWidth > largeScreenWidth)
           ? null
           : NavigationBar(
-              destinations: destinations.map<NavigationDestination>((d) {
+              destinations:
+                  destinations.map<NavigationDestination>((destination) {
                 return NavigationDestination(
-                  icon: Icon(d.icon),
-                  selectedIcon: Icon(d.selectedIcon),
-                  label: d.label,
+                  icon: Icon(destination.icon),
+                  selectedIcon: Icon(destination.selectedIcon),
+                  label: destination.label,
                 );
               }).toList(),
               selectedIndex: navigationShell.currentIndex,
@@ -129,28 +130,26 @@ class ScreenContainer extends StatelessWidget {
                 navigationShell.goBranch(index);
               },
             ),
-      floatingActionButton: mediumScreen ||
-              (screenWidth > largeScreenWidth) ||
-              settingsActive ||
-              graphsActive
-          ? null
-          : FloatingActionButton(
-              backgroundColor: Theme.of(context).colorScheme.primary,
-              foregroundColor: Theme.of(context).colorScheme.onPrimary,
-              onPressed: () {
-                showDialog<void>(
-                  context: context,
-                  builder: (BuildContext context) {
-                    if (screenWidth < mediumScreenWidth) {
-                      return const AddWindowFullScreen();
-                    } else {
-                      return const AddWindow();
-                    }
+      floatingActionButton:
+          mediumScreen || largeScreen || settingsActive || graphsActive
+              ? null
+              : FloatingActionButton(
+                  backgroundColor: Theme.of(context).colorScheme.primary,
+                  foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                  onPressed: () {
+                    showDialog<void>(
+                      context: context,
+                      builder: (BuildContext context) {
+                        if (smallScreen) {
+                          return const AddWindowFullScreen();
+                        } else {
+                          return const AddWindow();
+                        }
+                      },
+                    );
                   },
-                );
-              },
-              child: const Icon(Icons.add),
-            ),
+                  child: const Icon(Icons.add),
+                ),
     );
   }
 }

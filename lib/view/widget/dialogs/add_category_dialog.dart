@@ -57,7 +57,6 @@ class _AddCategoryDialogState extends State<AddCategoryDialog> {
                 message:
                     "Name of category can't be empty. Please enter some name.",
               );
-
               return;
             }
 

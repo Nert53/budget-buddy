@@ -35,7 +35,7 @@ class SpendingOverTimeGraph extends StatelessWidget {
         edgeLabelPlacement: EdgeLabelPlacement.shift,
       ),
       primaryYAxis: NumericAxis(
-        labelFormat: mediumScreen ? '{amountvalue} CZK' : '{value}',
+        labelFormat: mediumScreen ? '{value} CZK' : '{value}',
         axisLine: AxisLine(width: 0),
         majorTickLines: MajorTickLines(size: 0),
       ),

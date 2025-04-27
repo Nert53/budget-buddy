@@ -126,13 +126,12 @@ class ReportsViewModel extends ChangeNotifier {
   void getTopCategoriesGraphData() async {
     final query = _db.selectOnly(_db.transactionItems)
       ..addColumns([
-        _db.categoryItems.name, // Category name
-        _db.categoryItems.colorCode, // Category color
-        _db.categoryItems.icon, // Category icon
-        _db.categoryItems.id, // Category ID
+        _db.categoryItems.name,
+        _db.categoryItems.colorCode,
+        _db.categoryItems.icon,
+        _db.categoryItems.id,
         _db.transactionItems.isOutcome,
-        _db.transactionItems.amountInCZK
-            .sum() // Total amount spent for the category
+        _db.transactionItems.amountInCZK.sum()
       ])
       ..join([
         innerJoin(_db.categoryItems,
@@ -151,7 +150,7 @@ class ReportsViewModel extends ChangeNotifier {
         _db.categoryItems.id
       ]);
     query.limit(countHighestSpendingCategories);
-    var result = await query.get();
+    List result = await query.get();
 
     final List<CategorySpentGraph> categorySpendings = result.map((row) {
       return CategorySpentGraph(
@@ -180,14 +179,15 @@ class ReportsViewModel extends ChangeNotifier {
   }
 
   void getDailySpentInMotnhGraphData() async {
-    final queryOutcome = _db.select(_db.transactionItems)
+    final queryOutcomeTransactions = _db.select(_db.transactionItems)
       ..where((t) =>
           t.date.isBiggerOrEqualValue(selectedDateRange.start) &
           t.date.isSmallerOrEqualValue(selectedDateRange.end) &
           t.isOutcome.equals(true))
       ..get();
 
-    List<TransactionItem> outcomeTransactions = await queryOutcome.get();
+    List<TransactionItem> outcomeTransactions =
+        await queryOutcomeTransactions.get();
     List<OneDaySpent> oneDaySpent = [];
     DateTime startDate = selectedDateRange.start;
     int index = 0;
@@ -299,13 +299,13 @@ class ReportsViewModel extends ChangeNotifier {
   void getIncomeCategories() {
     final query = _db.selectOnly(_db.transactionItems)
       ..addColumns([
-        _db.categoryItems.name, // Category name
-        _db.categoryItems.colorCode, // Category color
-        _db.categoryItems.icon, // Category icon
-        _db.categoryItems.id, // Category ID
+        _db.categoryItems.name,
+        _db.categoryItems.colorCode,
+        _db.categoryItems.icon,
+        _db.categoryItems.id,
         _db.transactionItems.isOutcome,
         _db.transactionItems.amountInCZK
-            .sum() // Total amount spent for the category
+            .sum()
       ])
       ..join([
         innerJoin(_db.categoryItems,
@@ -343,13 +343,13 @@ class ReportsViewModel extends ChangeNotifier {
   void getOutcomeCategories() {
     final query = _db.selectOnly(_db.transactionItems)
       ..addColumns([
-        _db.categoryItems.name, // Category name
-        _db.categoryItems.colorCode, // Category color
-        _db.categoryItems.icon, // Category icon
-        _db.categoryItems.id, // Category ID
+        _db.categoryItems.name,
+        _db.categoryItems.colorCode,
+        _db.categoryItems.icon,
+        _db.categoryItems.id,
         _db.transactionItems.isOutcome,
         _db.transactionItems.amountInCZK
-            .sum() // Total amount spent for the category
+            .sum()
       ])
       ..join([
         innerJoin(_db.categoryItems,

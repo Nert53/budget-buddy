@@ -37,7 +37,7 @@ class _EditCurrencyDialogState extends State<EditCurrencyDialog> {
                   builder: (_) => AlertDialog(
                         title: Text('Delete currency'),
                         content: Text(
-                            'Are you sure you want to delete currency ${widget.currentCurrency.name}? All transactions with this currency will also be deleted.'),
+                            'Are you sure you want to delete currency ${widget.currentCurrency.name}? All transactions assigned to this currency will also be deleted.'),
                         actions: [
                           TextButton(
                             onPressed: () {
@@ -49,7 +49,10 @@ class _EditCurrencyDialogState extends State<EditCurrencyDialog> {
                             onPressed: () {
                               widget.viewModel
                                   .deleteCurrency(widget.currentCurrency);
-                              Navigator.pop(context);
+                              Navigator.pop(
+                                  context); // close delete confirm dialog
+                              Navigator.pop(
+                                  context); // close edit currency dialog
                             },
                             style: ButtonStyle(
                               backgroundColor: WidgetStateProperty.all(
@@ -59,18 +62,16 @@ class _EditCurrencyDialogState extends State<EditCurrencyDialog> {
                           )
                         ],
                       )),
-              //widget.viewModel.deleteCurrency(widget.currentCurrency),
-              //Navigator.pop(context),
             },
             icon: Tooltip(
-              message: 'Delete currency and all transactions with it.',
+              message: 'Delete currency and all assigned transactions.',
               child: Icon(
                 Icons.delete_outline,
                 color: Theme.of(context).colorScheme.error,
                 size: 28.0,
               ),
             ),
-            tooltip: 'Delete currency.',
+            tooltip: 'Delete currency with all assigned transactions.',
           )
         ],
       ),
@@ -112,9 +113,6 @@ class _EditCurrencyDialogState extends State<EditCurrencyDialog> {
             Expanded(
               child: TextField(
                 controller: exchangeRateController,
-                onTapOutside: (_) {
-                  FocusScope.of(context).unfocus();
-                },
                 keyboardType: TextInputType.number,
                 inputFormatters: [
                   LengthLimitingTextInputFormatter(10),
@@ -182,7 +180,7 @@ class _EditCurrencyDialogState extends State<EditCurrencyDialog> {
                   return;
                 }
 
-                exchangeRateController.text = newRate.toStringAsFixed(3);
+                exchangeRateController.text = newRate.toStringAsFixed(2);
                 if (context.mounted) {
                   FlushbarSuccess.show(
                     context: context,
@@ -203,23 +201,20 @@ class _EditCurrencyDialogState extends State<EditCurrencyDialog> {
         ),
         FilledButton(
           onPressed: () {
-            // empty when saving will keep the old value
-
+            Navigator.pop(context);
             double newExchangeRate;
             try {
               newExchangeRate = double.parse(exchangeRateController.text);
             } catch (e) {
               FlushbarWarning.show(
                 context: context,
-                message: "Please enter valid values or tap `cancel` button.",
+                message: "Please enter valid values or tap cancel button.",
               );
-
               return;
             }
 
             widget.viewModel.updateCurrency(widget.currentCurrency,
                 nameController.text, symbolController.text, newExchangeRate);
-            Navigator.pop(context);
           },
           child: Text('Save'),
         ),

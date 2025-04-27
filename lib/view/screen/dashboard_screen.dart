@@ -193,6 +193,9 @@ class DashboardScreen extends StatelessWidget {
                                         ? Center(
                                             child: Text(
                                               'Graph data is empty.',
+                                              style: TextStyle(
+                                                fontStyle: FontStyle.italic,
+                                              ),
                                             ),
                                           )
                                         : ListView.builder(

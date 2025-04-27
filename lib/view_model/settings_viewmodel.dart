@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:drift/drift.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -36,6 +35,7 @@ class SettingsViewmodel extends ChangeNotifier {
     isLoading = true;
     getCurrencies();
     isLoading = false;
+    notifyListeners();
   }
 
   void getCurrencies() async {
@@ -45,13 +45,8 @@ class SettingsViewmodel extends ChangeNotifier {
 
   void updateCurrency(CurrencyItem currencyItem, String newName,
       String newSymbol, double newExchangeRate) async {
-    await (_db.update(_db.currencyItems)
-          ..where((tbl) => tbl.id.equals(currencyItem.id)))
-        .write(CurrencyItemsCompanion(
-      name: Value(newName),
-      symbol: Value(newSymbol),
-      exchangeRate: Value(newExchangeRate),
-    ));
+    await _db.updateCurrency(
+        currencyItem.id, newName, newSymbol, newExchangeRate);
 
     notifyListeners();
   }
@@ -69,7 +64,7 @@ class SettingsViewmodel extends ChangeNotifier {
         // skip metadata
         List<String> parts = lines[i].split("|");
         // skip empty or invalid lines
-        if (parts.length < 5) continue; 
+        if (parts.length < 5) continue;
 
         int amount = int.parse(parts[2]);
         rates.add(ExchangeRate(
@@ -105,7 +100,7 @@ class SettingsViewmodel extends ChangeNotifier {
   }
 
   void deleteCurrency(CurrencyItem currencyItem) async {
-    await _db.deleteCurrency(currencyItem.id);
+    await _db.deleteCurrencyHard(currencyItem.id);
 
     notifyListeners();
   }
@@ -125,9 +120,9 @@ class SettingsViewmodel extends ChangeNotifier {
 
     if (selectedFormat != 'json' && selectedFormat != 'csv') return false;
 
-    final transactions = await _db.select(_db.transactionItems).get();
-    final categories = await _db.select(_db.categoryItems).get();
-    final currencies = await _db.select(_db.currencyItems).get();
+    final transactions = await _db.getAllTransactionItems();
+    final categories = await _db.getAllCategoryItems();
+    final currencies = await _db.getAllCurrencyItems();
 
     List<Transaction> transactionsToExport = [];
 
@@ -210,7 +205,8 @@ class SettingsViewmodel extends ChangeNotifier {
     String now = DateFormat('yy_MM_dd-HH_mm').format(DateTime.now());
 
     final backupDb = sqlite3.open(dbDirectory);
-    final tempDb = path.join(selectedDirectory, 'budget-buddy-export-$now.sqlite');
+    final tempDb =
+        path.join(selectedDirectory, 'budget-buddy-export-$now.sqlite');
     backupDb
       ..execute('VACUUM INTO ?', [tempDb])
       ..dispose();

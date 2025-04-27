@@ -1,6 +1,3 @@
-// allows to use value of color for saving with no error
-// ignore_for_file: deprecated_member_use
-
 import 'package:flutter/material.dart';
 import 'package:personal_finance/repository/database.dart';
 import 'package:personal_finance/utils/functions.dart';

@@ -144,10 +144,42 @@ class AppDatabase extends _$AppDatabase {
         exchangeRate: Value(exchangeRate)));
   }
 
-  Future<int> deleteCurrency(String currencyId) async {
-    return await (delete(currencyItems)
-          ..where((tbl) => tbl.id.equals(currencyId)))
-        .go();
+  Future<bool> deleteCurrencyHard(String currencyId) async {
+    // delete all transactions with this currency and the currency
+    try {
+      transaction(() async {
+        await (delete(transactionItems)
+              ..where((tbl) => tbl.currency.equals(currencyId)))
+            .go();
+
+        await (delete(currencyItems)..where((tbl) => tbl.id.equals(currencyId)))
+            .go();
+      });
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  Future<bool> updateCurrency(
+    String oldCurrencyId,
+    String newName,
+    String newSymbol,
+    double newExchangeRate,
+  ) async {
+    try {
+      await (update(currencyItems)
+            ..where((tbl) => tbl.id.equals(oldCurrencyId)))
+          .write(CurrencyItemsCompanion(
+        name: Value(newName),
+        symbol: Value(newSymbol),
+        exchangeRate: Value(newExchangeRate),
+      ));
+
+      return true;
+    } catch (e) {
+      return false;
+    }
   }
 
   // 04 initial data insert

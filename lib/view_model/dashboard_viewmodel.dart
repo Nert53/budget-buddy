@@ -94,7 +94,7 @@ class DashboardViewmodel extends ChangeNotifier {
           currencyId: t.currency,
           currencyName: currencyName,
           currencySymbol: currencySymbol,
-        )); // Skip if the transaction already exists
+        ));
       }
     }
 
@@ -135,14 +135,14 @@ class DashboardViewmodel extends ChangeNotifier {
   }
 
   void getPredictedSpentThisMonth() async {
-    final q = _db.select(_db.transactionItems)
+    final query = _db.select(_db.transactionItems)
       ..where((transaction) =>
           transaction.date.month.equals(currentMonth) &
           transaction.date.year.equals(currentYear) &
           transaction.isOutcome.equals(true));
 
     double tillNowSpent = 0;
-    await q.get().then((value) {
+    await query.get().then((value) {
       tillNowSpent = value.fold(
         0,
         (previousValue, element) => previousValue + element.amountInCZK,
@@ -156,13 +156,13 @@ class DashboardViewmodel extends ChangeNotifier {
   void getCategorySpentData() async {
     final query = _db.selectOnly(_db.transactionItems)
       ..addColumns([
-        _db.categoryItems.name, // Category name
-        _db.categoryItems.colorCode, // Category color
-        _db.categoryItems.icon, // Category icon
-        _db.categoryItems.id, // Category ID
+        _db.categoryItems.name,
+        _db.categoryItems.colorCode, 
+        _db.categoryItems.icon, 
+        _db.categoryItems.id,
         _db.transactionItems.isOutcome,
         _db.transactionItems.amountInCZK
-            .sum() // Total amount spent for the category
+            .sum()
       ])
       ..join([
         innerJoin(_db.categoryItems,

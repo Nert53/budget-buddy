@@ -23,7 +23,7 @@ class HighSpendingCategoriesGraph extends StatelessWidget {
         labelIntersectAction: AxisLabelIntersectAction.multipleRows,
       ),
       primaryYAxis: NumericAxis(
-        labelFormat: mediumScreen ? '{amountvalue} CZK' : '{value}',
+        labelFormat: mediumScreen ? '{value} CZK' : '{value}',
       ),
       series: <ColumnSeries>[
         ColumnSeries(

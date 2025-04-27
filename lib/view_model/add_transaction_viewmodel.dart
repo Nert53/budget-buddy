@@ -37,6 +37,7 @@ class AddTransactionViewModel extends ChangeNotifier {
     dateController.text = dateFormatter.format(DateTime.now()).toString();
     timeController.text = timeFormatter.format(DateTime.now()).toString();
     isLoading = false;
+    notifyListeners();
   }
 
   void saveTransaction() async {
