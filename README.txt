@@ -8,7 +8,7 @@ Soubory nutné ke spuštění se nechází v adresáři '\bin'.
 --- Platforma Windows ---
 1.  Jako referenční prostředí je použit Windows 10 Pro jako je uvedeno na
     stránkách katedry informatiky. Je nutné ještě nainstalovat nejnovější běhové
-    knihovny Microsoft Visual C++ (dostupné na tomto odkaze learn.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist).
+    knihovny Microsoft Visual C++ (dostupné na learn.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist).
 2.  Ostatní potřebné soubory se nachází v adresáři '\windows'.
 3.  Stačí spustit soubor s názvem 'personal_finance.exe', který otevře aplikaci.
 
