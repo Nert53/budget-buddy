@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:personal_finance/repository/database.dart';
 import 'package:personal_finance/utils/functions.dart';
-import 'package:personal_finance/view/widget/flushbars.dart';
+import 'package:personal_finance/view/widgets/flushbars.dart';
 import 'package:personal_finance/view_model/settings_viewmodel.dart';
 
 class EditCurrencyDialog extends StatefulWidget {

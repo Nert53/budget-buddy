@@ -4,10 +4,10 @@ import 'package:personal_finance/repository/database.dart';
 import 'package:personal_finance/theme/named_colors.dart';
 import 'package:personal_finance/theme/theme_provider.dart';
 import 'package:personal_finance/utils/functions.dart';
-import 'package:personal_finance/view/widget/dialogs/add_currency_dialog.dart';
-import 'package:personal_finance/view/widget/dialogs/edit_currency_dialog.dart';
-import 'package:personal_finance/view/widget/dialogs/export_transactions_dialog.dart';
-import 'package:personal_finance/view/widget/flushbars.dart';
+import 'package:personal_finance/view/widgets/dialogs/add_currency_dialog.dart';
+import 'package:personal_finance/view/widgets/dialogs/edit_currency_dialog.dart';
+import 'package:personal_finance/view/widgets/dialogs/export_transactions_dialog.dart';
+import 'package:personal_finance/view/widgets/flushbars.dart';
 import 'package:personal_finance/view_model/settings_viewmodel.dart';
 import 'package:provider/provider.dart';
 
@@ -197,7 +197,7 @@ class SettingsScreen extends StatelessWidget {
                   context: context,
                   builder: (context) {
                     return AlertDialog(
-                      title: Text('Delete all transactions?'),
+                      title: Text('Delete all transactions'),
                       content: Text(
                           'This action will delete all transactions. This action cannot be undone.'),
                       actions: [

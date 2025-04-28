@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:personal_finance/view/widget/flushbars.dart';
+import 'package:personal_finance/view/widgets/flushbars.dart';
 import 'package:personal_finance/view_model/settings_viewmodel.dart';
 
 class ExportTransactionsDialog extends StatefulWidget {

@@ -4,7 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:personal_finance/constants.dart';
 import 'package:personal_finance/model/category_simple.dart';
 import 'package:personal_finance/model/currency.dart';
-import 'package:personal_finance/view/widget/flushbars.dart';
+import 'package:personal_finance/view/widgets/flushbars.dart';
 import 'package:personal_finance/view_model/add_transaction_viewmodel.dart';
 import 'package:provider/provider.dart';
 

@@ -4,7 +4,7 @@ import 'package:marquee/marquee.dart';
 import 'package:personal_finance/constants.dart';
 import 'package:personal_finance/model/time_period.dart';
 import 'package:personal_finance/utils/functions.dart';
-import 'package:personal_finance/view/widget/flushbars.dart';
+import 'package:personal_finance/view/widgets/flushbars.dart';
 import 'package:personal_finance/view_model/transactions_viewmodel.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';

@@ -17,7 +17,7 @@ Color incomeColor = Colors.lightGreen[800]!;
 const scaffoldBackgroundColor = Color.fromARGB(255, 224, 224, 224);
 
 // database
-const databaseName = 'personal_finance_db';
+const databaseName = 'budget_buddy_db';
 const maxNoteLength = 1000;
 
 // url for exchange rate

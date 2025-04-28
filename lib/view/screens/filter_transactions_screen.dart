@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:personal_finance/constants.dart';
 import 'package:personal_finance/utils/functions.dart';
 import 'package:personal_finance/view/constants/sort_order.dart';
+import 'package:personal_finance/view/widgets/dialogs/set_range_dialog.dart';
 import 'package:personal_finance/view_model/transactions_viewmodel.dart';
 import 'package:provider/provider.dart';
 
@@ -240,8 +241,8 @@ class _FilterTransactionsScreenState extends State<FilterTransactionsScreen> {
                           inactiveColor: Colors.white,
                           onChanged: (value) {
                             setState(() {
-                              viewModel.amountLow = value.start;
-                              viewModel.amountHigh = value.end;
+                              viewModel.amountLow = value.start.ceilToDouble();
+                              viewModel.amountHigh = value.end.ceilToDouble();
                               if (viewModel.amountLow != viewModel.amountMin ||
                                   viewModel.amountHigh != viewModel.amountMax) {
                                 viewModel.amountFilterActive = true;
@@ -256,12 +257,36 @@ class _FilterTransactionsScreenState extends State<FilterTransactionsScreen> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             FilledButton.tonal(
-                                onPressed: () {},
+                                onPressed: () {
+                                  showDialog(
+                                      context: context,
+                                      builder: (context) {
+                                        return SetRangeDialog(
+                                          viewModel: viewModel,
+                                          name: 'Set lower amount',
+                                          amount: viewModel.amountLow,
+                                          maxAmount: viewModel.amountMax,
+                                          isLowRange: true,
+                                        );
+                                      });
+                                },
                                 child: Text(
                                   '${amountPretty(viewModel.amountLow, decimalDigits: 0)} CZK',
                                 )),
                             FilledButton.tonal(
-                                onPressed: () {},
+                                onPressed: () {
+                                  showDialog(
+                                      context: context,
+                                      builder: (context) {
+                                        return SetRangeDialog(
+                                          viewModel: viewModel,
+                                          name: 'Set upper amount',
+                                          amount: viewModel.amountHigh,
+                                          maxAmount: viewModel.amountMax,
+                                          isLowRange: false,
+                                        );
+                                      });
+                                },
                                 child: Text(
                                   '${amountPretty(viewModel.amountHigh, decimalDigits: 0)} CZK',
                                 )),
@@ -280,7 +305,8 @@ class _FilterTransactionsScreenState extends State<FilterTransactionsScreen> {
                                   },
                                   child: Text('Apply filters')),
                             ),
-                      SizedBox(height: 16),
+                      // enable FAB button to not overlap with range slider
+                      SizedBox(height: 64),
                     ],
                   ),
                 ),

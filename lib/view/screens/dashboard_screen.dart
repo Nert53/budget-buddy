@@ -4,7 +4,7 @@ import 'package:personal_finance/constants.dart';
 import 'package:personal_finance/model/category_spent_graph.dart';
 import 'package:personal_finance/model/transaction.dart';
 import 'package:personal_finance/utils/functions.dart';
-import 'package:personal_finance/view/widget/extended_dashboard.dart';
+import 'package:personal_finance/view/widgets/extended_dashboard.dart';
 import 'package:personal_finance/view_model/dashboard_viewmodel.dart';
 import 'package:provider/provider.dart';
 import 'package:skeletonizer/skeletonizer.dart';

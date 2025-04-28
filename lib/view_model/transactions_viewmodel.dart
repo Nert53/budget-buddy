@@ -378,4 +378,14 @@ class TransactionViewModel extends ChangeNotifier {
     }
     notifyListeners();
   }
+
+  void updateLowRange(double amount) {
+    amountLow = amount;
+    notifyListeners();
+  }
+
+  void updateHighRange(double amount) {
+    amountHigh = amount;
+    notifyListeners();
+  }
 }

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:personal_finance/view/constants/colors_categories.dart';
 import 'package:personal_finance/view/constants/icons_categories.dart';
-import 'package:personal_finance/view/widget/dialogs/pick_color_dialog.dart';
-import 'package:personal_finance/view/widget/dialogs/pick_icon_dialog.dart';
-import 'package:personal_finance/view/widget/flushbars.dart';
+import 'package:personal_finance/view/widgets/dialogs/pick_color_dialog.dart';
+import 'package:personal_finance/view/widgets/dialogs/pick_icon_dialog.dart';
+import 'package:personal_finance/view/widgets/flushbars.dart';
 import 'package:personal_finance/view_model/edit_categories_viewmodel.dart';
 
 class AddCategoryDialog extends StatefulWidget {

@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:personal_finance/constants.dart';
 import 'package:personal_finance/utils/functions.dart';
-import 'package:personal_finance/view/widget/dialogs/add_category_dialog.dart';
-import 'package:personal_finance/view/widget/dialogs/edit_category_dialog.dart';
+import 'package:personal_finance/view/widgets/dialogs/add_category_dialog.dart';
+import 'package:personal_finance/view/widgets/dialogs/edit_category_dialog.dart';
 import 'package:personal_finance/view_model/edit_categories_viewmodel.dart';
 import 'package:provider/provider.dart';
 import 'package:skeletonizer/skeletonizer.dart';
@@ -29,7 +29,7 @@ class EditCategoriesScreen extends StatelessWidget {
         builder: (context, viewModel, child) {
       return Scaffold(
         appBar: AppBar(
-          title: Text('Edit Categories'),
+          title: Text('Categories editor'),
           leading: IconButton(
             icon: Icon(Icons.adaptive.arrow_back),
             onPressed: () {
