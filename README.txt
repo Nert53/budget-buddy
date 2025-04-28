@@ -17,8 +17,8 @@ Soubory nutné ke spuštění se nechází v adresáři '\bin'.
 2.  Soubor 'app-release.apk' se nachází v adresáři '\android'.
 3.  Před samotnou instalací je nutné provést změnu v nastavení mobilního
     telefonu, jelikož se nejedná o distribuci skrz obchod Play Store. 
-    V 'nastavení -> aplikace -> přístup ke speciálním aplikacím -> instalace neznámých apliakcí'
+    V 'nastavení -> aplikace -> přístup ke speciálním aplikacím -> instalace neznámých aplikací'
     je nutné povolit zdroj, ze kterého se bude aplikace instalovat (obvykle se 
     jedná o aplikaci typu průzkumník souborů).
-4.  Na různých nádstavbách podle výrobce se postup může mírně lišit.
-5.  Poté už stačí soubor 'app-release.apk' otevří a projít instalačním procesem.
+4.  Na různých nadstavbách podle výrobce se postup může mírně lišit.
+5.  Poté už stačí soubor 'app-release.apk' otevřít a projít instalačním procesem.
