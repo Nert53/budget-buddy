@@ -19,13 +19,13 @@ class ReportsViewModel extends ChangeNotifier {
     GraphType(
         id: 1,
         name: 'top-categories-graph',
-        namePretty: 'Top Categories',
+        namePretty: 'Top categories',
         icon: Icons.sort,
         selected: true),
     GraphType(
         id: 2,
-        name: 'spent-month-graph',
-        namePretty: 'Spent during month',
+        name: 'spent-time-graph',
+        namePretty: 'Spent during time',
         icon: Icons.bar_chart,
         selected: true),
     GraphType(
@@ -304,8 +304,7 @@ class ReportsViewModel extends ChangeNotifier {
         _db.categoryItems.icon,
         _db.categoryItems.id,
         _db.transactionItems.isOutcome,
-        _db.transactionItems.amountInCZK
-            .sum()
+        _db.transactionItems.amountInCZK.sum()
       ])
       ..join([
         innerJoin(_db.categoryItems,
@@ -348,8 +347,7 @@ class ReportsViewModel extends ChangeNotifier {
         _db.categoryItems.icon,
         _db.categoryItems.id,
         _db.transactionItems.isOutcome,
-        _db.transactionItems.amountInCZK
-            .sum()
+        _db.transactionItems.amountInCZK.sum()
       ])
       ..join([
         innerJoin(_db.categoryItems,
