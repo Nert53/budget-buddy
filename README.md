@@ -1,6 +1,3 @@
----
-author: Vojtěch Netrh
----
 # Budget Buddy
 > author: Vojtěch Netrh, contact: vojtanetrh@gmail.com
 
@@ -25,22 +22,22 @@ Other platforms like iOS, Linux and macOS should work fine, but the app was not 
 
 ## Screenshots
 <figure>
-  <img src="assets/app_icon/app_icon.png" width=200px />
   <figcaption>App icon</figcaption>
+  <img src="assets/app_icon/app_icon.png" width=200px />
 </figure>
 <figure>
-  <img src=".github/1.png" width=1500px/>
   <figcaption>Mobile - dashboard, transactions, add transaction</figcaption>
+  <img src=".github/1.png" width=1500px/>
 </figure>
 <figure>
-  <img src=".github/2.png" width=1500px/>
   <figcaption>Mobile - filters, edit transaction</figcaption>
+  <img src=".github/2.png" width=1500px/>
 </figure>
 <figure>
-  <img src=".github/3.png" width=1500px/>
   <figcaption>Desktop dashboard</figcaption>
+  <img src=".github/3.png" width=1500px/>
 </figure>
 <figure>
-  <img src=".github/4.png" width=1500px/>
   <figcaption>Desktop reports</figcaption>
+  <img src=".github/4.png" width=1500px/>
 </figure>
