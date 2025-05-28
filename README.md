@@ -7,7 +7,7 @@ Budget Buddy is a simple finance management app for individual. It was made as m
 This part is different than the description for the school purposes that can be found in separete [text file](README.txt). 
 
 ### Web (only as example)
-- TODO later ⏳
+1. TODO later ⏳
 
 ### Android
 1. Download the `APK` file from the release section.
